@@ -1,0 +1,78 @@
+.driver-modal .ant-modal-body {
+  padding: 16px;
+}
+
+.driver-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.driver-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+
+.driver-name {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.driver-status {
+  margin-top: 8px;
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.driver-status.available {
+  background-color: #e6ffed;
+  color: #2ecc71;
+}
+
+.driver-status.inactive {
+  background-color: #ffe6e6;
+  color: #ff4d4f;
+}
+
+.driver-status.onroute {
+  background-color: #fff7e6;
+  color: #faad14;
+}
+
+.driver-section {
+  margin-bottom: 20px;
+}
+
+.route-info {
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+  margin-bottom: 12px;
+}
+
+.driver-map {
+  height: 160px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.view-map {
+  float: right;
+  font-size: 14px;
+}
+
+.details-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+}
+
+.verified-tag {
+  background-color: #e6ffed;
+  color: #2ecc71;
+  border: none;
+}

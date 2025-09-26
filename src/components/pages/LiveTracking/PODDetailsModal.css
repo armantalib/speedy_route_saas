@@ -1,0 +1,96 @@
+.pod-details-modal .ant-modal-content {
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pod-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pod-details-header .title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.pod-details-body {
+  padding: 24px 20px;
+}
+
+.pod-number {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-badge {
+  background-color: #ecfdf3;
+  color: #12b76a;
+  border: none;
+  border-radius: 999px;
+  font-weight: 500;
+  padding: 2px 12px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.section {
+  margin-top: 28px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  color: #667085;
+  font-size: 14px;
+}
+
+.comments {
+  font-size: 14px;
+  color: #667085;
+  line-height: 1.6;
+}
+
+.delivery-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.signature-box {
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+  padding: 8px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.signature-box img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}

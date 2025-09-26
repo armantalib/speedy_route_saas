@@ -1,0 +1,40 @@
+.items_swiper .swiper{
+    /* padding-top: 5rem !important; */
+}
+
+.items_swiper .swiper-button-next {
+    /* top: 1.5rem !important; */
+    width: 2rem;
+    height: 2rem;
+    /* right: 0 !important; */
+}
+ 
+.items_swiper .swiper-button-prev {
+    /* top: 1.5rem !important; */
+    width: 2rem;
+    /* left: auto; */
+    /* right: 4.2rem; */
+    height: 2rem;
+}
+
+.items_swiper .swiper-button-next::after{
+    content: '' !important;
+    background-image: url('../assets/svg/rightarrow.svg');
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+}
+
+
+.items_swiper .swiper-button-prev::after{
+    content: '' !important;
+    background-image: url('../assets/svg/leftarrow.svg');
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+}
+
+/* about testimonials swiper */
+

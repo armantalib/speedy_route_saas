@@ -1,0 +1,24 @@
+.driver-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.driver-list-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  flex: 1;
+  border-radius: 8px;
+}
+
+.filter-btn {
+  background-color: #e6f4ff;
+  border: none;
+  color: #1677ff;
+  border-radius: 8px;
+}

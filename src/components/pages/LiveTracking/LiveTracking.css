@@ -1,0 +1,19 @@
+.live-tracking-wrapper {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-row {
+  height: 100%;
+}
+
+.left-panel {
+  background: #fff;
+  border-right: 1px solid #eee;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.right-panel {
+  height: 100%;
+}
