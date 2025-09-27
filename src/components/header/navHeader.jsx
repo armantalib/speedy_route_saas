@@ -7,10 +7,12 @@ import { MdMenu } from 'react-icons/md';
 import { Navbar, Nav, Container, Modal } from 'react-bootstrap';
 import { useMediaQuery } from 'react-responsive';
 import { message } from 'antd';
+import { useSelector } from 'react-redux';
 
 const NavHeader = ({ broken, setToggled, toggled }) => {
     const isSmallScreen = useMediaQuery({ query: '(max-width: 768px)' });
     const [isModalOpen, setIsModalOpen] = useState(false);
+     const {headerName} = useSelector((state) => state?.user);
     const navigate = useNavigate();
 
     const openModal = () => setIsModalOpen(true);
@@ -57,7 +59,7 @@ const NavHeader = ({ broken, setToggled, toggled }) => {
                                 <input type="text" className='ps-10 py-2 w-full' placeholder='Search anything here' name="" id="" />
                             </div>
                         )} */}
-                        <h3 className="d-none d-md-block poppins_semibold mb-0 text_dark">Admin</h3>
+                        <h3 className="d-none d-md-block poppins_semibold mb-0 text_dark">{headerName}</h3>
                     </div>
                     <Nav className="ms-auto flex">
                         <div className='flex justify-center items-center'>

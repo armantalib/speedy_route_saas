@@ -47,8 +47,8 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
         { image: quizdark, image2: quizdark, items: "Drivers", path: '/driver/list' },
         { image: coursedark, image2: coursedark, items: "Live Tracking", path: '/tracking/list' },
         { image: parentdark	, image2: parentdark, items: "Prof Of Delivery", path: '/prof/list' },
-        { image: question, image2: question, items: "FAQ", path: '/faq' },
-        { image: childdark, image2: childlight, items: "Veh Make/Modal", path: '/veh/make' },
+        // { image: question, image2: question, items: "FAQ", path: '/faq' },
+        // { image: childdark, image2: childlight, items: "Veh Make/Modal", path: '/veh/make' },
         // {
         //     items: "Safety Resources",
         //     subItems: [

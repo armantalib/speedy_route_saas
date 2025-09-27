@@ -21,6 +21,8 @@ import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { Table, Tag, Avatar, Button, Input } from "antd";
 import { formatSecondsToHMS } from '../../utils/DateTimeCustom';
 import PODDetailsModal from './PODDetailsModal';
+import { useDispatch } from 'react-redux';
+import { setHeaderName } from '../../../storeTolkit/userSlice';
 const ProfDeliveryList = (props) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
@@ -43,6 +45,8 @@ const ProfDeliveryList = (props) => {
     const [selectedDate, setSelectedDate] = useState("Today");
     const [selectedStatus, setSelectedStatus] = useState("Completed");
     const [selectedDriver, setSelectedDriver] = useState(null);
+      const dispatch = useDispatch();
+  dispatch(setHeaderName('Prof Of Delivery'))
 
     // new driver modal states
     const [showNewDriverModal, setShowNewDriverModal] = useState(false);
@@ -150,7 +154,7 @@ const ProfDeliveryList = (props) => {
             cell: (row) => {
                 return (
                     <div onClick={() => {
-    
+
                         setSingleData(row)
                         setSelectedDriver(row)
                         setShowDriverDetail(true)
@@ -169,13 +173,19 @@ const ProfDeliveryList = (props) => {
                 return (
                     <div style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        backgroundColor: row?.status == 'draft' ? '#FEF9C3' : '#EDFEED',
+                        backgroundColor: row?.stop?.status == 'failed' ? '#FCE8EC' : 
+                        row?.stop?.status == 'pending' ? '#FEF9C3' : 
+                        
+                        '#EDFEED',
                         padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15
                     }}>
                         <span style={{
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
-                            color: row?.status == 'offline' ? '#CA8A04' : '#22C55E'
-                        }}>{row?.status}</span>
+                            color: row?.stop?.status == 'failed' ? '#EF4444' : 
+                            row?.stop?.status == 'pending' ? '#CA8A04' : 
+                            
+                            '#22C55E'
+                        }}>{row?.stop?.status}</span>
                     </div>
                 )
             }
@@ -184,13 +194,13 @@ const ProfDeliveryList = (props) => {
             name: 'Stop Address',
             sortable: true,
             width: '250px',
-            selector: row => row?.endPoint ? row?.endPoint?.address : 'N/A'
+            selector: row => row?.stop?.place_name ? row?.stop?.place_name : 'N/A'
         },
         {
             name: 'Time',
             sortable: true,
             width: '250px',
-            selector: row => formatSecondsToHMS(row?.duration) 
+            selector: row => formatSecondsToHMS(row?.duration)
         },
         {
             name: 'Action',
@@ -198,9 +208,9 @@ const ProfDeliveryList = (props) => {
             cell: (row) => {
                 return (
                     <div className='flex gap-1' style={{ flexDirection: 'row', flex: 'row', justifyContent: 'space-between' }}>
-                          <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14, color: '#4770E4', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => {
+                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14, color: '#4770E4', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => {
                             setSingleData(row)
-                                        setSelectedDriver(row)
+                            setSelectedDriver(row)
                             setShowDriverDetail(true)
                         }}>{'View Detail'}</p>
                     </div>
@@ -241,13 +251,13 @@ const ProfDeliveryList = (props) => {
 
     return (
         <StyleSheetManager shouldForwardProp={(prop) => !['sortActive'].includes(prop)}>
-     <main className="min-h-screen lg:container py-5 px-4 mx-auto">
+            <main className="min-h-screen lg:container py-5 px-4 mx-auto">
 
                 <div className="flex justify-between gap-3 items-center w-full">
-                    <div className="flex flex-col mb-3 w-full">
+                    {/* <div className="flex flex-col mb-3 w-full">
                         <h2 className='plusJakara_bold text_black'>Prof Of Delivery</h2>
                         <h6 className="text_secondary plusJakara_regular">Information about your current plan and usages</h6>
-                    </div>
+                    </div> */}
                     {/* <button
                         onClick={() => setShowNewDriverModal(true)}
                         style={{ width: '150px', backgroundColor: '#6688E8' }}
@@ -390,7 +400,7 @@ const ProfDeliveryList = (props) => {
             <PODDetailsModal
                 visible={showDriverDetail}
                 data={selectedDriver}
-                onClose={() =>{
+                onClose={() => {
                     setSelectedDriver(null)
                     setShowDriverDetail(false)
                 }

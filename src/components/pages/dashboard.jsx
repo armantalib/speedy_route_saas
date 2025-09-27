@@ -5,68 +5,179 @@ import Chart from 'react-apexcharts'
 import axios from 'axios';
 import { CircularProgress } from '@mui/material';
 import { dataGet_ } from '../utils/myAxios';
+import { useDispatch } from 'react-redux';
+import { setHeaderName } from '../../storeTolkit/userSlice';
+import ProductTableFetch from '../DataTable/productTableFetch';
+import { formatSecondsToHMS } from '../utils/DateTimeCustom';
+import moment from 'moment';
+import { Divider } from 'antd';
 
 const Dashboard = () => {
     const [series, setSeries] = useState([]);
     const chatRef = useRef()
     const [categories, setCategories] = useState([])
+    const [data, setData] = useState([])
+    const [totalPages, setTotalPages] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false)
-
-    const options = {
-        series: [
+    const dispatch = useDispatch();
+    dispatch(setHeaderName('Dashboard'))
+    const chartOptions = {
+        chart: {
+            type: "donut",
+        },
+        labels: ["In Progress", "Assigned", "Draft"], // Label names for each section
+        responsive: [
             {
-                name: 'Total Users',
-                data: [(categories?.stats?.totalCoursesQuizez || 0).toFixed(2)],
-                width: 40,
-            },
-            {
-                name: 'Total Courses',
-                data: [(categories?.stats?.notattemptedquizez || 0).toFixed(2)],
-                width: 40,
-            },
-            {
-                name: 'Completed Courses',
-                data: [(categories?.stats?.completedQuizez || 0).toFixed(2)],
-                width: 40,
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 300,
+                    },
+                    legend: {
+                        position: "bottom",
+                    },
+                },
             },
         ],
+    };
+    const chartSeries = [44, 33, 23]; // Values for each section
+
+    const chartOptions2 = {
         chart: {
-            width: 300,
-            type: 'donut',
+            type: "radialBar",
         },
-        labels: ['Total Courses', 'Pending Courses', 'Completed Courses',],
-        dataLabels: {
-            enabled: false,
-            style: {
-                fontSize: '9px',
-                colors: ['#fff', '#fafafa', '#D0D2DA'],
-            }
-        },
-        colors: ['#FD2254', '#00B7FE', '#d3d3d3'],
-        dropShadow: {
-            enabled: true,
-            top: 0,
-            left: 0,
-            blur: 3,
-            width: 10,
-            opacity: 0.5
-        },
-        responsive: [{
-            breakpoint: 400,
-            options: {
-                chart: {
-                    width: 280
+        plotOptions: {
+            radialBar: {
+                startAngle: -90,
+                endAngle: 90,
+                hollow: {
+                    margin: 0,
+                    size: "70%",
                 },
-                legend: {
-                    show: false
-                }
+                track: {
+                    background: "#e7e7e7",
+                    strokeWidth: "100%",
+                },
+                dataLabels: {
+                    name: {
+                        show: true,
+                        fontSize: "16px",
+                        color: "#666",
+                        offsetY: 20,
+                    },
+                    value: {
+                        show: true,
+                        fontSize: "28px",
+                        fontWeight: "bold",
+                        formatter: (val) => `${val}%`,
+                        offsetY: -10,
+                    },
+                },
+            },
+        },
+        fill: {
+            colors: ["#555"], // Progress color
+        },
+        labels: ["Stops Completed"],
+    };
+    const chartSeries2 = [80]; // % Completed
+    const columns = [
+        {
+            name: 'ID',
+            allowoverflow: true,
+            width: '150px',
+            cell: (row) => {
+                return (
+                    <div onClick={() => {
+                        // setSingleData(row)
+                        // setShowModal(true)
+                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.routeId}</p>
+                    </div>
+                )
             }
-        }],
-        legend: {
-            show: false,
+        },
+        {
+            name: 'Driver',
+            allowoverflow: true,
+            width: '150px',
+            cell: (row) => {
+                return (
+                    <>
+                        {row?.driver ?
+                            <div onClick={() => {
+                                // setSingleData(row)
+                                // setSelectedDriver(row)
+                                // setShowDriverDetail(true)
+                            }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                                <img src={row?.user?.image ? row?.user?.image : avatar1} alt="Girl in a jacket" style={{ borderRadius: 100, width: 40, height: 40 }} />
+                                <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.driver?.name}</p>
+                            </div> : <span>N/A</span>}
+                    </>
+                )
+            }
+        },
+        {
+            name: 'Status',
+            allowoverflow: true,
+            width: '150px',
+            cell: (row) => {
+                return (
+                    <div style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        backgroundColor: row?.stop?.status == 'failed' ? '#FCE8EC' :
+                            row?.stop?.status == 'pending' ? '#FEF9C3' :
+
+                                '#EDFEED',
+                        padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15
+                    }}>
+                        <span style={{
+                            fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
+                            color: row?.stop?.status == 'failed' ? '#EF4444' :
+                                row?.stop?.status == 'pending' ? '#CA8A04' :
+
+                                    '#22C55E'
+                        }}>{row?.stop?.status}</span>
+                    </div>
+                )
+            }
+        },
+        {
+            name: 'Stop Address',
+            sortable: true,
+            width: '250px',
+            selector: row => row?.stop?.place_name ? row?.stop?.place_name : 'N/A'
+        },
+        {
+            name: 'Time',
+            sortable: true,
+            width: '150px',
+            selector: row => formatSecondsToHMS(row?.duration)
         },
 
-    }
+    ]
+
+    const fetchData2 = async () => {
+        setLoading(true);
+        try {
+            let allData = [];
+            let data1 = {}
+            const endPoint = `routes/admin/prof/list/${currentPage}`;
+            const res = await dataGet_(endPoint, data1);
+
+            if (res?.data) {
+                allData = allData.concat(res?.data?.data);
+                setTotalPages(res?.data?.count?.totalPage);
+            }
+
+            setData(allData);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchData = async () => {
         const headers = {
@@ -78,8 +189,10 @@ const Dashboard = () => {
             // const res = await axios.get(`${global.BASEURL}api/users/dashboard`, { headers });
             let data1 = {
             }
-            const endPoint = 'users/admin/dashboard'
+            const endPoint = 'routes/admin/dashboard'
             const res = await dataGet_(endPoint, data1);
+            console.log("E",res.data.data);
+            
             if (res?.data.success) {
                 setCategories(res?.data);
             }
@@ -99,26 +212,27 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchData();
+        fetchData2();
     }, []);
 
     return (
         <main className='min-h-screen lg:container py-4 px-4 mx-auto'>
-            <div className="flex flex-col mb-3 w-full">
+            {/* <div className="flex flex-col mb-3 w-full">
                 <h2 className='plusJakara_bold text_black'>Dashboard</h2>
                 <h6 className="text_secondary plusJakara_regular">Information about your current plan and usages</h6>
-            </div>
+            </div> */}
             <div className="displaygrid_1 bg_white rounded-4 shadow-sm px-4 py-5 mb-3 h-auto w-full">
                 <div className="flex gap-2 justify-start w-full">
                     <div style={{ backgroundColor: '#FFF2E9' }} className="rounded-4 w-auto p-3 h-auto flex items-center justify-center">
                         <img src={bag} className='w-3 h-auto' alt="" />
                     </div>
                     <div className="flex flex-col w-full">
-                        <span className="plusJakara_medium text_secondary">Total Users</span>
+                        <span className="plusJakara_medium text_secondary">Route Assigned Today</span>
                         {/* {!categories?.totalCourses ?
                             <div className="flex items-center ms-5">
                                 <CircularProgress size={18} className='text_dark' />
                             </div> : */}
-                        <h5 className="plusJakara_semibold text_dark">{categories?.totalUsers || 0}</h5>
+                        <h5 className="plusJakara_semibold text_dark">{categories?.routesAssignedToday || 0}</h5>
                     </div>
                 </div>
                 <div className="flex gap-2 justify-start w-full">
@@ -126,12 +240,12 @@ const Dashboard = () => {
                         <img src={bag} className='w-3 h-auto' alt="" />
                     </div>
                     <div className="flex flex-col w-full">
-                        <span className="plusJakara_medium text_secondary">Total Community Post</span>
+                        <span className="plusJakara_medium text_secondary">Active Drivers</span>
                         {/* {!categories?.totalCourses ?
                             <div className="flex items-center ms-5">
                                 <CircularProgress size={18} className='text_dark' />
                             </div> : */}
-                        <h5 className="plusJakara_semibold text_dark">{categories?.totalCommunityPost || 0}</h5>
+                        <h5 className="plusJakara_semibold text_dark">{categories?.activeDrivers || 0}</h5>
                     </div>
                 </div>
 
@@ -140,12 +254,12 @@ const Dashboard = () => {
                         <img src={bag} className='w-3 h-auto' alt="" />
                     </div>
                     <div className="flex flex-col w-full">
-                        <span className="plusJakara_medium text_secondary">Total Marketplace Post</span>
+                        <span className="plusJakara_medium text_secondary">Delivery Expectation</span>
                         {/* {!categories?.totalCourses ?
                             <div className="flex items-center ms-5">
                                 <CircularProgress size={18} className='text_dark' />
                             </div> : */}
-                        <h5 className="plusJakara_semibold text_dark">{categories?.totalMarketplace || 0}</h5>
+                        <h5 className="plusJakara_semibold text_dark">{categories?.deliveryExpectation || 0}</h5>
                     </div>
                 </div>
 
@@ -155,12 +269,12 @@ const Dashboard = () => {
                         <img src={bag} className='w-3 h-auto' alt="" />
                     </div>
                     <div className="flex flex-col w-full">
-                        <span className="plusJakara_medium text_secondary">Total Livestreams</span>
+                        <span className="plusJakara_medium text_secondary">Route Optimized Today</span>
                         {/* {!categories?.totalCourses ?
                             <div className="flex items-center ms-5">
                                 <CircularProgress size={18} className='text_dark' />
                             </div> : */}
-                        <h5 className="plusJakara_semibold text_dark">{categories?.totalStreams || 0}</h5>
+                        <h5 className="plusJakara_semibold text_dark">{categories?.routesCreatedToday || 0}</h5>
                     </div>
                 </div>
 
@@ -170,35 +284,33 @@ const Dashboard = () => {
 
 
             <div className="feature_grid w-full gap-3">
-                {/* <div className="rounded-4 bg_white p-4 shadow w-full h-auto scrolbar">
-                    <h4 className='text_dark plusJakara_semibold mb-4'>Top 04 Children</h4>
-                    {!categories?.topUser || categories?.topUser?.length === 0 ?
-                        <main className='my-5 flex w-100 justify-center items-center'>
-                            <CircularProgress size={24} className='text_dark' />
-                        </main> :
-                        <div className="flex flex-col gap-2 w-full">
-                            {categories?.topUser?.map((item, i) => (
-                                <div key={i} className="flex border px-3 py-2 rounded-4 w-full justify-between items-center">
-                                    <div className="flex gap-2 items-center">
-                                        <img src={item?.image || avatar1} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: "contain" }} alt="" />
-                                        <div className="flex flex-col">
-                                            <span className="text_dark plusJakara_semibold">{`${item?.first_name} ${item?.last_name}`}</span>
-                                            <span className="text_dark plusJakara_semibold text-xs">{item?.honey_pot || 0} Honeypots</span>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '36px', height: '36px' }} className="border rounded-full flex justify-center p-2">
-                                        <span className="text-xs text_dark plusJakara_semibold">{item?.wonQuiz || 0}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>}
-                </div> */}
-                {/* <div className="rounded-4 bg_white p-4 shadow w-full h-auto">
+                <div className="rounded-4 bg_white p-4 shadow w-full h-auto scrolbar">
+                    <h5 className='text_dark plusJakara_semibold mb-4'>Recent Activity</h5>
+
+                    <ProductTableFetch columns={columns} showFilter={true} data={data} totalPage={totalPages} currentPageSend={(val) => { setCurrentPage(val) }} currentPage={currentPage - 1} />
+
+                </div>
+                <div className="rounded-4 bg_white p-4 shadow w-full h-auto">
                     <div className="d-flex flex-column mb-3">
-                        <h4 className='text_dark plusJakara_semibold'>Users Stat</h4>
-                        <span className='text_secondary text-sm plusJakara_regular'>Total profit growth of 25%</span>
+                        <h5 className='text_dark plusJakara_semibold'>Route Status</h5>
+                        <Chart
+                            options={categories?.chartOptions || chartOptions}
+                            series={categories?.chartSeries || chartSeries}
+                            type="donut"
+                            width="350"
+                        />
                     </div>
-                </div> */}
+                    <Divider />
+                    <div className="d-flex flex-column mb-3">
+                        <h5 className='text_dark plusJakara_semibold'>Stop Completed</h5>
+                        <Chart
+                            options={chartOptions2}
+                             series={categories?.stopCompletionPercent || chartSeries2}
+                            type="radialBar"
+                            height={500}
+                        />
+                    </div>
+                </div>
             </div>
         </main>
     )

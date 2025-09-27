@@ -10,7 +10,7 @@ const PODDetailsModal = ({ visible, onClose, data }) => {
       open={visible}
       onCancel={onClose}
       footer={null}
-      closable={false}
+      closable={true}
       centered
       width={420}
       className="pod-details-modal"
@@ -25,7 +25,7 @@ const PODDetailsModal = ({ visible, onClose, data }) => {
       <div className="pod-details-body">
         <div className="pod-number">
           POD #{data?.routeId}
-          <Tag className="status-badge">{data?.status}</Tag>
+          <Tag className="status-badge">{data?.stop?.status}</Tag>
         </div>
 
         <div className="section">
@@ -51,14 +51,14 @@ const PODDetailsModal = ({ visible, onClose, data }) => {
         <div className="section">
           <div className="section-title">Comments & Notes</div>
           <p className="comments">
-            {data?.endPoint?.notes ||
-              data?.endPoint?.notes}
+            {data?.stop?.notes ||
+              data?.stop?.notes}
           </p>
         </div>
 
         <div className="section">
           <div className="section-title">Picture of Delivery</div>
-          <img src={data?.endPoint?.profDelivery} alt="POD" className="delivery-image" />
+          <img src={data?.stop?.profDelivery} alt="POD" className="delivery-image" />
         </div>
 
         {/* <div className="section">

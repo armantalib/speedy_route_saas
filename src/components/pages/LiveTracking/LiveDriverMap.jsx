@@ -6,8 +6,8 @@ import MovingMarker from "./MovingMarker";
 import "leaflet/dist/leaflet.css";
 
 const driverIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-  iconSize: [32, 32],
+  iconUrl: "https://storage.googleapis.com/speedyroute-b8a9a.firebasestorage.app/uploads/1758893863596.png",
+  iconSize: [45, 45],
   iconAnchor: [16, 32],
 });
 

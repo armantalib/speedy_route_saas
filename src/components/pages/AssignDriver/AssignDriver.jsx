@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Card, Button, Descriptions, Timeline, Typography } from "antd";
-import { EnvironmentOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { Card, Button, Descriptions, Timeline, Typography, Tooltip } from "antd";
+import { EnvironmentOutlined, ClockCircleOutlined, ExportOutlined, PrinterOutlined } from "@ant-design/icons";
 import L from "leaflet";
 import AssignDriverModal from "./AssignDriverModal";
 import "leaflet/dist/leaflet.css";
@@ -13,7 +13,7 @@ import { CircularProgress } from "@mui/material";
 
 const { Title, Text } = Typography;
 
-const AssignDriver = ({ routeGeometry, start, stops = [], destination,routeName,routeId,startPoint,endPoint,dateSchedule,timeSchedule,stopData=[],onClickSave,loading }) => {
+const AssignDriver = ({ routeGeometry, start, stops = [], destination,routeName,routeId,startPoint,endPoint,dateSchedule,timeSchedule,stopData=[],onClickSave,loading,exportToCSV,printToPDF }) => {
   const mapRef = useRef(null);
   const routeLayerRef = useRef(null);
   const markersRef = useRef([]);
@@ -178,6 +178,13 @@ const AssignDriver = ({ routeGeometry, start, stops = [], destination,routeName,
           <Button type="primary" onClick={() => setShowAssignDriverModal(true)}>
             Assign Driver
           </Button>
+
+             <Tooltip title="Export to CSV">
+                                <Button icon={<ExportOutlined />} onClick={exportToCSV} />
+                              </Tooltip>
+                              <Tooltip title="Print to PDF">
+                                <Button icon={<PrinterOutlined />} onClick={printToPDF} />
+                              </Tooltip>
         </div>
       </Card>
 

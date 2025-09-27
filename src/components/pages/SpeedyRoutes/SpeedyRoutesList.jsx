@@ -16,6 +16,8 @@ import Switch from 'react-switch';
 import moment from 'moment';
 import AssignDriverModal from '../AssignDriver/AssignDriverModal';
 import { formatSecondsToHMS } from '../../utils/DateTimeCustom';
+import { useDispatch } from 'react-redux';
+import { setHeaderName } from '../../../storeTolkit/userSlice';
 const SpeedyRoutesList = (props) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
@@ -38,6 +40,8 @@ const SpeedyRoutesList = (props) => {
     const [selectedDate, setSelectedDate] = useState("Today");
     const [selectedStatus, setSelectedStatus] = useState("Completed");
     const [showAssignDriverModal, setShowAssignDriverModal] = useState(false);
+    const dispatch = useDispatch();
+    dispatch(setHeaderName('Routes'))
 
     const dateOptions = ["Today", "Yesterday", "Last 7 Days", "Last Month"];
     const statusOptions = ["Completed", "In Progress", "Failed", "Cancelled"];
@@ -121,8 +125,14 @@ const SpeedyRoutesList = (props) => {
             cell: (row) => {
                 return (
                     <div onClick={() => {
-                    }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: row?.status == 'draft' ? '#FEF9C3' : '#EDFEED', padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15 }}>
-                        <span style={{ fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize', color: row?.status == 'draft' ? '#CA8A04' : '#22C55E' }}>{row?.status}</span>
+                    }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 
+                        row?.status == 'draft' ? '#E8E8E9' : 
+                        row?.status == 'assigned' ? '#FEF9C3' : 
+                    '#EDFEED', padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15 }}>
+                        <span style={{ fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize', color: 
+                            row?.status == 'draft' ? '#18181B' : 
+                            row?.status == 'assigned' ? '#CA8A04' : 
+                            '#22C55E' }}>{row?.status}</span>
                     </div>
                 )
             }
@@ -225,8 +235,8 @@ const SpeedyRoutesList = (props) => {
 
                 <div className="flex justify-between gap-3 items-center w-full">
                     <div className="flex flex-col mb-3 w-full">
-                        <h2 className='plusJakara_bold text_black'>Routes</h2>
-                        <h6 className="text_secondary plusJakara_regular">Information about your current plan and usages</h6>
+                        {/* <h2 className='plusJakara_bold text_black'>Routes</h2>
+                        <h6 className="text_secondary plusJakara_regular">Information about your current plan and usages</h6> */}
                     </div>
                     <button onClick={() => {
                         navigate('/route/form')

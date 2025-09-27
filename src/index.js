@@ -8,6 +8,8 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { finabeelight, finabeeoutline, finabeesingle, logoDynomo } from './components/icons/icon';
 import { CircularProgress } from '@mui/material';
+import { Provider } from 'react-redux';
+import store from '../src/storeTolkit/store.tsx'
 const App = lazy(() => import('./App'))
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,9 +20,11 @@ root.render(
     </main>
   }>  
     <React.StrictMode>  
+            <Provider store={store}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
+      </Provider>
     </React.StrictMode>
   </Suspense>
 )

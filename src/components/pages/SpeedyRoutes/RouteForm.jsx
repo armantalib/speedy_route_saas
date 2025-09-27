@@ -26,7 +26,7 @@ import axios from "axios";
 import AssignDriver from "../AssignDriver/AssignDriver";
 import "./RouteForm.css";
 import moment from "moment";
-import { dataPost } from "../../utils/myAxios";
+import { dataGet_, dataPost } from "../../utils/myAxios";
 import { useNavigate } from 'react-router-dom';
 
 const { Title, Paragraph, Text } = Typography;
@@ -38,6 +38,7 @@ const RouteForm = () => {
   // Autocomplete + notes states (from DrawerComponent)
   const [queries, setQueries] = useState({ start: "", stop: "", destination: "" });
   const [searchResults, setSearchResults] = useState([]);
+  const [searchResultsName, setSearchResultsName] = useState([]);
   const [start, setStart] = useState(null);
   const [destination, setDestination] = useState(null);
   const [stops, setStops] = useState([]);
@@ -50,6 +51,7 @@ const RouteForm = () => {
   const [duration, setDuration] = useState(0);
   const [distance, setDistance] = useState(0);
   const [loading, setIsLoading] = useState(false);
+  const [customerStopId, setCustomerStopId] = useState(null);
   const navigate = useNavigate();
 
   // Search via Mapbox
@@ -66,8 +68,18 @@ const RouteForm = () => {
     }
   };
 
+  const handleSearchFromDb = async (val) => {
+    if (!val) return;
+    const endPoint = `routes/admin/stop?q=${val}`;
+    const response = await dataGet_(endPoint, {});
+    if (response?.data?.success) {
+      setSearchResultsName(response?.data?.data);
+    } else {
+      setSearchResultsName([]);
+    }
+  }
+
   useEffect(() => {
-    console.log("CE===>", process.env.REACT_APP_MAPBOX_ACCESS_TOKEN);
 
     const randomNumber = Math.floor(Math.random() * 1111111)
     const routeNum = 'R' + randomNumber
@@ -82,15 +94,31 @@ const RouteForm = () => {
       result,
     }));
 
+  const renderOptionsName = () =>
+    searchResultsName.map((result) => ({
+      value: result.name || result.stopName,   // fallback if key is stopName
+      label: (
+        <div>
+          <strong>{result.name || result.stopName}</strong><br />
+          <small>{result.place_name || result.address}</small>
+        </div>
+      ),
+      result: {
+        ...result,
+        name: result.name || result.stopName,
+        place_name: result.place_name || result.address,
+      },
+    }));
+
   const handleSelect = (_, option, type) => {
     const { geometry, place_name } = option.result;
     const coordinates = geometry.coordinates;
 
     if (type === "start") setStart({ coordinates, place_name });
     else if (type === "stop") {
-      setStops([...stops, { coordinates, place_name,status:'pending',startTime:'',notes:'',completeLat:'',completeLng:'',completeTime:'',profDelivery:'',signature:'' }]);
+      // setStops([...stops, { coordinates, place_name, status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: '' }]);
       setNotes((prev) => ({ ...prev, stops: [...prev.stops, ""] }));
-    } else if (type === "destination") setDestination({ coordinates, place_name,status:'pending',startTime:'',notes:'',completeLat:'',completeLng:'',completeTime:'',profDelivery:'',signature:''  });
+    } else if (type === "destination") setDestination({ coordinates, place_name, status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: '' });
 
     setQueries({ ...queries, [type]: "" });
   };
@@ -170,8 +198,9 @@ const RouteForm = () => {
   // const handleCancel = () => dispatch(hideRouteForm()); 
 
   const handleOptimize = async () => {
-    console.log("Click");
-
+    // console.log("Click");
+    // saveStopsToDB()
+    // return
     // await handleSaveAddresses()
     const waypoints = [start, ...stops, destination].filter(Boolean);
     if (waypoints.length < 2) {
@@ -207,15 +236,16 @@ const RouteForm = () => {
 
       // Step 2: Fetch the optimized route using /get-optimized-route
       await fetchOptimizedRoute(optimizedWaypoints);
-
+      let stopD = [...stops]
       // Update stops with optimized order
       const optimizedStops = optimizedWaypoints
         .slice(1, destination ? -1 : undefined) // Only slice the last item if destination exists
         .map((wp, index) => ({
           place_name: stops[parseInt(wp.id.replace('destination', '')) - 1]?.place_name || `Stop ${index + 1}`, // Preserve original place name
           coordinates: [stops[parseInt(wp.id.replace('destination', '')) - 1].coordinates[0], stops[parseInt(wp.id.replace('destination', '')) - 1].coordinates[1]],
-          status:'pending'
-          ,startTime:'',notes:'',completeLat:'',completeLng:'',completeTime:'',profDelivery:'',signature:''
+          status: 'pending',
+          name:stopD[index]?.name
+          , startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
         }));
       const reorderedNotes = optimizedWaypoints
         .slice(1, destination ? -1 : undefined)
@@ -227,6 +257,10 @@ const RouteForm = () => {
         ...prev,
         stops: reorderedNotes,
       }));
+      //  setNotes((prev) => ({
+      //   ...prev,
+      //   stops: reorderedNotes,
+      // }));
       setStops(optimizedStops);
       await setDuration(optimizeResponse.data.duration)
       await setDistance(optimizeResponse.data.distance)
@@ -278,23 +312,27 @@ const RouteForm = () => {
   }
 
   const saveDraftData = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
+
+    await saveStopsToDB(); // 🔹 Save stops to DB first
+
     const startPoint = {
       latitude: start?.coordinates[1],
       longitude: start?.coordinates[0],
       address: start?.place_name
-    }
+    };
+
     const endPointAddress = {
       latitude: destination?.coordinates[1],
       longitude: destination?.coordinates[0],
       address: destination?.place_name,
-      status:'pending',startTime:'',notes:'',completeLat:'',completeLng:'',completeTime:'',profDelivery:'',signature:'' 
-    }
-    const stops12 = stops.map((stop) => stop.coordinates)
+      status: 'pending', name: '', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
+    };
+
+    const stops12 = stops.map((stop) => stop.coordinates);
 
     const endPoint = `routes/create`;
     let data1 = {
-      // driver: '',
       routeId: routeIdGen,
       name: routeName,
       startPoint: startPoint,
@@ -306,13 +344,36 @@ const RouteForm = () => {
       stopsData: stops,
       routeGeometry: routeGeom,
       duration: duration,
-    }
-    const response = await dataPost(endPoint, data1)
-    navigate('/route/list')
-    message.success('Route Created Successfully')
+    };
 
-    setIsLoading(false)
-  }
+    const response = await dataPost(endPoint, data1);
+    navigate('/route/list');
+    message.success('Route Created Successfully');
+    setIsLoading(false);
+  };
+
+
+  const saveStopsToDB = async () => {
+    for (let stop of stops) {
+      console.log("Stops", stop);
+
+      if (stop.name && stop.place_name && stop.coordinates) {
+        const response = await dataPost("routes/admin/stop/save", {
+          name: stop.name,
+          place_name: stop.place_name,
+          coordinates: stop.coordinates
+        });
+        console.log("sto[ response", response);
+
+        if (response?.success) {
+          console.log("Stop saved:", response.data);
+        }
+      }
+    }
+  };
+
+
+
 
   return (
     <>
@@ -392,7 +453,7 @@ const RouteForm = () => {
                   {/* Switches */}
                   <div className="route-options">
                     <div className="switch-group">
-                      <Switch defaultChecked />
+                      <Switch />
                       <span className="switch-label">Round Trip</span>
                       <div className="switch-subtext">Return to starting location</div>
                     </div>
@@ -425,7 +486,38 @@ const RouteForm = () => {
                             Delete Stop
                           </Button>
                         </div>
-
+                        <Form.Item label="Client/Location Name">
+                          <AutoComplete
+                            placeholder="Enter client/location name"
+                            value={stop.name || ""}
+                            onSearch={handleSearchFromDb}   // 🔹 let AutoComplete trigger search
+                            onChange={(v) => {
+                              const updated = [...stops];
+                              updated[index] = { ...updated[index], name: v };
+                              setStops(updated);
+                            }}
+                            onSelect={(val, opt) => {
+                              const updated = [...stops];
+                              updated[index] = {
+                                ...updated[index],
+                                name: opt.result.name,
+                                place_name: opt.result.place_name,
+                                coordinates: opt.result.coordinates,
+                                status: "pending",
+                                startTime: "",
+                                notes: "",
+                                completeLat: "",
+                                completeLng: "",
+                                completeTime: "",
+                                profDelivery: "",
+                                signature: "",
+                              };
+                              setStops(updated);
+                            }}
+                            options={renderOptionsName()}
+                            filterOption={false}   // 🔹 must add for async
+                          />
+                        </Form.Item>
                         {/* Address */}
                         <Form.Item label="Address">
                           <AutoComplete
@@ -439,14 +531,19 @@ const RouteForm = () => {
                             onSearch={handleSearch}
                             onSelect={(val, opt) => {
                               const updated = [...stops];
+                              
+
                               updated[index] = {
                                 ...updated[index],
                                 place_name: opt.result.place_name,
+                                // name: opt.result.name || val,
                                 coordinates: opt.result.geometry.coordinates,
-                                status:'pending',startTime:'',notes:'',completeLat:'',completeLng:'',completeTime:'',profDelivery:'',signature:'' 
+                                status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
                               };
+
                               setStops(updated);
                             }}
+
                             options={renderOptions()}
                           />
                         </Form.Item>
@@ -456,17 +553,7 @@ const RouteForm = () => {
                           <Form.Item label="Time Window (optional)" style={{ flex: 1 }}>
                             <TimePicker.RangePicker style={{ width: "100%" }} />
                           </Form.Item>
-                          <Form.Item label="Client/Location Name" style={{ flex: 1 }}>
-                            <Input
-                              placeholder="Name"
-                              value={stop.clientName || ""}
-                              onChange={(e) => {
-                                const updated = [...stops];
-                                updated[index].clientName = e.target.value;
-                                setStops(updated);
-                              }}
-                            />
-                          </Form.Item>
+
                         </div>
 
                         {/* Notes */}
@@ -488,7 +575,7 @@ const RouteForm = () => {
                       style={{ width: '20%', marginTop: 20 }}
                       icon={<PlusOutlined />}
                       onClick={() => {
-                        setStops([...stops, { place_name: "", clientName: "", coordinates: null,status:'pending',startTime:'',notes:'',completeLat:'',completeLng:'',completeTime:'',profDelivery:'',signature:'' }]);
+                        setStops([...stops, { place_name: "", name: "", coordinates: null, status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: '' }]);
                         setNotes((prev) => ({ ...prev, stops: [...prev.stops, ""] }));
                       }}
                     >
@@ -505,12 +592,12 @@ const RouteForm = () => {
                     <Button type="primary" className="optimize-btn" onClick={handleOptimize}>
                       {loading ? "Optimizing Route..." : "Optimize Route"}
                     </Button>
-                    <Tooltip title="Export to CSV">
+                    {/* <Tooltip title="Export to CSV">
                       <Button icon={<ExportOutlined />} onClick={exportToCSV} />
                     </Tooltip>
                     <Tooltip title="Print to PDF">
                       <Button icon={<PrinterOutlined />} onClick={printToPDF} />
-                    </Tooltip>
+                    </Tooltip> */}
                   </div>
                 </Form>
               </TabPane>
@@ -533,6 +620,8 @@ const RouteForm = () => {
               dateSchedule={moment(scheduleDate).format('DD MMM YYYY')}
               timeSchedule={moment(scheduleTime).format('hh:mm')}
               loading={loading}
+              exportToCSV={() => { exportToCSV() }}
+              printToPDF={() => { printToPDF() }}
               onClickSave={() => {
                 saveDraftData()
 

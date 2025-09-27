@@ -9,6 +9,8 @@ import PODDetailsModal from "./PODDetailsModal";
 import "./LiveTracking.css";
 import LiveDriverList from "./LiveDriverList";
 import LiveDriverMap from "./LiveDriverMap";
+import { useDispatch } from "react-redux";
+import { setHeaderName } from "../../../storeTolkit/userSlice";
 
 const LiveTrackingList = () => {
   const navigate = useNavigate();
@@ -18,6 +20,8 @@ const LiveTrackingList = () => {
   const [selectedStatus, setSelectedStatus] = useState("Completed");
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [showDriverDetail, setShowDriverDetail] = useState(false);
+  const dispatch = useDispatch();
+  dispatch(setHeaderName('Live Tracking'))
 
   const dateOptions = ["Today", "Yesterday", "Last 7 Days", "Last Month"];
   const statusOptions = ["Completed", "In Progress", "Failed", "Cancelled"];

@@ -20,6 +20,8 @@ import styles from "./DriverTable.module.css";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { Table, Tag, Avatar, Button, Input } from "antd";
 import DriverDetailsModal from './DriverDetailsModal';
+import { useDispatch } from 'react-redux';
+import { setHeaderName } from '../../../storeTolkit/userSlice';
 const DriversList = (props) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
@@ -54,6 +56,8 @@ const DriversList = (props) => {
         image: null
     });
     const [imagePreview, setImagePreview] = useState(null);
+      const dispatch = useDispatch();
+    dispatch(setHeaderName('Drivers'))
 
     const dateOptions = ["Today", "Yesterday", "Last 7 Days", "Last Month"];
     const statusOptions = ["Completed", "In Progress", "Failed", "Cancelled"];
@@ -243,10 +247,10 @@ const DriversList = (props) => {
             <main className="min-h-screen lg:container py-1 px-4 mx-auto">
 
                 <div className="flex justify-between gap-3 items-center w-full">
-                    <div className="flex flex-col mb-3 w-full">
+                    {/* <div className="flex flex-col mb-3 w-full">
                         <h2 className='plusJakara_bold text_black'>Drivers</h2>
                         <h6 className="text_secondary plusJakara_regular">Information about your current plan and usages</h6>
-                    </div>
+                    </div> */}
                     {/* <button
                         onClick={() => setShowNewDriverModal(true)}
                         style={{ width: '150px', backgroundColor: '#6688E8' }}
