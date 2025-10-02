@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
+import { socketUrl } from "./myAxios";
 
-const socket = io("http://192.168.100.59:8080/", {
+const socket = io(socketUrl, {
   transports: ["websocket"],
 });
 

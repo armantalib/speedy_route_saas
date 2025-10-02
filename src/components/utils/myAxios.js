@@ -1,8 +1,8 @@
 import axios from 'axios';
 
  const mainUrl = "http://192.168.100.59:8080/api/";
-//  const mainUrl = "https://api.7arty.com/api/";
- export const socketUrl = "https://api.7arty.com/";
+//  const mainUrl = "https://api.speedyroute.ai/api/";
+ export const socketUrl = "https://api.speedyroute.ai/";
 
 
 

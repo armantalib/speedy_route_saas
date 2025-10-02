@@ -8,7 +8,7 @@ import "./AssignDriver.css";
 
 // Import custom marker icons
 import startIconUrl from "../../assets/svg/start-pin.svg";
-import destinationIconUrl from "../../assets/svg/start-pin.svg";
+import destinationIconUrl from "../../assets/svg/destination-pin.svg";
 import { CircularProgress } from "@mui/material";
 
 const { Title, Text } = Typography;
@@ -169,7 +169,7 @@ const AssignDriver = ({ routeGeometry, start, stops = [], destination,routeName,
 
         {/* Actions */}
         <div className="driver-actions">
-          <Button style={{ marginRight: 8 }} onClick={onClickSave}>
+          <Button style={{ marginRight: 8 }} onClick={()=>{onClickSave(null)}}>
             {loading?
             <CircularProgress size={18} className='text_black' />:
             "Save as Draft"
@@ -197,8 +197,10 @@ const AssignDriver = ({ routeGeometry, start, stops = [], destination,routeName,
       <AssignDriverModal
         visible={showAssignDriverModal}
         onCancel={() => setShowAssignDriverModal(false)}
+        modalRoute={true}
         // routeId = {}
         onAssign={(driverName) => {
+          onClickSave(driverName)
           console.log("Driver assigned:", driverName);
           setShowAssignDriverModal(false);
         }}

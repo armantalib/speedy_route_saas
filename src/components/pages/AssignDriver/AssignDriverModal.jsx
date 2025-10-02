@@ -14,7 +14,7 @@ const driverImages = [
   "/avatars/driver3.jpg",
 ];
 
-const AssignDriverModal = ({ visible, onCancel, onAssign,routeId }) => {
+const AssignDriverModal = ({ visible, onCancel, onAssign, routeId, modalRoute }) => {
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [search, setSearch] = useState("");
   const [driversData, setDriverData] = useState([]);
@@ -42,11 +42,19 @@ const AssignDriverModal = ({ visible, onCancel, onAssign,routeId }) => {
     getDrivers();
   }, [])
 
+  const assingDriverCreateRoute = () => {
+    if (modalRoute) {
+    onAssign(selectedDriver)
+    } else {
+      assignDriver()
+
+    }
+  }
   const assignDriver = async () => {
     let data1 = {}
-      const endPoint = `routes/assign/update/${routeId}/${selectedDriver}`;
-      const res = await dataPut(endPoint, data1);
-      onAssign()
+    const endPoint = `routes/assign/update/${routeId}/${selectedDriver}`;
+    const res = await dataPut(endPoint, data1);
+    onAssign()
   }
 
   const filteredDrivers = driverList.filter((name) =>
@@ -103,7 +111,7 @@ const AssignDriverModal = ({ visible, onCancel, onAssign,routeId }) => {
         <Button
           type="primary"
           disabled={!selectedDriver}
-          onClick={() => assignDriver()}
+          onClick={() => assingDriverCreateRoute()}
         >
           Assign Driver
         </Button>
