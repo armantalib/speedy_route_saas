@@ -40,6 +40,8 @@ const NavHeader = ({ broken, setToggled, toggled }) => {
                                 <MdMenu size={28} />
                             </button>
                         )}
+                        <h5 className="d-none d-md-block poppins_semibold mb-0 text_dark">{headerName}</h5>
+
                         {/* {isSmallScreen && (
                             <div>
                                 <img src={searchbar} className='cursor-pointer' alt="" onClick={openModal} />
@@ -59,7 +61,6 @@ const NavHeader = ({ broken, setToggled, toggled }) => {
                                 <input type="text" className='ps-10 py-2 w-full' placeholder='Search anything here' name="" id="" />
                             </div>
                         )} */}
-                        <h3 className="d-none d-md-block poppins_semibold mb-0 text_dark">{headerName}</h3>
                     </div>
                     <Nav className="ms-auto flex">
                         <div className='flex justify-center items-center'>

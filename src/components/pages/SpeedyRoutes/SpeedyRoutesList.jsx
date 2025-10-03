@@ -10,7 +10,7 @@ import axios from 'axios';
 import { CircularProgress } from '@mui/material';
 import { dataDelete, dataGet_, dataPut } from '../../utils/myAxios';
 import { useNavigate } from 'react-router-dom';
-import { Accordion, Button, Form, Modal } from 'react-bootstrap';
+import { Accordion, Form, Modal } from 'react-bootstrap';
 import { GoogleMap, LoadScript, Polygon, Autocomplete, Marker, useLoadScript, useJsApiLoader } from "@react-google-maps/api";
 import Switch from 'react-switch';
 import moment from 'moment';
@@ -18,6 +18,10 @@ import AssignDriverModal from '../AssignDriver/AssignDriverModal';
 import { formatSecondsToHMS } from '../../utils/DateTimeCustom';
 import { useDispatch } from 'react-redux';
 import { setHeaderName } from '../../../storeTolkit/userSlice';
+import styles2 from "../Drivers/DriverTable.module.css";
+import { Button, Input } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { setRouteDetail } from '../../../storeTolkit/routeSlice';
 const SpeedyRoutesList = (props) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
@@ -91,7 +95,7 @@ const SpeedyRoutesList = (props) => {
                 return (
                     <div onClick={() => {
                         setSingleData(row)
-                        setShowModal(true)
+                        // setShowModal(true)
                     }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
                         {/* <button className="bg-[#2B7F75] flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[12px] h-auto" src={preview} alt="" /></button> */}
                         {/* <img src={row?.user?.image ? row?.user?.image : avatar1} alt="Girl in a jacket" style={{ borderRadius: 100, width: 40, height: 40 }} /> */}
@@ -125,14 +129,18 @@ const SpeedyRoutesList = (props) => {
             cell: (row) => {
                 return (
                     <div onClick={() => {
-                    }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 
-                        row?.status == 'draft' ? '#E8E8E9' : 
-                        row?.status == 'assigned' ? '#FEF9C3' : 
-                    '#EDFEED', padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15 }}>
-                        <span style={{ fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize', color: 
-                            row?.status == 'draft' ? '#18181B' : 
-                            row?.status == 'assigned' ? '#CA8A04' : 
-                            '#22C55E' }}>{row?.status}</span>
+                    }} style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor:
+                            row?.status == 'draft' ? '#E8E8E9' :
+                                row?.status == 'assigned' ? '#FEF9C3' :
+                                    '#EDFEED', padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15
+                    }}>
+                        <span style={{
+                            fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize', color:
+                                row?.status == 'draft' ? '#18181B' :
+                                    row?.status == 'assigned' ? '#CA8A04' :
+                                        '#22C55E'
+                        }}>{row?.status}</span>
                     </div>
                 )
             }
@@ -155,7 +163,11 @@ const SpeedyRoutesList = (props) => {
                     }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
                         {/* <button className="bg-[#2B7F75] flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[12px] h-auto" src={preview} alt="" /></button> */}
                         {/* <img src={row?.user?.image ? row?.user?.image : avatar1} alt="Girl in a jacket" style={{ borderRadius: 100, width: 40, height: 40 }} /> */}
-                        <p style={{ marginLeft: 10, fontWeight: 700, fontSize: 14, color: '#4770E4', cursor: 'pointer', textDecoration: 'underline' }}>{'Edit'}</p>
+                        <p style={{ marginLeft: 10, fontWeight: 700, fontSize: 14, color: '#4770E4', cursor: 'pointer', textDecoration: 'underline' }}
+                            onClick={() => {
+                                moveNext(row)
+                            }}
+                        >{'Edit'}</p>
                         <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14, color: '#4770E4', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => {
                             setSingleData(row)
                             setShowAssignDriverModal(true)
@@ -215,8 +227,11 @@ const SpeedyRoutesList = (props) => {
     }
 
     const moveNext = async (item) => {
-        localStorage.setItem('zone_data', JSON.stringify(item))
-        navigate('/zone/create');
+        // console.log("Clock",item);
+        
+        // localStorage.setItem('route_data', JSON.stringify(item))
+        dispatch(setRouteDetail(item))
+        navigate('/route/form');
     }
 
     useEffect(() => {
@@ -233,48 +248,37 @@ const SpeedyRoutesList = (props) => {
         <StyleSheetManager shouldForwardProp={(prop) => !['sortActive'].includes(prop)}>
             <main className="min-h-screen lg:container py-5 px-4 mx-auto">
 
-                <div className="flex justify-between gap-3 items-center w-full">
-                    <div className="flex flex-col mb-3 w-full">
-                        {/* <h2 className='plusJakara_bold text_black'>Routes</h2>
-                        <h6 className="text_secondary plusJakara_regular">Information about your current plan and usages</h6> */}
+
+
+                <div className={styles2.tableHeader}>
+                    <h3></h3>
+                    <div>
+                        <Input.Search
+                            placeholder="Search"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            style={{ width: 200, marginRight: 10 }}
+                        />
+                        <Button type="default"
+                            onClick={() => {
+                                setShowModal(true)
+                            }}
+                        >Filter</Button>
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            style={{ marginLeft: 10 }}
+                            onClick={() => {
+                                dispatch(setRouteDetail(null))
+                                navigate('/route/form')
+
+                            }}
+                        >
+                            New Route
+                        </Button>
                     </div>
-                    <button onClick={() => {
-                        navigate('/route/form')
-
-                    }} style={{ width: '150px', backgroundColor: '#6688E8' }} className="bg_primary py-3 rounded-4 text_white plusKajara_semibold"> New Routes</button>
                 </div>
-                <div className="mb-4 d-flex flex-wrap align-items-center gap-3 justify-content-start">
-                    <Form.Select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        style={{ width: 200 }}
-                    >
-                        <option value="">All Routes</option>
-                        {marketplaceCategories.map((cat, idx) => (
-                            <option key={idx} value={cat.value}>{cat.name}</option>
-                        ))}
-                    </Form.Select>
 
-                    <Form.Control
-                        type="text"
-                        placeholder="Search"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        style={{ width: 300 }}
-                    />
-                    {/* <Form.Control
-                        type="number"
-                        placeholder="Max Price"
-                        value={maxPrice}
-                        onChange={(e) => setMaxPrice(e.target.value)}
-                        style={{ width: 150 }}
-                    /> */}
-                    <button onClick={() => {
-                        setShowModal(true)
-
-
-                    }} style={{ width: '100px', backgroundColor: '#6688E8' }} className="bg_primary py-2 rounded-4 text_white plusKajara_semibold">Filter</button>
-                </div>
                 {loading ? <main className='my-5 d-flex w-100 justify-content-center align-items-center'>
                     <CircularProgress size={24} className='text_dark' />
                 </main> :

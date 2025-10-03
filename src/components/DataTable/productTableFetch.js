@@ -2,18 +2,12 @@
 import { Fragment, useState, forwardRef } from 'react'
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
-import { ChevronDown, FileText, MoreVertical, Edit2, Trash } from 'react-feather'
+import { ChevronDown } from 'react-feather'
 import {
-    Row,
-    Col,
     Card,
     Input,
-    Label,
-    CardTitle,
-    CardHeader,
 } from 'reactstrap'
-import { arrowleft2, arrowright2, filter, searchbar, searchnormal } from '../icons/icon'
-import { MdSearch } from 'react-icons/md'
+import { arrowleft2, arrowright2, filter, searchnormal } from '../icons/icon'
 
 const BootstrapCheckbox = forwardRef((props, ref) => (
     <div className='form-check'>
@@ -21,19 +15,15 @@ const BootstrapCheckbox = forwardRef((props, ref) => (
     </div>
 ))
 
-
 const ProductTableFetch = ({ data, columns, totalPage, rowHeading, showRow, currentPageSend, currentPage, showFilter }) => {
     const [modal, setModal] = useState(false)
-    // const [currentPage, setCurrentPage] = useState(0)
     const [searchValue, setSearchValue] = useState('')
     const [filteredData, setFilteredData] = useState([])
 
     const perPage = 10
 
-    // ** Function to handle Modal toggle
     const handleModal = () => setModal(!modal)
 
-    // ** Function to handle filter
     const handleFilter = e => {
         const value = e.target.value
         let updatedData = []
@@ -68,30 +58,22 @@ const ProductTableFetch = ({ data, columns, totalPage, rowHeading, showRow, curr
         }
     }
 
-    // ** Function to handle Pagination
     const handlePagination = page => {
-        // setCurrentPage(page.selected)
         currentPageSend(page.selected + 1)
     }
 
-    // ** Pagination Previous Component
-    const Previous = () => {
-        return (
-            <Fragment>
-                <span><img src={arrowleft2} alt="" /></span>
-            </Fragment>
-        )
-    }
+    const Previous = () => (
+        <Fragment>
+            <span><img src={arrowleft2} alt="" /></span>
+        </Fragment>
+    )
 
-    // ** Pagination Next Component
-    const Next = () => {
-        return (
-            <Fragment>
-                <span><img src={arrowright2} alt="" /></span>
-            </Fragment>
-        )
-    }
-    // ** Custom Pagination
+    const Next = () => (
+        <Fragment>
+            <span><img src={arrowright2} alt="" /></span>
+        </Fragment>
+    )
+
     const CustomPagination = () => (
         <ReactPaginate
             previousLabel={<Previous size={15} />}
@@ -118,17 +100,17 @@ const ProductTableFetch = ({ data, columns, totalPage, rowHeading, showRow, curr
     return (
         <>
             <Fragment>
-                <Card className='border border-white w-full'>
+                <Card className='border border-[#E8E8E9] rounded-xl shadow-sm w-full'>
                     {showRow && (
-                        <div className='flex items-center justify-between flex-wrap p-3 max-md:gap-3 w-full'>
+                        <div className='flex items-center justify-between flex-wrap p-3 max-md:gap-3 w-full border-b border-[#F0F0F0]'>
                             <div className="">
-                                <h6 className='plusJakara_semibold text-[#6C7278]'>{rowHeading}</h6>
+                                <h6 className='font-semibold text-[#6C7278]'>{rowHeading}</h6>
                             </div>
                             <div className='flex items-center flex-wrap gap-[12px]'>
                                 <div className='relative'>
-                                    <img src={searchnormal} className='absolute mt-[12px] ms-3' alt="" />
+                                    <img src={searchnormal} className='absolute top-3 left-3' alt="" />
                                     <Input
-                                        className='dataTable-filter ps-5 md:pe-5 py-[8px] w-full'
+                                        className='ps-10 py-[8px] w-full rounded-md border border-[#E8E8E9]'
                                         type='text'
                                         placeholder='Search anything here'
                                         id='search-input-1'
@@ -138,9 +120,9 @@ const ProductTableFetch = ({ data, columns, totalPage, rowHeading, showRow, curr
                                 </div>
                                 {showFilter && (
                                     <div>
-                                        <button className="flex items-center gap-2 border rounded-3 py-[8px] px-[14px]">
+                                        <button className="flex items-center gap-2 border rounded-md py-[8px] px-[14px] bg-white hover:bg-gray-50">
                                             <img src={filter} alt="" />
-                                            <span className='plusJakara_semibold text_black text-sm'>Filter</span>
+                                            <span className='font-medium text-black text-sm'>Filter</span>
                                         </button>
                                     </div>
                                 )}
@@ -151,12 +133,11 @@ const ProductTableFetch = ({ data, columns, totalPage, rowHeading, showRow, curr
                         <DataTable
                             noHeader
                             pagination
-                            // selectableRows
                             selectableRowsNoSelectAll
                             columns={columns}
                             paginationPerPage={30}
                             className='react-dataTable'
-                            sortIcon={<ChevronDown size={10} />}
+                            sortIcon={<ChevronDown size={14} />}
                             paginationDefaultPage={currentPage + 1}
                             paginationComponent={CustomPagination}
                             data={searchValue.length ? filteredData : data}
@@ -175,12 +156,26 @@ export default ProductTableFetch;
 const customStyles = {
   headCells: {
     style: {
-      backgroundColor: "#F8F8F8", // header background
-      color: "#73757C",             // header text color
-      fontWeight: "700",         // optional: bold text
-      fontSize: "14px",   
-      borderBottom: "0.5px solid #F5F5F5",        // optional: font size
+      backgroundColor: "#F9FAFB",   // header bg
+      color: "#6B7280",             // header text
+      fontWeight: "600",
+      fontSize: "14px",
+      borderBottom: "1px solid #E5E7EB",
+      paddingTop: "12px",
+      paddingBottom: "12px"
     },
   },
-
-};
+  rows: {
+    style: {
+      borderBottom: "1px solid #F3F4F6", // row divider
+      fontSize: "14px",
+      color: "#374151"
+    }
+  },
+  cells: {
+    style: {
+      paddingTop: "14px",
+      paddingBottom: "14px"
+    }
+  }
+}

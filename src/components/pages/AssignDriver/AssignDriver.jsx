@@ -172,7 +172,7 @@ const AssignDriver = ({ routeGeometry, start, stops = [], destination,routeName,
           <Button style={{ marginRight: 8 }} onClick={()=>{onClickSave(null)}}>
             {loading?
             <CircularProgress size={18} className='text_black' />:
-            "Save as Draft"
+            "Update Route"
             }
             </Button>
           <Button type="primary" onClick={() => setShowAssignDriverModal(true)}>

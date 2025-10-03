@@ -2,7 +2,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { childdark, childlight, coursedark, courselight, dashboarddark, dashboardlight, finabeelight, parentdark, parentlight, quizdark, quizlight,logo,logo2, feedDark, question } from '../icons/icon';
+import { childdark, childlight, coursedark, courselight, dashboarddark, dashboardlight, finabeelight, parentdark, parentlight, quizdark, quizlight,logo,logo2, feedDark, question, dashboard_icon, route_icom, driver_icons, live_tracking_icon, prof_delivery_icon } from '../icons/icon';
 import { useAuth } from '../authRoutes/useAuth';
 import { Search } from 'react-feather';
 import { MdArticle, MdOutlineArticle, MdProductionQuantityLimits } from 'react-icons/md';
@@ -42,11 +42,11 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
     // };
 
     const menuItems = [
-        { image: dashboarddark, image2: dashboarddark, items: "Dashboard", path: '/dashboard' },
-        { image: parentdark, image2: parentdark, items: "Routes", path: '/route/list' },
-        { image: quizdark, image2: quizdark, items: "Drivers", path: '/driver/list' },
-        { image: coursedark, image2: coursedark, items: "Live Tracking", path: '/tracking/list' },
-        { image: parentdark	, image2: parentdark, items: "Prof Of Delivery", path: '/prof/list' },
+        { image: dashboard_icon, image2: dashboard_icon, items: "Dashboard", path: '/dashboard' },
+        { image: route_icom, image2: route_icom, items: "Routes", path: '/route/list' },
+        { image: driver_icons, image2: driver_icons, items: "Drivers", path: '/driver/list' },
+        { image: live_tracking_icon, image2: live_tracking_icon, items: "Live Tracking", path: '/tracking/list' },
+        { image: prof_delivery_icon	, image2: prof_delivery_icon, items: "Prof Of Delivery", path: '/prof/list' },
         // { image: question, image2: question, items: "FAQ", path: '/faq' },
         // { image: childdark, image2: childlight, items: "Veh Make/Modal", path: '/veh/make' },
         // {

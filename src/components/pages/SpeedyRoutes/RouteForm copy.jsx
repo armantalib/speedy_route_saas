@@ -29,7 +29,6 @@ import moment from "moment";
 import { dataGet_, dataPost, dataPut } from "../../utils/myAxios";
 import { useNavigate } from 'react-router-dom';
 import { new_route_icon } from "../../icons/icon";
-import { useSelector } from "react-redux";
 
 const { Title, Paragraph, Text } = Typography;
 const { TabPane } = Tabs;
@@ -57,7 +56,6 @@ const RouteForm = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [customerStopId, setCustomerStopId] = useState(null);
   const navigate = useNavigate();
-  const { routeDetail } = useSelector((state) => state?.route);
   const [options, setOptions] = useState({
     roundTrip: false,
     reverseOrder: false,
@@ -89,71 +87,25 @@ const RouteForm = () => {
   }
 
   useEffect(() => {
-    getUpdateData()
+    const updateData = localStorage.getItem('route_data')
+    if (updateData) {
+      setIsUpdate(true)
+      let data1 = JSON.parse(updateData)
+
+      setUpdateData(data1)
+      setRouteIdGen(data1?.routeId)
+      setRouteName(data1?.name)
+
+    } else {
+      const randomNumber = Math.floor(Math.random() * 1111111)
+      const routeNum = 'R' + randomNumber
+      setRouteIdGen(routeNum)
+    }
 
     return () => {
-      localStorage.removeItem("route_data");
-    };
-  }, []);
-
-  const getUpdateData = async () => {
-    //  const updateData = await localStorage.getItem("route_data");
-    if (routeDetail) {
-      setIsUpdate(true);
-      let data1 = routeDetail;
-
-      setUpdateData(data1);
-      setRouteIdGen(data1?.routeId);
-      setRouteName(data1?.name);
-      setScheduleDate(data1?.scheduleDate ? moment(data1.scheduleDate) : null);
-      setScheduleTime(data1?.scheduleTime ? moment(data1.scheduleTime) : null);
-      setOptions({
-        roundTrip: data1?.isRound || false,
-        reverseOrder: data1?.isReverse || false,
-      });
-      setRouteGeom(data1?.routeGeometry || null);
-      setDuration(data1?.duration || 0);
-      setDistance(data1?.distance || 0);
-
-      if (data1?.startPoint) {
-
-        setStart({
-          coordinates: [
-            data1.startPoint.longitude,
-            data1.startPoint.latitude,
-          ],
-          place_name: data1.startPoint.address,
-        });
-        setNotes((prev) => ({ ...prev, start: data1.startPoint.customer || "" }));
-      }
-
-      if (data1?.endPoint) {
-        setDestination({
-          coordinates: [
-            data1.endPoint.longitude,
-            data1.endPoint.latitude,
-          ],
-          place_name: data1.endPoint.address,
-        });
-        setNotes((prev) => ({
-          ...prev,
-          destination: data1.endPoint.customer || "",
-        }));
-      }
-
-      if (data1?.stopsData?.length > 0) {
-        setStops(data1.stopsData);
-        setNotes((prev) => ({
-          ...prev,
-          stops: data1.stopsData.map((s) => s.notes || ""),
-        }));
-      }
-    } else {
-      const randomNumber = Math.floor(Math.random() * 1111111);
-      const routeNum = "R" + randomNumber;
-      setRouteIdGen(routeNum);
+      localStorage.removeItem('route_data')
     }
-  }
+  }, [])
 
 
 
@@ -309,35 +261,33 @@ const RouteForm = () => {
       await fetchOptimizedRoute(optimizedWaypoints);
       let stopD = [...stops]
       // Update stops with optimized order
-      let optimizedStops = optimizedWaypoints
-        .slice(1, destination ? -1 : undefined)
-        .map((wp, index) => ({
-          place_name: stops[parseInt(wp.id.replace('destination', '')) - 1]?.place_name || `Stop ${index + 1}`,
-          coordinates: [
-            stops[parseInt(wp.id.replace('destination', '')) - 1].coordinates[0],
-            stops[parseInt(wp.id.replace('destination', '')) - 1].coordinates[1]
-          ],
-          status: 'pending',
-          name: stopD[index]?.name,
-          startTime: '',
-          notes: '',
-          completeLat: '',
-          completeLng: '',
-          completeTime: '',
-          profDelivery: '',
-          signature: ''
-        }));
-
+      let optimizedStops = null
       if (options.reverseOrder) {
-        optimizedStops.reverse();
+        optimizedStops = optimizedWaypoints
+          .slice(1, destination ? -1 : undefined) // Only slice the last item if destination exists
+          .map((wp, index) => ({
+            place_name: stops[parseInt(wp.id.replace('destination', '')) - 1]?.place_name || `Stop ${index + 1}`, // Preserve original place name
+            coordinates: [stops[parseInt(wp.id.replace('destination', '')) - 1].coordinates[0], stops[parseInt(wp.id.replace('destination', '')) - 1].coordinates[1]],
+            status: 'pending',
+            name: stopD[index]?.name
+            , startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
+          })).reverse();
+      } else {
+        optimizedStops = optimizedWaypoints
+          .slice(1, destination ? -1 : undefined) // Only slice the last item if destination exists
+          .map((wp, index) => ({
+            place_name: stops[parseInt(wp.id.replace('destination', '')) - 1]?.place_name || `Stop ${index + 1}`, // Preserve original place name
+            coordinates: [stops[parseInt(wp.id.replace('destination', '')) - 1].coordinates[0], stops[parseInt(wp.id.replace('destination', '')) - 1].coordinates[1]],
+            status: 'pending',
+            name: stopD[index]?.name
+            , startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
+          }));
       }
-      let reorderedNotes = optimizedWaypoints
+      const reorderedNotes = optimizedWaypoints
         .slice(1, destination ? -1 : undefined)
-        .map((wp) => notes.stops.find((note, i) => i === parseInt(wp.id.replace('destination', '')) - 1) || "");
-
-      if (options.reverseOrder) {
-        reorderedNotes.reverse();
-      }
+        .map(
+          (wp) => notes.stops.find((note, i) => i === parseInt(wp.id.replace('destination', '')) - 1) || ""
+        )
 
       setNotes((prev) => ({
         ...prev,
@@ -371,11 +321,6 @@ const RouteForm = () => {
 
       setRouteGeom(routeData); // Set the GeoJSON data for the route
       setShowMap(true)
-      setTimeout(() => {
-        if (isUpdate) return
-        saveDraftData(null);
-
-      }, 1000);
       //setDuration(routeData.properties.summary.duration / 3600); // Convert duration to hours
       //setDistance(routeData.properties.summary.length / 1000); // Convert distance to kilometers
     } catch (error) {
@@ -422,7 +367,7 @@ const RouteForm = () => {
 
     const stops12 = stops.map((stop) => stop.coordinates);
 
-    const endPoint = isUpdate ? `routes/admin/update/${routeDetail?._id}` : `routes/create`;
+    const endPoint = `routes/create`;
     let data1 = {
       routeId: routeIdGen,
       name: routeName,
@@ -438,32 +383,28 @@ const RouteForm = () => {
       duration: duration,
     };
 
-    const response = isUpdate ? await dataPut(endPoint, data1) : await dataPost(endPoint, data1);
+    const response = await dataPost(endPoint, data1);
     if (isDriver) {
       assignDriverFun(response?.data?.data?._id, isDriver)
       return
     }
-    if (isUpdate) {
-      navigate('/route/list');
-    }
-    message.success(isUpdate ? 'Route Updated Successfully' : 'Route Created Successfully');
+    navigate('/route/list');
+    message.success('Route Created Successfully');
     setIsLoading(false);
   };
 
   const assignDriverFun = async (routeId, selectedDriver) => {
     const endPoint = `routes/assign/update/${routeId}/${selectedDriver}`;
     const res = await dataPut(endPoint, {});
-    if (isUpdate) {
-      navigate('/route/list');
-    }
-    message.success(isUpdate ? 'Route Updated Successfully' : 'Route Created Successfully');
+    navigate('/route/list');
+    message.success('Route Created Successfully');
     setIsLoading(false);
   }
 
 
   const saveStopsToDB = async () => {
     for (let stop of stops) {
-      // console.log("Stops", stop);
+      console.log("Stops", stop);
 
       if (stop.name && stop.place_name && stop.coordinates) {
         const response = await dataPost("routes/admin/stop/save", {
@@ -498,7 +439,7 @@ const RouteForm = () => {
               <div className="route-icon">
                 <img src={new_route_icon} alt="Route" width={50} height={50} />
               </div>
-              <Title level={3}>{isUpdate ? "Update Route" : "New Route"}</Title>
+              <Title level={3}>New Route</Title>
               <Paragraph>
                 Sorem ipsum dolor sit amet, consectetur adipiscing elit.
               </Paragraph>
@@ -521,10 +462,10 @@ const RouteForm = () => {
                     </Form.Item>
 
                     {/* Start Point Autocomplete */}
-                    <Form.Item label="Start Point">
+                    <Form.Item label="Start Point" name="startPoint">
                       <AutoComplete
                         placeholder="Enter start point"
-                        value={start?.place_name || queries.start}   // ✅ pre-fill from update data
+                        value={queries.start}
                         onChange={(v) => setQueries({ ...queries, start: v })}
                         onSearch={handleSearch}
                         onSelect={(val, opt) => handleSelect(val, opt, "start")}
@@ -533,11 +474,11 @@ const RouteForm = () => {
                     </Form.Item>
 
                     {/* Destination Autocomplete */}
-                    <Form.Item label="End Point (optional)">
+                    <Form.Item label="End Point (optional)" name="endPoint">
                       <AutoComplete
                         placeholder="Enter end point"
                         disabled={options?.roundTrip}
-                        value={destination?.place_name || queries.destination}  // ✅ pre-fill
+                        value={queries.destination}
                         onChange={(v) => setQueries({ ...queries, destination: v })}
                         onSearch={handleSearch}
                         onSelect={(val, opt) => handleSelect(val, opt, "destination")}
@@ -545,11 +486,10 @@ const RouteForm = () => {
                       />
                     </Form.Item>
 
-                    <Form.Item label="Scheduled Date">
+                    <Form.Item label="Scheduled Date" name="scheduleDate">
                       <DatePicker
                         suffixIcon={<CalendarOutlined />}
                         style={{ width: "100%" }}
-                        value={scheduleDate}   // ✅ pre-fill
                         onChange={(e) => {
                           setScheduleDate(e)
 
@@ -558,10 +498,9 @@ const RouteForm = () => {
                         }}
                       />
                     </Form.Item>
-                    <Form.Item label="Scheduled Time">
+                    <Form.Item label="Scheduled Time" name="scheduleTime">
                       <TimePicker
                         suffixIcon={<ClockCircleOutlined />}
-                        value={scheduleTime}   // ✅ pre-fill
                         style={{ width: "100%" }}
                         onChange={(e) => { setScheduleTime(e) }}
                       />

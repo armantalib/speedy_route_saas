@@ -1,0 +1,21 @@
+.pagination .page-item .page-link {
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #374151;
+  background: #fff;
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination .page-item .page-link:hover {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+.pagination .page-item.active .page-link {
+  background: #2563EB; /* blue */
+  border-color: #2563EB;
+  color: #fff;
+  font-weight: 600;
+}

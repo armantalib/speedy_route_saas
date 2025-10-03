@@ -1,16 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { constant } from '../constraints';
-
-type InitialStateType = {
-  route: any | null;
-  routeDetail: any | null;  // Replace 'any' with actual user type if available
-  editCommunity: any | null;
-  routeLocationSingle: any | null;
 
 
-};
-
-const initialState: InitialStateType = {
+const initialState = {
   route: null, 
   routeDetail:null,
   editCommunity:null,
@@ -18,7 +9,7 @@ const initialState: InitialStateType = {
 };
 
 const routeSlice = createSlice({
-  name: 'community',
+  name: 'route',
   initialState,
   reducers: {
     setRoute: (state, action) => {

@@ -11,6 +11,8 @@ import ProductTableFetch from '../DataTable/productTableFetch';
 import { formatSecondsToHMS } from '../utils/DateTimeCustom';
 import moment from 'moment';
 import { Divider } from 'antd';
+import { DivideCircle } from 'react-feather';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
     const [series, setSeries] = useState([]);
@@ -22,6 +24,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(false)
     const dispatch = useDispatch();
     dispatch(setHeaderName('Dashboard'))
+    const navigate = useNavigate()
     const chartOptions = {
         chart: {
             type: "donut",
@@ -84,24 +87,9 @@ const Dashboard = () => {
     const chartSeries2 = [80]; // % Completed
     const columns = [
         {
-            name: 'ID',
-            allowoverflow: true,
-            width: '150px',
-            cell: (row) => {
-                return (
-                    <div onClick={() => {
-                        // setSingleData(row)
-                        // setShowModal(true)
-                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
-                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.routeId}</p>
-                    </div>
-                )
-            }
-        },
-        {
             name: 'Driver',
             allowoverflow: true,
-            width: '150px',
+            width: '200px',
             cell: (row) => {
                 return (
                     <>
@@ -115,6 +103,37 @@ const Dashboard = () => {
                                 <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.driver?.name}</p>
                             </div> : <span>N/A</span>}
                     </>
+                )
+            }
+        },
+        {
+            name: 'Route ID',
+            allowoverflow: true,
+            width: '150px',
+            cell: (row) => {
+                return (
+                    <div onClick={() => {
+                        // setSingleData(row)
+                        // setShowModal(true)
+                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.routeId}</p>
+                    </div>
+                )
+            }
+        },
+
+        {
+            name: 'Client Name/Location',
+            allowoverflow: true,
+            width: '150px',
+            cell: (row) => {
+                return (
+                    <div onClick={() => {
+                        // setSingleData(row)
+                        // setShowModal(true)
+                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{'N/A'}</p>
+                    </div>
                 )
             }
         },
@@ -150,10 +169,10 @@ const Dashboard = () => {
             selector: row => row?.stop?.place_name ? row?.stop?.place_name : 'N/A'
         },
         {
-            name: 'Time',
+            name: 'Last Updated',
             sortable: true,
             width: '150px',
-            selector: row => formatSecondsToHMS(row?.duration)
+            selector: row => moment(row?.updatedAt).fromNow()
         },
 
     ]
@@ -163,7 +182,7 @@ const Dashboard = () => {
         try {
             let allData = [];
             let data1 = {}
-            const endPoint = `routes/admin/prof/list/${currentPage}`;
+            const endPoint = `routes/admin/recent/list/${currentPage}`;
             const res = await dataGet_(endPoint, data1);
 
             if (res?.data) {
@@ -191,8 +210,8 @@ const Dashboard = () => {
             }
             const endPoint = 'routes/admin/dashboard'
             const res = await dataGet_(endPoint, data1);
-            console.log("E",res.data.data);
-            
+            console.log("E", res.data.data);
+
             if (res?.data.success) {
                 setCategories(res?.data);
             }
@@ -292,23 +311,104 @@ const Dashboard = () => {
                 </div>
                 <div className="rounded-4 bg_white p-4 shadow w-full h-auto">
                     <div className="d-flex flex-column mb-3">
-                        <h5 className='text_dark plusJakara_semibold'>Route Status</h5>
-                        <Chart
-                            options={categories?.chartOptions || chartOptions}
-                            series={categories?.chartSeries || chartSeries}
-                            type="donut"
-                            width="350"
-                        />
+                        <div
+                            style={{
+                                border: "1px solid #E8E8E9",   // border color
+                                borderRadius: "8px",        // rounded corners
+                                padding: "10px",            // space inside border
+                                display: "flex",    // wrap tightly around chart
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            <h6 className="text_dark plusJakara_semibold">Route Status</h6>
+                            <button onClick={() => {
+                                navigate('/route/form')
+
+                            }} style={{ width: '129px', backgroundColor: '#6688E8', fontSize: 11 }} className="bg_primary py-2 rounded-3 text_white plusKajara_semibold">Create New Routes</button>
+                        </div>
+                        <div
+                            style={{
+                                border: "1px solid #E8E8E9",   // border color
+                                borderRadius: "8px",        // rounded corners
+                                padding: "10px",            // space inside border
+                                display: "inline-block",    // wrap tightly around chart
+                            }}
+                        >
+                            <Chart
+                                options={categories?.chartOptions || chartOptions}
+                                series={categories?.chartSeries || chartSeries}
+                                type="donut"
+                                width="350"
+                            />
+                        </div>
                     </div>
                     <Divider />
+
                     <div className="d-flex flex-column mb-3">
-                        <h5 className='text_dark plusJakara_semibold'>Stop Completed</h5>
-                        <Chart
-                            options={chartOptions2}
-                             series={categories?.stopCompletionPercent || chartSeries2}
-                            type="radialBar"
-                            height={500}
-                        />
+                        <div
+                            style={{
+                                border: "1px solid #E8E8E9",   // border color
+                                borderRadius: "8px",        // rounded corners
+                                padding: "10px",            // space inside border
+                                display: "flex",    // wrap tightly around chart
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            <h6 className="text_dark plusJakara_semibold">Stops Completed</h6>
+                            <button onClick={() => {
+                                navigate('/tracking/list')
+
+                            }} style={{ width: '129px', borderColor: '#6688E8', borderWidth: 1, fontSize: 11, color: '#6688E8' }} className="py-2 rounded-3 text_white plusKajara_semibold">View Live Tracking</button>
+                        </div>
+                        <div
+                            style={{
+                                border: "1px solid #E8E8E9",   // border color
+                                borderRadius: "8px",        // rounded corners
+                                padding: "10px",            // space inside border
+                                display: "inline-block",    // wrap tightly around chart
+                            }}
+                        >
+                            <Chart
+                                options={chartOptions2}
+                                series={categories?.stopCompletionPercent || chartSeries2}
+                                type="radialBar"
+                                height={500}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="d-flex flex-column mb-3">
+                        <div
+                            style={{
+                                border: "1px solid #E8E8E9",   // border color
+                                borderRadius: "8px",        // rounded corners
+                                padding: "10px",            // space inside border
+                                display: "flex",    // wrap tightly around chart
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            <h6 className="text_dark plusJakara_semibold">Exceptions Callout Panel</h6>
+                        </div>
+                        <div
+                            style={{
+                                border: "1px solid #E8E8E9",   // border color
+                                borderRadius: "8px",        // rounded corners
+                                padding: "10px",            // space inside border
+                                display: "inline-block",    // wrap tightly around chart
+                            }}
+                        >
+                            <div style={{ width: '100%', height: 160, backgroundColor: '#FFE6E6', borderRadius: 12, padding: 10 }}>
+                                <p className="text_dark plusJakara_semibold" style={{ fontSize: 14 }}>Route #124 · Stop #5 — Failed</p>
+                                <p className="text_dark plusJakara_light" style={{ fontSize: 14, color: '#73757C' }}>Customer not available — Driver: Sarah K · ETA 11:45 AM · Tried 1:05 PM — No answer, no safe place.</p>
+                               <div style={{display:'flex',justifyContent:'space-between',marginTop:20}}>
+                                <div></div>
+                                <button onClick={() => {
+                                    navigate('/route/form')
+
+                                }} style={{ width: '129px', backgroundColor: '#6688E8', fontSize: 11, alignSelf: 'flex-end' }} className="bg_primary py-2 rounded-3 text_white plusKajara_semibold">View Details</button>
+                            </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
