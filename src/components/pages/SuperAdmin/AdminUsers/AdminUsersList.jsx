@@ -2,13 +2,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import ProductTableFetch from '../../DataTable/productTableFetch';
-import { dataTable } from '../../DataTable/productsData';
-import { avatar1, preview, trash, edit2 } from '../../icons/icon';
+import ProductTableFetch from '../../../DataTable/productTableFetch';
+import { dataTable } from '../../../DataTable/productsData';
+import { avatar1, preview, trash, edit2, edit_icon, pause_icon } from '../../../icons/icon';
 import { StyleSheetManager } from 'styled-components';
 import axios from 'axios';
 import { CircularProgress } from '@mui/material';
-import { dataDelete, dataGet_, dataPut } from '../../utils/myAxios';
+import { dataDelete, dataGet_, dataPut } from '../../../utils/myAxios';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, Form, Modal } from 'react-bootstrap';
 import { GoogleMap, LoadScript, Polygon, Autocomplete, Marker, useLoadScript, useJsApiLoader } from "@react-google-maps/api";
@@ -21,9 +21,10 @@ import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { Table, Tag, Avatar, Button, Input } from "antd";
 import DriverDetailsModal from './DriverDetailsModal';
 import { useDispatch } from 'react-redux';
-import { setHeaderName } from '../../../storeTolkit/userSlice';
+import { setHeaderName } from '../../../../storeTolkit/userSlice';
 import EditDataModal from './EditDataModal';
-const DriversList = (props) => {
+// import { dataGet_ } from '../../../utils/myAxios';
+const AdminUsersList = (props) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [totalPages, setTotalPages] = useState(1);
@@ -46,8 +47,8 @@ const DriversList = (props) => {
     const [selectedStatus, setSelectedStatus] = useState("Completed");
     const [selectedDriver, setSelectedDriver] = useState(null);
     const [isEditForm, setIsEditForm] = useState(false);
-const [showDeleteModal, setShowDeleteModal] = useState(false);
-const [driverToDelete, setDriverToDelete] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [driverToDelete, setDriverToDelete] = useState(null);
     // new driver modal states
     const [showNewDriverModal, setShowNewDriverModal] = useState(false);
     const [showDriverDetail, setShowDriverDetail] = useState(false);
@@ -60,7 +61,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
     });
     const [imagePreview, setImagePreview] = useState(null);
     const dispatch = useDispatch();
-    dispatch(setHeaderName('Drivers'))
+    dispatch(setHeaderName('Clients'))
 
     const dateOptions = ["Today", "Yesterday", "Last 7 Days", "Last Month"];
     const statusOptions = ["Completed", "In Progress", "Failed", "Cancelled"];
@@ -135,7 +136,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
 
     const columns = [
         {
-            name: 'ID',
+            name: 'Client Name',
             allowoverflow: true,
             width: '250px',
             cell: (row) => {
@@ -144,13 +145,30 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                         setSingleData(row)
                         setShowModal(true)
                     }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
-                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?._id}</p>
+                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.name}</p>
                     </div>
                 )
             }
         },
         {
-            name: 'Name',
+            name: 'Email',
+            allowoverflow: true,
+            width: '250px',
+            cell: (row) => {
+                return (
+                    <div onClick={() => {
+
+                        setSingleData(row)
+                        setSelectedDriver(row)
+                        setShowDriverDetail(true)
+                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                        <p style={{ fontWeight: 'bold', fontSize: 14, }}>{row?.email}</p>
+                    </div>
+                )
+            }
+        },
+        {
+            name: 'Phone Numbers',
             allowoverflow: true,
             width: '250px',
             cell: (row) => {
@@ -162,8 +180,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                         setSelectedDriver(row)
                         setShowDriverDetail(true)
                     }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
-                        <img src={row?.user?.image ? row?.user?.image : avatar1} alt="Girl in a jacket" style={{ borderRadius: 100, width: 40, height: 40 }} />
-                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.name}</p>
+                        <p style={{ fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize' }}>{row?.phone}</p>
                     </div>
                 )
             }
@@ -176,28 +193,16 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                 return (
                     <div style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        backgroundColor: row?.status == 'draft' ? '#FEF9C3' : '#EDFEED',
+                        backgroundColor: row?.status == 'deactivated' ? '#FEF9C3' : '#EDFEED',
                         padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15
                     }}>
                         <span style={{
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
-                            color: row?.status == 'offline' ? '#CA8A04' : '#22C55E'
-                        }}>{row?.status}</span>
+                            color: row?.status == 'deactivated' ? '#CA8A04' : '#22C55E'
+                        }}>{row?.status =='online'?'Active':row?.status}</span>
                     </div>
                 )
             }
-        },
-        {
-            name: 'Last Active',
-            sortable: true,
-            width: '250px',
-            selector: row => row?.lastActive ? moment(row?.lastActive).fromNow() : 'N/A'
-        },
-        {
-            name: 'Assigned Route',
-            sortable: true,
-            width: '250px',
-            selector: row => row?.driver?.name ? row?.driver?.name : 'N/A'
         },
         {
             name: 'Action',
@@ -205,13 +210,13 @@ const [driverToDelete, setDriverToDelete] = useState(null);
             cell: (row) => {
                 return (
                     <div className='flex gap-1' style={{ flexDirection: 'row', flex: 'row', justifyContent: 'space-between' }}>
-                        <button className="bg-[#2B7F75] flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[12px] h-auto" src={edit2} onClick={() => {
+                        <button className="flex justify-center rounded-3 w-[34px] h-[34px] items-center"><img className="w-[24px] h-auto" src={edit_icon} onClick={() => {
                             setSingleData(row)
                             setIsEditForm(true)
                         }} alt="" /></button>
-                        <button className="bg-[#CE2C60] flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[12px] h-auto" src={trash} onClick={()=>{
+                        {/* <button className="flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[24px] h-auto" src={pause_icon} onClick={() => {
                             handleDeleteClick(row)
-                        }} alt="" /></button>
+                        }} alt="" /></button> */}
 
                     </div>
                 )
@@ -224,7 +229,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
         try {
             let allData = [];
             let data1 = {}
-            const endPoint = `users/admin/driver/all/${currentPage}?category=${selectedCategory}&search=${search}`;
+            const endPoint = `users/s-admin/clients/all/${currentPage}?category=${selectedCategory}&search=${search}`;
             const res = await dataGet_(endPoint, data1);
 
             if (res?.data) {
@@ -248,27 +253,27 @@ const [driverToDelete, setDriverToDelete] = useState(null);
         setSelectedDate(null);
         setSelectedStatus(null);
     };
-const handleDeleteClick = (driver) => {
-  setDriverToDelete(driver);
-  setShowDeleteModal(true);
-};
+    const handleDeleteClick = (driver) => {
+        setDriverToDelete(driver);
+        setShowDeleteModal(true);
+    };
 
-const handleConfirmDelete = async () => {
-  try {
-    if (!driverToDelete) return;
-    const endpoint = `users/${driverToDelete._id}`;
-    await dataDelete(endpoint,{});
-    setShowDeleteModal(false);
-    fetchData();
-  } catch (err) {
-    console.error(err);
-    alert("Failed to delete driver");
-  }
-};
+    const handleConfirmDelete = async () => {
+        try {
+            if (!driverToDelete) return;
+            const endpoint = `users/${driverToDelete._id}`;
+            await dataDelete(endpoint, {});
+            setShowDeleteModal(false);
+            fetchData();
+        } catch (err) {
+            console.error(err);
+            alert("Failed to delete driver");
+        }
+    };
     return (
         <StyleSheetManager shouldForwardProp={(prop) => !['sortActive'].includes(prop)}>
-            <DriverStats />
-            <main className="min-h-screen lg:container py-1 px-4 mx-auto">
+
+            <main className="min-h-screen lg:container py-1 px-4 mx-auto mt-3">
 
                 <div className="flex justify-between gap-3 items-center w-full">
                     {/* <div className="flex flex-col mb-3 w-full">
@@ -411,7 +416,7 @@ const handleConfirmDelete = async () => {
                 centered
                 size="md"
             >
-      
+
                 <Modal.Body>
                     <div style={{ textAlign: "center", padding: "20px 10px" }}>
                         <div
@@ -501,7 +506,7 @@ const handleConfirmDelete = async () => {
     )
 }
 
-export default DriversList;
+export default AdminUsersList;
 
 const marketplaceCategories = [
     { id: '1', name: 'All Routes', desc: 'Find homes, apartments, and commercial properties.', value: 'all' },

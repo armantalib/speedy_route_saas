@@ -25,19 +25,6 @@
   color: #888;
   margin: 0;
 }
-.switch-label {
-  margin-left: 8px;
-  font-weight: 500;
-}
-.switch-label {
-  margin-left: 8px;
-  font-weight: 500;
-}
-.switch-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
 
 .form-grid {
   display: grid;

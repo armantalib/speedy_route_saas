@@ -176,9 +176,24 @@ import driver_icons from '../assets/png/driver_icons.png'
 import dashboard_icon from '../assets/png/dashboard_icon.png'
 import new_route_icon from '../assets/png/new_route_icon.png'
 
+import badge1 from '../assets/png/badge1.png'
+import badge2 from '../assets/png/badge2.png'
+import badge3 from '../assets/png/badge3.png'
+import badge4 from '../assets/png/badge4.png'
+import badge5 from '../assets/png/badge5.png'
+
+import user_icons from '../assets/png/user_icons.png'
+import settings_icon from '../assets/png/settings_icon.png'
+import billing_icons from '../assets/png/billing_icons.png'
+import edit_icon from '../assets/png/edit_icon.png'
+import pause_icon from '../assets/png/pause_icon.png'
+
+
+
 
 export {
-    new_route_icon,
+    edit_icon,pause_icon,
+    new_route_icon,badge1,badge2,badge3,badge4,badge5,user_icons,settings_icon,billing_icons,
     support_icon,reports_icon,route_icom,prof_delivery_icon,live_tracking_icon,driver_icons,dashboard_icon,
     logo2,login_sec_img,destination_pin,start_pin,live_tracking_marker,
     avatar1, pdflogo, honeypot, testpdf, news1, fileavatar, course2, course3, course4, course5, course1, finabeesingle, arrowdownlight, finabeelight, settingdark, dashboarddark, dashboardlight, coursedark, courselight, quizdark, quizlight, parentdark, parentlight, childdark, childlight,logo,

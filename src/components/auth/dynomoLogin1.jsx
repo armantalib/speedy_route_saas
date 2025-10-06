@@ -46,9 +46,15 @@ const DynomoLogin1 = () => {
                 localStorage.setItem('token', res?.data?.token)
                 localStorage.setItem('login_admin_data', JSON.stringify(res?.data?.user))
                 localStorage.setItem('isLogin_finabee_admin', true)
-                navigate('/dashboard')
+                localStorage.setItem('user_type', res?.data?.user?.type)
+                
+                if (res?.data?.user?.type == 'super_admin') {
+                    navigate('/super/dashboard')
+                } else {
+                    navigate('/dashboard')
+                }
             } else {
-                message.error("Invalid credentials")
+                message.error(res?.data?.message)
             }
         } catch (error) {
             setIsProcessing(false)
@@ -125,7 +131,7 @@ const DynomoLogin1 = () => {
                     </div>
                 </div>
                 <div className='d-none bg_darkprimary d-md-flex justify-content-center align-items-center p-1 w-full lg:w-1/2'>
-                    <img src={login_sec_img} alt="ImageNotfound"  className="w-full h-full object-contain"  />
+                    <img src={login_sec_img} alt="ImageNotfound" className="w-full h-full object-contain" />
                 </div>
             </div>
         </>

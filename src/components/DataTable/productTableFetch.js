@@ -15,7 +15,7 @@ const BootstrapCheckbox = forwardRef((props, ref) => (
     </div>
 ))
 
-const ProductTableFetch = ({ data, columns, totalPage, rowHeading, showRow, currentPageSend, currentPage, showFilter }) => {
+const ProductTableFetch = ({ data, columns, totalPage, rowHeading, showRow, currentPageSend, currentPage, showFilter,notPagination }) => {
     const [modal, setModal] = useState(false)
     const [searchValue, setSearchValue] = useState('')
     const [filteredData, setFilteredData] = useState([])
@@ -132,7 +132,7 @@ const ProductTableFetch = ({ data, columns, totalPage, rowHeading, showRow, curr
                     <div className='react-dataTable'>
                         <DataTable
                             noHeader
-                            pagination
+                            pagination={notPagination?false:true}
                             selectableRowsNoSelectAll
                             columns={columns}
                             paginationPerPage={30}

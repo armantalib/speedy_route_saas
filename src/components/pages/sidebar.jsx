@@ -2,7 +2,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { childdark, childlight, coursedark, courselight, dashboarddark, dashboardlight, finabeelight, parentdark, parentlight, quizdark, quizlight,logo,logo2, feedDark, question, dashboard_icon, route_icom, driver_icons, live_tracking_icon, prof_delivery_icon } from '../icons/icon';
+import { childdark, childlight, coursedark, courselight, dashboarddark, dashboardlight, finabeelight, parentdark, parentlight, quizdark, quizlight, logo, logo2, feedDark, question, dashboard_icon, route_icom, driver_icons, live_tracking_icon, prof_delivery_icon, reports_icon, user_icons } from '../icons/icon';
 import { useAuth } from '../authRoutes/useAuth';
 import { Search } from 'react-feather';
 import { MdArticle, MdOutlineArticle, MdProductionQuantityLimits } from 'react-icons/md';
@@ -14,7 +14,6 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const isLogin = useAuth();
-
     const handleLinkClick = (itemId, path) => {
         setSelectedLink(itemId);
         setToggled(false);
@@ -44,9 +43,39 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
     const menuItems = [
         { image: dashboard_icon, image2: dashboard_icon, items: "Dashboard", path: '/dashboard' },
         { image: route_icom, image2: route_icom, items: "Routes", path: '/route/list' },
+        {
+            items: "Team",
+            image: live_tracking_icon, image2: live_tracking_icon,
+            subItems: [
+                { label: "Dispatcher", path: "/dispatcher/list" },
+                { label: "Driver", path: "/driver/list" },
+            ]
+        },
+        // { image: driver_icons, image2: driver_icons, items: "Drivers", path: '/driver/list' },
+        { image: live_tracking_icon, image2: live_tracking_icon, items: "Live Tracking", path: '/tracking/list' },
+        { image: prof_delivery_icon, image2: prof_delivery_icon, items: "Prof Of Delivery", path: '/prof/list' },
+        { image: reports_icon, image2: reports_icon, items: "Reports", path: '/reports' },
+    ];
+
+    const menuItemsDispatcher = [
+        { image: dashboard_icon, image2: dashboard_icon, items: "Dashboard", path: '/dashboard' },
+        { image: route_icom, image2: route_icom, items: "Routes", path: '/route/list' },
         { image: driver_icons, image2: driver_icons, items: "Drivers", path: '/driver/list' },
         { image: live_tracking_icon, image2: live_tracking_icon, items: "Live Tracking", path: '/tracking/list' },
-        { image: prof_delivery_icon	, image2: prof_delivery_icon, items: "Prof Of Delivery", path: '/prof/list' },
+        { image: prof_delivery_icon, image2: prof_delivery_icon, items: "Prof Of Delivery", path: '/prof/list' },
+        { image: reports_icon, image2: reports_icon, items: "Reports", path: '/reports' },
+    ];
+
+    const menuItemsSuperAdmin = [
+        { image: dashboard_icon, image2: dashboard_icon, items: "Dashboard", path: '/super/dashboard' },
+        { image: user_icons, image2: user_icons, items: "Clients", path: '/clients/list' },
+        { image: prof_delivery_icon, image2: prof_delivery_icon, items: "Companies", path: '/company/list' },
+
+        // { image: driver_icons, image2: driver_icons, items: "Drivers", path: '/driver/list' },
+        // { image: live_tracking_icon, image2: live_tracking_icon, items: "Live Tracking", path: '/tracking/list' },
+        // { image: prof_delivery_icon, image2: prof_delivery_icon, items: "Prof Of Delivery", path: '/prof/list' },
+        // { image: reports_icon, image2: reports_icon, items: "Reports", path: '/reports' },
+
         // { image: question, image2: question, items: "FAQ", path: '/faq' },
         // { image: childdark, image2: childlight, items: "Veh Make/Modal", path: '/veh/make' },
         // {
@@ -60,6 +89,9 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
         // { image: quizdark, image2: quizlight, items: "Customer Support", path: "/customer-support" },
         // { image: quizdark, image2: quizlight, items: "Digital Products", path: "/digital-products" },
     ];
+
+    const user_type = localStorage.getItem('user_type')
+    const finalMenuItem = user_type === 'super_admin' ? menuItemsSuperAdmin : user_type === 'dispatcher' ? menuItemsDispatcher : menuItems
 
     return (
         <>
@@ -82,12 +114,12 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
                             <div className='scrolbar' style={{ display: 'flex', flexDirection: 'column', overflowY: 'auto', height: '100%', paddingTop: '1rem' }}>
                                 <div className='mb-2 flex items-center justify-center'>
                                     <button onClick={() => { navigate('/dashboard') }} className="">
-                                        <img style={{ height: '5rem', width: 'auto'}} src={logo2} className='' alt="" />
+                                        <img style={{ height: '5rem', width: 'auto' }} src={logo2} className='' alt="" />
                                     </button>
                                 </div>
                                 <Menu className='container mx-auto flex flex-col justify-between h-full'>
                                     <div>
-                                        {menuItems.map((item, i) => (
+                                        {finalMenuItem.map((item, i) => (
                                             <Fragment key={i}>
                                                 {item.subItems ? (
                                                     <SubMenu icon={<MdProductionQuantityLimits style={{ height: 'auto', width: "25px", marginRight: '10px' }} />} label={item.items} className={`w-full plusJakara_semibold text_secondary rounded-3 mb-2`}>

@@ -23,6 +23,11 @@ import DriversList from "./components/pages/Drivers/DriversList";
 import DriverForm from "./components/pages/Drivers/DriverForm";
 import ProfDeliveryList from "./components/pages/ProfOfDelivery/ProfDeliveryList";
 import LiveTrackingList from "./components/pages/LiveTracking/LiveTrackingList";
+import Reports from "./components/pages/reports";
+import SuperDashboard from "./components/pages/superDashboard";
+import CompanyList from "./components/pages/SuperAdmin/Company/CompanyList";
+import AdminUsersList from "./components/pages/SuperAdmin/AdminUsers/AdminUsersList";
+import DispatcherList from "./components/pages/SuperAdmin/Dispatcher/DispatcherList";
 // import AccountDeletetion from "./components/auth/accountDeletion";
 
 
@@ -98,6 +103,11 @@ function App() {
               <Route path="/driver/form" element={<DriverForm />} />
               <Route path="/prof/list" element={<ProfDeliveryList />} />
               <Route path="/tracking/list" element={<LiveTrackingList />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/super/dashboard" element={<SuperDashboard />} />
+              <Route path="/company/list" element={<CompanyList />} />
+              <Route path="/clients/list" element={<AdminUsersList />} />
+              <Route path="/dispatcher/list" element={<DispatcherList />} />
       
 
 
