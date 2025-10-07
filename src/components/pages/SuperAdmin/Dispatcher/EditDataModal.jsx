@@ -19,6 +19,7 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
         email: dataFill?.email || "",
         phone: dataFill?.phone || "",
         status: dataFill?.status || "",
+        dispatcherAccess: dataFill?.dispatcherAccess || "",
       });
     }
   }, [dataFill, form]);
@@ -32,7 +33,8 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
         name: values?.name,
         email: values?.email,
         phone: values?.phone,
-        status:values?.status
+        status: values?.status,
+        dispatcherAccess:values?.dispatcherAccess
       };
 
       const response = await dataPut(endPoint, updatedData);
@@ -89,6 +91,13 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
               <Select.Option value="online">Active</Select.Option>
               <Select.Option value="deactivated">Deactivate</Select.Option>
               {/* <Select.Option value="contractor">Contractor</Select.Option> */}
+            </Select>
+          </Form.Item>
+
+          <Form.Item name="dispatcherAccess" label="Access" rules={[{ required: true }]}>
+            <Select placeholder="Please select">
+              <Select.Option value={'limited'}>Limited Access</Select.Option>
+              <Select.Option value={'full'}>Full Access</Select.Option>
             </Select>
           </Form.Item>
 

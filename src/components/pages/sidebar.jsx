@@ -63,7 +63,15 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
         { image: driver_icons, image2: driver_icons, items: "Drivers", path: '/driver/list' },
         { image: live_tracking_icon, image2: live_tracking_icon, items: "Live Tracking", path: '/tracking/list' },
         { image: prof_delivery_icon, image2: prof_delivery_icon, items: "Prof Of Delivery", path: '/prof/list' },
-        { image: reports_icon, image2: reports_icon, items: "Reports", path: '/reports' },
+        // { image: reports_icon, image2: reports_icon, items: "Reports", path: '/reports' },
+    ];
+
+        const menuItemsDispatcherLimited = [
+        { image: dashboard_icon, image2: dashboard_icon, items: "Dashboard", path: '/dashboard' },
+        { image: route_icom, image2: route_icom, items: "Routes", path: '/route/list' },
+        { image: driver_icons, image2: driver_icons, items: "Drivers", path: '/driver/list' },
+        { image: live_tracking_icon, image2: live_tracking_icon, items: "Live Tracking", path: '/tracking/list' },
+        { image: prof_delivery_icon, image2: prof_delivery_icon, items: "Prof Of Delivery", path: '/prof/list' },
     ];
 
     const menuItemsSuperAdmin = [
@@ -91,6 +99,7 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
     ];
 
     const user_type = localStorage.getItem('user_type')
+    const dispatch_limit = localStorage.getItem('dispatch_limit')
     const finalMenuItem = user_type === 'super_admin' ? menuItemsSuperAdmin : user_type === 'dispatcher' ? menuItemsDispatcher : menuItems
 
     return (

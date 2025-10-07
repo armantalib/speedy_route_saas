@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Input, Upload, Button, Form, Select } from "antd";
+import { Modal, Input, Upload, Button, Form, Select, message } from "antd";
 import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import "./AddDriverModal.css";
 import { dataPost } from "../../../utils/myAxios";
@@ -23,11 +23,18 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
       tags: '',
       phone: values?.phone,
       licenseFile: '',
+      dispatcherAccess: values?.dispatcherAccess,
+      isAppAllow: false
     }
     const response = await dataPost(endPoint, data1)
-
     setLoader(false)
-    onClose();
+    if (response?.data?.success) {
+      onClose();
+    } else {
+      message.error(response?.data?.message)
+    }
+
+
     // form.resetFields();
   };
 
@@ -51,7 +58,7 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
       <Form layout="vertical" form={form} onFinish={handleFinish}>
         <div className="form-grid">
           <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input placeholder="John" 
+            <Input placeholder="John"
             />
           </Form.Item>
           <Form.Item name="email" label="Email" rules={[{ required: true }]}>
@@ -63,8 +70,15 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
           <Form.Item name="phone" label="Phone Number">
             <Input placeholder="+1 (___) ___-____" />
           </Form.Item>
-    
-        
+
+          <Form.Item name="dispatcherAccess" label="Access" rules={[{ required: true }]}>
+            <Select placeholder="Please select">
+              <Select.Option value={'limited'}>Limited Access</Select.Option>
+              <Select.Option value={'full'}>Full Access</Select.Option>
+            </Select>
+          </Form.Item>
+
+
         </div>
 
 

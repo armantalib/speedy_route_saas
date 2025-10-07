@@ -61,6 +61,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const dispatch = useDispatch();
     dispatch(setHeaderName('Drivers'))
+    const user_type = localStorage.getItem('user_type')
 
     const dateOptions = ["Today", "Yesterday", "Last 7 Days", "Last Month"];
     const statusOptions = ["Completed", "In Progress", "Failed", "Cancelled"];
@@ -293,6 +294,7 @@ const handleConfirmDelete = async () => {
                             style={{ width: 200, marginRight: 10 }}
                         />
                         <Button type="default">Filter</Button>
+                        {user_type =='dispatcher'?null:
                         <Button
                             type="primary"
                             icon={<PlusOutlined />}
@@ -301,6 +303,7 @@ const handleConfirmDelete = async () => {
                         >
                             Add New
                         </Button>
+}
                     </div>
                 </div>
 

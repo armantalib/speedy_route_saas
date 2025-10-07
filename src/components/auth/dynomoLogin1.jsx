@@ -47,6 +47,7 @@ const DynomoLogin1 = () => {
                 localStorage.setItem('login_admin_data', JSON.stringify(res?.data?.user))
                 localStorage.setItem('isLogin_finabee_admin', true)
                 localStorage.setItem('user_type', res?.data?.user?.type)
+                localStorage.setItem('dispatch_limit', res?.data?.user?.dispatcherAccess)
                 
                 if (res?.data?.user?.type == 'super_admin') {
                     navigate('/super/dashboard')

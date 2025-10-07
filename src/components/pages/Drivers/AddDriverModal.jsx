@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Input, Upload, Button, Form, Select } from "antd";
+import { Modal, Input, Upload, Button, Form, Select, message } from "antd";
 import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import "./AddDriverModal.css";
 import { dataPost } from "../../utils/myAxios";
@@ -10,7 +10,7 @@ const { Dragger } = Upload;
 const AddDriverModal = ({ visible, onCancel, onClose }) => {
   const [form] = Form.useForm();
   const [loader, setLoader] = useState(false)
-    const [appAccess, setAppAccess] = useState(false);
+  const [appAccess, setAppAccess] = useState(false);
 
   const handleFinish = async (values) => {
     setLoader(true)
@@ -24,12 +24,16 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
       tags: values?.tags,
       phone: values?.phone,
       licenseFile: '',
-      isAppAllow:values?.isAppAllow
+      isAppAllow: values?.isAppAllow,
+      dispatcherAccess: 'limited'
     }
     const response = await dataPost(endPoint, data1)
-
     setLoader(false)
-    onClose();
+    if (response?.data?.success) {
+      onClose();
+    } else {
+      message.error(response?.data?.message)
+    }
     // form.resetFields();
   };
 
@@ -78,7 +82,7 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
             </Select>
           </Form.Item>
 
-            <Form.Item name="isAppAllow" label="App Access">
+          <Form.Item name="isAppAllow" label="App Access">
             <Select placeholder="Allow Access">
               <Select.Option value={true}>Allow Access</Select.Option>
               <Select.Option value={false}>No Allow</Select.Option>
