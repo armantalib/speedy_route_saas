@@ -28,6 +28,7 @@ import SuperDashboard from "./components/pages/superDashboard";
 import CompanyList from "./components/pages/SuperAdmin/Company/CompanyList";
 import AdminUsersList from "./components/pages/SuperAdmin/AdminUsers/AdminUsersList";
 import DispatcherList from "./components/pages/SuperAdmin/Dispatcher/DispatcherList";
+import CompanySettingsList from "./components/pages/CompanySettings/CompanySettingsList";
 // import AccountDeletetion from "./components/auth/accountDeletion";
 
 
@@ -108,6 +109,7 @@ function App() {
               <Route path="/company/list" element={<CompanyList />} />
               <Route path="/clients/list" element={<AdminUsersList />} />
               <Route path="/dispatcher/list" element={<DispatcherList />} />
+              <Route path="/settings" element={<CompanySettingsList />} />
       
 
 

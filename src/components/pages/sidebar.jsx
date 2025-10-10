@@ -2,7 +2,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { childdark, childlight, coursedark, courselight, dashboarddark, dashboardlight, finabeelight, parentdark, parentlight, quizdark, quizlight, logo, logo2, feedDark, question, dashboard_icon, route_icom, driver_icons, live_tracking_icon, prof_delivery_icon, reports_icon, user_icons } from '../icons/icon';
+import { childdark, childlight, coursedark, courselight, dashboarddark, dashboardlight, finabeelight, parentdark, parentlight, quizdark, quizlight, logo, logo2, feedDark, question, dashboard_icon, route_icom, driver_icons, live_tracking_icon, prof_delivery_icon, reports_icon, user_icons, settings_icon } from '../icons/icon';
 import { useAuth } from '../authRoutes/useAuth';
 import { Search } from 'react-feather';
 import { MdArticle, MdOutlineArticle, MdProductionQuantityLimits } from 'react-icons/md';
@@ -55,6 +55,7 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
         { image: live_tracking_icon, image2: live_tracking_icon, items: "Live Tracking", path: '/tracking/list' },
         { image: prof_delivery_icon, image2: prof_delivery_icon, items: "Prof Of Delivery", path: '/prof/list' },
         { image: reports_icon, image2: reports_icon, items: "Reports", path: '/reports' },
+        { image: settings_icon, image2: settings_icon, items: "Company Settings", path: '/settings' },
     ];
 
     const menuItemsDispatcher = [

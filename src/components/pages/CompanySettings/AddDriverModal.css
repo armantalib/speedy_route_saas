@@ -1,0 +1,67 @@
+.add-driver-modal .modal-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.icon-circle {
+  width: 56px;
+  height: 56px;
+  background-color: #e6eeff;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #3a6ee8;
+}
+
+.modal-header h2 {
+  margin-bottom: 4px;
+  font-size: 22px;
+}
+
+.modal-header p {
+  color: #888;
+  margin: 0;
+}
+.switch-label {
+  margin-left: 8px;
+  font-weight: 500;
+}
+.switch-label {
+  margin-left: 8px;
+  font-weight: 500;
+}
+.switch-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.add-driver-modal .ant-form-item-label {
+  font-weight: 500;
+}
+
+.add-driver-modal .ant-upload-drag {
+  border: 1.5px dashed #d9d9d9;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.ant-upload-text .browse {
+  color: #3a6ee8;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
