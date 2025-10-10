@@ -1,0 +1,36 @@
+.plans-container {
+  padding: 24px;
+}
+
+.plans-header {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.pricing-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.discount {
+  color: #4f46e5;
+  font-size: 14px;
+}
+
+.continue-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.plan-cards {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.billing-history-section {
+  margin-top: 40px;
+}

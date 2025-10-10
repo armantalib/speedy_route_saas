@@ -187,12 +187,13 @@ import settings_icon from '../assets/png/settings_icon.png'
 import billing_icons from '../assets/png/billing_icons.png'
 import edit_icon from '../assets/png/edit_icon.png'
 import pause_icon from '../assets/png/pause_icon.png'
+import layer_icon from '../assets/png/layer_icon.png'
 
 
 
 
 export {
-    edit_icon,pause_icon,
+    edit_icon,pause_icon,layer_icon,
     new_route_icon,badge1,badge2,badge3,badge4,badge5,user_icons,settings_icon,billing_icons,
     support_icon,reports_icon,route_icom,prof_delivery_icon,live_tracking_icon,driver_icons,dashboard_icon,
     logo2,login_sec_img,destination_pin,start_pin,live_tracking_marker,
