@@ -1,7 +1,8 @@
 import React from "react";
-import { Card, Switch, Typography, Button } from "antd";
+import { Card, Switch, Typography, Button, Divider } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import "./AddonCard.css";
+import { Divide } from "react-feather";
 
 const { Title, Text } = Typography;
 
@@ -11,19 +12,21 @@ const AddonCard = ({ addon, onToggle, onChangeQty }) => {
 
   return (
     <Card className="addon-card" bordered={false}>
-      <div className="addon-header">
-        <div className="addon-icon">{icon}</div>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: -20 }}>
+        <div></div>
         <Switch
           checked={enabled}
           onChange={(checked) => onToggle(id, checked)}
         />
       </div>
-
-      <Title level={5} className="addon-title">
-        {title}
-      </Title>
+      <div className="addon-header" style={{ marginTop: -6 }}>
+        <div className="addon-icon">{icon}</div>
+        <Title level={5} className="addon-title" style={{ marginTop: 10 }}>
+          {title}
+        </Title>
+      </div>
       <Text className="addon-description">{description}</Text>
-
+      <Divider/>
       <div className="addon-footer">
         <div className="addon-quantity">
           <Button
@@ -36,8 +39,14 @@ const AddonCard = ({ addon, onToggle, onChangeQty }) => {
           <Button
             shape="circle"
             size="small"
-            icon={<PlusOutlined />}
+            icon={<PlusOutlined className="big-icon" />}
             onClick={() => onChangeQty(id, quantity + 1)}
+            style={{
+              backgroundColor: "#4770E4", // button color
+              borderRadius: 100,
+              borderWidth:1,
+              color: "white",             // icon color
+            }}
           />
         </div>
         <Text className="addon-price">

@@ -1,7 +1,7 @@
 import React from "react";
 import { CheckCircleFilled } from "@ant-design/icons";
 import "./PlanCard.css";
-import { layer_icon } from "../../icons/icon";
+import { circle_check, layer_icon } from "../../icons/icon";
 
 const PlanCard = ({ plan, selected, onSelect }) => {
   return (
@@ -9,28 +9,31 @@ const PlanCard = ({ plan, selected, onSelect }) => {
       className={`plan-card ${selected ? "selected" : ""}`}
       onClick={onSelect}
     >
-      <div style={{ width: '100%', height: 60, borderWidth: 2, borderColor: '#6688E8', backgroundColor: '#DAE2FA' }}>
-        <div className="plan-header">
+      <div style={{ width: '100%', height: 60, borderWidth: selected ? 2 : 1, borderColor: selected ? '#6688E8' : '#E8E8E9', backgroundColor: selected ? '#DAE2FA' : '#FFF' }}>
+        <div className="plan-header" style={{ padding: 12 }}>
           {/* <input type="radio" checked={selected} readOnly /> */}
-          <div style={{width:28,height:28,borderRadius:50,backgroundColor:'#DAE2FA',justifyContent:'center',alignItems:'center'}}>
-          <img src={layer_icon} style={{ height: 16, width: 16 }} className='' alt="" />
+          <div style={{ width: 35, height: 35, borderRadius: 50, backgroundColor: '#cad7fd', justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
+            <img src={layer_icon} style={{ height: 16, width: 16 }} className='' alt="" />
           </div>
           <span className="plan-title">{plan.title}</span>
           {selected && <CheckCircleFilled className="check-icon" />}
         </div>
       </div>
-      <div className="plan-price">
+      <div className="plan-price" style={{ padding: 12, paddingTop: 0 }}>
         <span className="price">${plan.price}</span>
         <span className="period">{plan.period}</span>
         {plan.badge && <span className="badge">{plan.badge}</span>}
       </div>
 
-      <div className="features">
+      <div className="features" style={{ padding: 12, paddingTop: 0, marginTop: -15 }}>
         <p>FEATURES</p>
         <ul>
           {plan.features.map((f, i) => (
             <li key={i}>
-              <CheckCircleFilled className="feature-icon" /> {f}
+              {/* <CheckCircleFilled className="feature-icon" /> {f} */}
+              <div style={{display:'flex',flexDirection:'row'}}>
+              <img src={circle_check} style={{ height: 16, width: 16 }} className='feature-icon' />{f}
+              </div>
             </li>
           ))}
         </ul>

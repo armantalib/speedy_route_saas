@@ -64,10 +64,15 @@ const Plans = () => {
       <div className="plans-header">
         <h2>Plan</h2>
         <p>Manage your billing and payment details.</p>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <div></div>
         <div className="pricing-toggle">
           <span>Annual pricing</span>
-          <Switch checked={yearly} onChange={setYearly} />
+          <Switch checked={yearly} onChange={setYearly}  />
           <span className="discount">save 20%</span>
+        </div>
+          <div></div>
+
         </div>
         <Button type="primary" className="continue-btn">
           Continue

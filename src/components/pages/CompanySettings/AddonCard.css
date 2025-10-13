@@ -54,3 +54,8 @@
   font-weight: 600;
   color: #2a5bd7;
 }
+
+.big-icon {
+  font-size: 14px !important;
+  color: #FFFFFF;
+}

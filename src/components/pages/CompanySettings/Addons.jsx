@@ -1,46 +1,34 @@
 import React, { useState } from "react";
 import AddonCard from "./AddonCard";
 import "./Addons.css";
+import { navigation_direction, people_users } from "../../icons/icon";
 
 const initialAddons = [
   {
     id: 1,
-    name: "Driver App License",
+    title: "Driver App License",
     description:
       "Send routes directly to your drivers, with live tracking & Proof of Delivery.",
     price: "$10/driver/mo",
     quantity: 2,
     enabled: true,
-    icon: "👤",
+    icon: <img src={people_users} style={{ height: 48, width: 48 }} className='' alt="" />,
   },
   {
     id: 2,
-    name: "Extra Route Packs",
+    title: "Extra Route Packs",
     description:
       "Add 30 extra optimized routes per month to handle peak demand.",
     price: "$10/pack/mo",
     quantity: 2,
     enabled: true,
-    icon: "✈️",
+    icon: <img src={navigation_direction} style={{ height: 48, width: 48 }} className='' alt="" />,
   },
-  {
-    id: 3,
-    name: "Advanced Reports",
-    description:
-      "Get deeper insights into delivery performance, costs, and driver efficiency.",
-    price: "$10/mo",
-    quantity: 2,
-    enabled: true,
-    icon: "📊",
-  },
+
 ];
 
 const Addons = () => {
-  const [addons, setAddons] = useState(
-    Array(3)
-      .fill()
-      .flatMap((_, i) => initialAddons.map((a) => ({ ...a, id: a.id + i * 3 })))
-  );
+  const [addons, setAddons] = useState(initialAddons)
 
   const toggleAddon = (id) => {
     setAddons((prev) =>
@@ -58,11 +46,18 @@ const Addons = () => {
 
   return (
     <div className="addons-container">
-      <h2>Addons</h2>
-      <p className="addons-subtext">
-        These add-ons will be added to your monthly plan and renew
-        automatically.
-      </p>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h2>Addons</h2>
+          <p className="addons-subtext" style={{marginTop:-15}}>
+            These add-ons will be added to your monthly plan and renew
+            automatically.
+          </p>
+        </div>
+        <div className="addons-footer">
+          <button className="addons-continue-btn">Continue</button>
+        </div>
+      </div>
       <div className="addons-grid">
         {addons.map((addon) => (
           <AddonCard
@@ -73,9 +68,7 @@ const Addons = () => {
           />
         ))}
       </div>
-      <div className="addons-footer">
-        <button className="addons-continue-btn">Continue</button>
-      </div>
+
     </div>
   );
 };

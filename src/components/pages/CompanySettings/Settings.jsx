@@ -13,6 +13,7 @@ const items = [
   // { key: "3", label: "Team", children: <SettingsTeamForm /> },
   { key: "3", label: "Plans", children: <Plans /> },
   { key: "4", label: "Addons", children: <Addons /> },
+  { key: "5", label: "Billing", children: <SettingsProfileForm /> },
   //   { key: "6", label: "Billing" },
 ];
 
