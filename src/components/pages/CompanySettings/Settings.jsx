@@ -6,6 +6,7 @@ import SettingsProfileForm from "./SettingsProfileForm";
 import SettingsPasswordForm from "./SettingsPasswordForm";
 import Plans from "./Plans";
 import Addons from "./Addons";
+import Billing from "./Billing";
 
 const items = [
   { key: "1", label: "Profile", children: <SettingsProfileForm /> },
@@ -13,7 +14,7 @@ const items = [
   // { key: "3", label: "Team", children: <SettingsTeamForm /> },
   { key: "3", label: "Plans", children: <Plans /> },
   { key: "4", label: "Addons", children: <Addons /> },
-  { key: "5", label: "Billing", children: <SettingsProfileForm /> },
+  { key: "5", label: "Billing", children: <Billing /> },
   //   { key: "6", label: "Billing" },
 ];
 
