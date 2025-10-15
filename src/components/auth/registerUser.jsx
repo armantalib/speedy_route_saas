@@ -10,7 +10,7 @@ import axios from 'axios'
 import { dataPost } from '../utils/myAxios'
 // import { apiRequest } from '../../api/auth_api'
 
-const DynomoLogin1 = () => {
+const RegisterUser = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false)
     const navigate = useNavigate()
@@ -21,39 +21,42 @@ const DynomoLogin1 = () => {
     const handleSubmit = async (data) => {
         setIsProcessing(true)
         try {
-            // const res = await axios.post(`${global.BASEURL}api/auth/admin`,
-            //     {
-            //         email: data?.email,
-            //         password: data?.password,
-            //     }, {
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     }
-            // })
             let data1 = {
+                name: data?.name,
                 email: data?.email,
                 password: data?.password,
             }
-            const endPoint = 'auth/admin/'
+            const endPoint = 'users/signup/admin'
             const res = await dataPost(endPoint, data1);
 
-            console.log("R", res);
-
-
-            console.log(res);
             if (res?.data.success) {
-                localStorage.setItem('login_admin_token', res?.data?.token)
-                localStorage.setItem('token', res?.data?.token)
-                localStorage.setItem('login_admin_data', JSON.stringify(res?.data?.user))
-                localStorage.setItem('isLogin_finabee_admin', true)
-                localStorage.setItem('user_type', res?.data?.user?.type)
-                localStorage.setItem('dispatch_limit', res?.data?.user?.dispatcherAccess)
-                
-                if (res?.data?.user?.type == 'super_admin') {
-                    navigate('/super/dashboard')
-                } else {
-                    navigate('/dashboard')
-                }
+                let user = res?.data?.user;
+                registerCompany(data,user)
+            } else {
+                message.error(res?.data?.message)
+            }
+        } catch (error) {
+            setIsProcessing(false)
+            message.error("Invalid credentials")
+            console.log(error);
+        } finally {
+            setIsProcessing(false)
+        }
+    };
+
+        const registerCompany = async (data,user) => {
+        setIsProcessing(true)
+        try {
+            let data1 = {
+                userId: user?._id,
+                company_name: data?.company_name,
+            }
+            const endPoint = 'company/create'
+            const res = await dataPost(endPoint, data1);
+
+            if (res?.data.success) {
+                message.success("Register Successful")
+                navigate('/login')
             } else {
                 message.error(res?.data?.message)
             }
@@ -77,9 +80,21 @@ const DynomoLogin1 = () => {
                             </Link>
                         </div>
                         <div className='border border-white p-xl-4'>
-                            <h2 className='poppins_semibold text-xl mb-0 md:mb-auto md:text-2xl lg:text-3xl text_black'>Login</h2>
-                            <p className='text_secondary max-md:text-sm poppins_regular my-2'>Login to your account</p>
-                            <Form layout='verticle' className='flex flex-wrap justify-between' onFinish={handleSubmit}>
+                            <h2 className='poppins_semibold text-xl mb-0 md:mb-auto md:text-2xl lg:text-3xl text_black text-center'>Create an account</h2>
+                            <p className='text_secondary max-md:text-sm poppins_regular my-2 text-center'>Start your 07-day free trial.</p>
+                            <Form layout='verticle' className='flex flex-wrap justify-between mt-5' onFinish={handleSubmit}>
+                                <span className='plusJakara_medium mb-2 text_black text-lg w-full'>Name</span>
+                                <Form.Item
+                                    name='name'
+                                    className="mb-3 w-full plusJakara_medium"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please enter you name',
+                                        },
+                                    ]}>
+                                    <Input size='large' placeholder='Please enter your name' />
+                                </Form.Item>
                                 <span className='plusJakara_medium mb-2 text_black text-lg w-full'>Email Address</span>
                                 <Form.Item
                                     name='email'
@@ -116,10 +131,22 @@ const DynomoLogin1 = () => {
                                         </div>
                                     </div>
                                 </Form.Item>
+                                         <span className='plusJakara_medium mb-2 text_black text-lg w-full mt-3'>Company Name</span>
+                                <Form.Item
+                                    name='company_name'
+                                    className="mb-3 w-full plusJakara_medium"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please enter company name',
+                                        },
+                                    ]}>
+                                    <Input size='large' placeholder='Please enter company name' />
+                                </Form.Item>
                                 {/* <button type='button' className="my-[18px] md:my-[24px] text-sm text-[#0E73F6] poppins_semibold">Forgot Password?</button> */}
                                 <div className='w-full my-3'>
                                     {!isProcessing ? (
-                                        <button type='submit' className='w-full rounded-3 bg_darkprimary text_white p-2 text-lg plusJakara_regular flex justify-center items-center'>Login</button>
+                                        <button type='submit' className='w-full rounded-3 bg_darkprimary text_white p-2 text-lg plusJakara_regular flex justify-center items-center'>Sign Up</button>
                                     ) : (
                                         <button type="button" className='w-full rounded-3 bg_darkprimary text_white p-2 flex justify-center items-center' disabled>
                                             <CircularProgress style={{ color: 'white' }} size={24} className='text_white' />
@@ -129,9 +156,9 @@ const DynomoLogin1 = () => {
                                 </div>
                             </Form>
                         </div>
-                            <p className='text_secondary max-md:text-sm poppins_regular my-2 text-center' style={{cursor: 'pointer'}} onClick={()=>{
-                                navigate('/register')
-                            }}>Don`t have an account?<span style={{color:'#6688E8'}}> Sign Up</span></p>
+                                                    <p className='text_secondary max-md:text-sm poppins_regular my-2 text-center' style={{cursor: 'pointer'}} onClick={()=>{
+                                navigate('/login')
+                            }}>Already have an account?<span style={{color:'#6688E8'}}> Login</span></p>
                     </div>
                 </div>
                 <div className='d-none bg_darkprimary d-md-flex justify-content-center align-items-center p-1 w-full lg:w-1/2'>
@@ -141,4 +168,4 @@ const DynomoLogin1 = () => {
         </>
     )
 }
-export default DynomoLogin1;
+export default RegisterUser;

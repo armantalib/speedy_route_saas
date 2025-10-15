@@ -6,10 +6,10 @@ import CheckoutForm from "./CheckoutForm";
 
 const stripePromise = loadStripe("pk_test_51RK1BPDHVlaPXj71J8A0MiUKEpMSfe2EpjA9J48KmiFlfeY700VYNPGM9tB7llETgVSfLAcvVQuawdLzcacunAfD00Y3ZNSjHW"); // Your Publishable Key
 
-function Billing() {
+function Billing({onContinue}) {
   return (
     <Elements stripe={stripePromise}>
-      <CheckoutForm />
+      <CheckoutForm onContinue={onContinue}/>
     </Elements>
   );
 }

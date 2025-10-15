@@ -22,10 +22,10 @@ const AddonCard = ({ addon, onToggle, onChangeQty }) => {
       <div className="addon-header" style={{ marginTop: -6 }}>
         <div className="addon-icon">{icon}</div>
         <Title level={5} className="addon-title" style={{ marginTop: 10 }}>
-          {title}
+          {addon?.addon_name}
         </Title>
       </div>
-      <Text className="addon-description">{description}</Text>
+      <Text className="addon-description">{addon?.addon_desc}</Text>
       <Divider/>
       <div className="addon-footer">
         <div className="addon-quantity">
@@ -33,14 +33,14 @@ const AddonCard = ({ addon, onToggle, onChangeQty }) => {
             shape="circle"
             size="small"
             icon={<MinusOutlined />}
-            onClick={() => onChangeQty(id, Math.max(quantity - 1, 0))}
+            onClick={() => onChangeQty('minus')}
           />
           <span className="addon-qty-value">{quantity}</span>
           <Button
             shape="circle"
             size="small"
             icon={<PlusOutlined className="big-icon" />}
-            onClick={() => onChangeQty(id, quantity + 1)}
+            onClick={() => onChangeQty('plus')}
             style={{
               backgroundColor: "#4770E4", // button color
               borderRadius: 100,
@@ -50,7 +50,7 @@ const AddonCard = ({ addon, onToggle, onChangeQty }) => {
           />
         </div>
         <Text className="addon-price">
-          {price}/{unit}
+          {addon?.price}/$
         </Text>
       </div>
     </Card>

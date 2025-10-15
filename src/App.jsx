@@ -29,6 +29,7 @@ import CompanyList from "./components/pages/SuperAdmin/Company/CompanyList";
 import AdminUsersList from "./components/pages/SuperAdmin/AdminUsers/AdminUsersList";
 import DispatcherList from "./components/pages/SuperAdmin/Dispatcher/DispatcherList";
 import Settings from "./components/pages/CompanySettings/Settings";
+import RegisterUser from "./components/auth/registerUser";
 
 // import AccountDeletetion from "./components/auth/accountDeletion";
 
@@ -88,6 +89,7 @@ function App() {
             <Route element={<PublicRoutes />} >
               <Route index element={<LoginPage1 />}></Route>
               <Route path='/login' element={<LoginPage1 />}></Route>
+              <Route path='/register' element={<RegisterUser />}></Route>
               <Route path='/account-delete' element={<AccountDeletetion />}></Route>
             </Route>
             <Route element={<PrivateRoutes />}>
@@ -111,6 +113,7 @@ function App() {
               <Route path="/clients/list" element={<AdminUsersList />} />
               <Route path="/dispatcher/list" element={<DispatcherList />} />
               <Route path="/settings" element={<Settings />} />
+             
       
 
 

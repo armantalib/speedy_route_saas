@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     CardElement,
     useStripe,
@@ -27,13 +27,35 @@ const CARD_ELEMENT_OPTIONS = {
     hidePostalCode: true, // optional
 };
 
-export default function CheckoutForm() {
+export default function CheckoutForm({onContinue}) {
     const stripe = useStripe();
     const elements = useElements();
 
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
+    const [totalAmount, setTotalAmount] = useState(0);
     const [amount, setAmount] = useState("");
+
+    useEffect(() => {
+        checkAmount();
+    }, [])
+
+    const checkAmount = async () => {
+        let addonsPrice = 0;
+        let totalAmount = 0
+        const addon_final = localStorage.getItem('addon_final')
+        if (addon_final) {
+            let anPo = JSON.parse(addon_final);
+            addonsPrice = anPo?.addonsPrice;
+        }
+        const plan = localStorage.getItem('plan')
+        if (plan) {
+            let anPo = JSON.parse(plan);
+            totalAmount = anPo?.price + addonsPrice;
+            setTotalAmount(totalAmount)
+        }
+    }
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -48,10 +70,22 @@ export default function CheckoutForm() {
         //   headers: { "Content-Type": "application/json" },
         //   body: JSON.stringify({ amount: parseInt(amount) * 100 }), // in cents
         // });
-
+        let addonsPrice = 0;
+        let totalAmount = 0
+        const addon_final = localStorage.getItem('addon_final')
+        if (addon_final) {
+            let anPo = JSON.parse(addon_final);
+            addonsPrice = anPo?.addonsPrice;
+        }
+        const plan = localStorage.getItem('plan')
+        if (plan) {
+            let anPo = JSON.parse(plan);
+            totalAmount = anPo?.price + addonsPrice;
+            setTotalAmount(totalAmount)
+        }
         const endPoint = `company/payment/init`;
         const res = await dataPost(endPoint, {
-            amount:amount
+            amount: totalAmount
         });
         if (res?.data?.success) {
             const clientSecret = res.data?.clientSecret;
@@ -64,33 +98,69 @@ export default function CheckoutForm() {
                     payment_method: { card: cardElement },
                 }
             );
-        
-        if (error) {
-            setMessage(error.message);
-        } else if (paymentIntent.status === "succeeded") {
-            setMessage("✅ Payment Successful!");
-                    setAmount(""); // clear input
-        cardElement.clear(); // clear card fields
-        
+
+            if (error) {
+                setMessage(error.message);
+            } else if (paymentIntent.status === "succeeded") {
+                subscribePackage(paymentIntent)
+                setMessage("✅ Payment Successful!");
+                setAmount(""); // clear input
+                cardElement.clear(); // clear card fields
+
+            }
         }
-    }
-        setLoading(false);
     };
+
+    const subscribePackage = async (paymentIntent) => {
+        let addonsN = null
+        let plans = null
+        let users = null
+        const addon_final = localStorage.getItem('addon_final')
+        if (addon_final) {
+            addonsN = JSON.parse(addon_final);
+        }
+        const plan = localStorage.getItem('plan')
+        if (plan) {
+            plans = JSON.parse(plan);
+        }
+        const user = localStorage.getItem('login_admin_data')
+        if (user) {
+            users = JSON.parse(user);
+        }
+        let data = {
+            companyId: users?.company,
+            planId: plans?._id,
+            planType: plans?.plan_type,
+            paymentId: paymentIntent?.id,
+            addons: addonsN?.addons,
+        }
+        const endPoint = `company/subscribe/package`;
+        const res = await dataPost(endPoint, data);
+        setLoading(false);
+
+        if (res?.data?.success) {
+            localStorage.removeItem('addon_final')
+            localStorage.removeItem('plan')
+            onContinue()
+        }
+
+
+    }
 
     return (
         <div className="checkout-container">
             <h2 className="checkout-title">Complete Your Payment</h2>
 
             <form onSubmit={handleSubmit} className="checkout-form">
-                <label className="input-label">Amount (USD)</label>
-                <input
+                <label className="input-label">Amount (USD) {totalAmount}</label>
+                {/* <input
                     type="number"
                     placeholder="Enter amount"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className="amount-input"
                     required
-                />
+                /> */}
 
                 <label className="input-label">Card Details</label>
                 <div className="card-element-container">

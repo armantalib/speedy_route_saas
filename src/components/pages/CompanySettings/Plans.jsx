@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Switch, Button } from "antd";
 import PlanCard from "./PlanCard";
 // import BillingHistoryTable from "./BillingHistoryTable";
 import "./Plans.css";
+import { dataGet, dataGet_ } from "../../utils/myAxios";
 
 const yearlyPlans = [
   {
@@ -53,28 +54,59 @@ const monthlyPlans = yearlyPlans.map((plan) => ({
   period: "Monthly",
 }));
 
-const Plans = () => {
+const Plans = ({ onContinue }) => {
   const [yearly, setYearly] = useState(true);
-  const [selectedPlan, setSelectedPlan] = useState("go");
+  const [planDataM, setPlansDataM] = useState([]);
+  const [planDataY, setPlansDataY] = useState([]);
+  const [selectedPlan, setSelectedPlan] = useState("pro");
+  const [selectedPlanObj, setSelectedPlanObj] = useState(null);
 
-  const plans = yearly ? yearlyPlans : monthlyPlans;
+  useEffect(() => {
+    getData();
+  }, [])
+
+  const getData = async () => {
+    const plans = localStorage.getItem('plans')
+    if (plans) {
+      const planParse = JSON.parse(plans)
+      setPlansDataM(planParse?.plansMonthly)
+      setPlansDataY(planParse?.plansYearly)
+    }
+    const endPoint = 'settings/get/plan-addons'
+    const response = await dataGet_(endPoint, {});
+    if (response?.data?.success) {
+      setPlansDataM(response?.data?.plansMonthly)
+      setPlansDataY(response?.data?.plansYearly)
+      setSelectedPlanObj(response?.data?.plansYearly[2])
+      localStorage.setItem('plans', JSON.stringify(response?.data))
+    }
+  }
+
+  const plans = yearly ? planDataY : planDataM;
+
+  const onClickContinue = () => {
+    localStorage.setItem('plan',JSON.stringify(selectedPlanObj))
+    onContinue()
+  }
 
   return (
     <div className="plans-container">
       <div className="plans-header">
         <h2>Plan</h2>
         <p>Manage your billing and payment details.</p>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div></div>
-        <div className="pricing-toggle">
-          <span>Annual pricing</span>
-          <Switch checked={yearly} onChange={setYearly}  />
-          <span className="discount">save 20%</span>
-        </div>
+          <div className="pricing-toggle">
+            <span>Annual pricing</span>
+            <Switch checked={yearly} onChange={setYearly} />
+            <span className="discount">save 20%</span>
+          </div>
           <div></div>
 
         </div>
-        <Button type="primary" className="continue-btn">
+        <Button type="primary" className="continue-btn"
+          onClick={() => onClickContinue()}
+        >
           Continue
         </Button>
       </div>
@@ -84,8 +116,11 @@ const Plans = () => {
           <PlanCard
             key={plan.id}
             plan={plan}
-            selected={selectedPlan === plan.id}
-            onSelect={() => setSelectedPlan(plan.id)}
+            selected={selectedPlan === plan.plan}
+            onSelect={() => {
+              setSelectedPlanObj(plan)
+              setSelectedPlan(plan.plan)
+            }}
           />
         ))}
       </div>

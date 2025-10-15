@@ -15,14 +15,14 @@ const PlanCard = ({ plan, selected, onSelect }) => {
           <div style={{ width: 35, height: 35, borderRadius: 50, backgroundColor: '#cad7fd', justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
             <img src={layer_icon} style={{ height: 16, width: 16 }} className='' alt="" />
           </div>
-          <span className="plan-title">{plan.title}</span>
+          <span className="plan-title">{plan.plan_name}</span>
           {selected && <CheckCircleFilled className="check-icon" />}
         </div>
       </div>
       <div className="plan-price" style={{ padding: 12, paddingTop: 0 }}>
         <span className="price">${plan.price}</span>
-        <span className="period">{plan.period}</span>
-        {plan.badge && <span className="badge">{plan.badge}</span>}
+        <span className="period">/{plan.plan_type}</span>
+        {/* {plan.badge && <span className="badge">{plan.badge}</span>} */}
       </div>
 
       <div className="features" style={{ padding: 12, paddingTop: 0, marginTop: -15 }}>
@@ -31,8 +31,8 @@ const PlanCard = ({ plan, selected, onSelect }) => {
           {plan.features.map((f, i) => (
             <li key={i}>
               {/* <CheckCircleFilled className="feature-icon" /> {f} */}
-              <div style={{display:'flex',flexDirection:'row'}}>
-              <img src={circle_check} style={{ height: 16, width: 16 }} className='feature-icon' />{f}
+              <div style={{display:'flex',flexDirection:'row',marginTop:15}}>
+              <img src={circle_check} style={{ height: 20, width: 20 }} className='feature-icon' />{f}
               </div>
             </li>
           ))}
