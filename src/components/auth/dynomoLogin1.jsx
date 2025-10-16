@@ -37,8 +37,6 @@ const DynomoLogin1 = () => {
             const endPoint = 'auth/admin/'
             const res = await dataPost(endPoint, data1);
 
-            console.log("R", res);
-
 
             console.log(res);
             if (res?.data.success) {
@@ -48,7 +46,12 @@ const DynomoLogin1 = () => {
                 localStorage.setItem('isLogin_finabee_admin', true)
                 localStorage.setItem('user_type', res?.data?.user?.type)
                 localStorage.setItem('dispatch_limit', res?.data?.user?.dispatcherAccess)
-                
+                if (res?.data?.subscription) {
+                    localStorage.setItem('subscription', JSON.stringify(res?.data?.subscription))
+                } else {
+                    localStorage.setItem('subscription', false)
+                }
+
                 if (res?.data?.user?.type == 'super_admin') {
                     navigate('/super/dashboard')
                 } else {
@@ -129,9 +132,9 @@ const DynomoLogin1 = () => {
                                 </div>
                             </Form>
                         </div>
-                            <p className='text_secondary max-md:text-sm poppins_regular my-2 text-center' style={{cursor: 'pointer'}} onClick={()=>{
-                                navigate('/register')
-                            }}>Don`t have an account?<span style={{color:'#6688E8'}}> Sign Up</span></p>
+                        <p className='text_secondary max-md:text-sm poppins_regular my-2 text-center' style={{ cursor: 'pointer' }} onClick={() => {
+                            navigate('/register')
+                        }}>Don`t have an account?<span style={{ color: '#6688E8' }}> Sign Up</span></p>
                     </div>
                 </div>
                 <div className='d-none bg_darkprimary d-md-flex justify-content-center align-items-center p-1 w-full lg:w-1/2'>

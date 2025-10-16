@@ -4,19 +4,26 @@ import "./PlanCard.css";
 import { circle_check, layer_icon } from "../../icons/icon";
 
 const PlanCard = ({ plan, selected, onSelect }) => {
+  let subscription = null
+  let planSave = null
+  const subscription1 = localStorage.getItem('plans')
+  if (subscription1) {
+    subscription = JSON.parse(subscription1)
+    planSave = subscription?.subscription?.plan?.plan
+  }
   return (
     <div
-      className={`plan-card ${selected ? "selected" : ""}`}
+      className={`plan-card ${planSave==plan?.plan || selected ? "selected" : ""}`}
       onClick={onSelect}
     >
-      <div style={{ width: '100%', height: 60, borderWidth: selected ? 2 : 1, borderColor: selected ? '#6688E8' : '#E8E8E9', backgroundColor: selected ? '#DAE2FA' : '#FFF' }}>
+      <div style={{ width: '100%', height: 60, borderWidth:planSave==plan?.plan || selected ? 2 : 1, borderColor: planSave==plan?.plan || selected ? '#6688E8' : '#E8E8E9', backgroundColor: planSave==plan?.plan || selected ? '#DAE2FA' : '#FFF',opacity:planSave=='pro' && plan?.plan=='basic'?0.2:planSave=='enterprise' && plan?.plan=='basic'?0.2:planSave=='enterprise' && plan?.plan=='pro'?0.2:1 }}>
         <div className="plan-header" style={{ padding: 12 }}>
           {/* <input type="radio" checked={selected} readOnly /> */}
           <div style={{ width: 35, height: 35, borderRadius: 50, backgroundColor: '#cad7fd', justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
             <img src={layer_icon} style={{ height: 16, width: 16 }} className='' alt="" />
           </div>
           <span className="plan-title">{plan.plan_name}</span>
-          {selected && <CheckCircleFilled className="check-icon" />}
+          {planSave==plan?.plan || selected && <CheckCircleFilled className="check-icon" />}
         </div>
       </div>
       <div className="plan-price" style={{ padding: 12, paddingTop: 0 }}>
@@ -31,8 +38,8 @@ const PlanCard = ({ plan, selected, onSelect }) => {
           {plan.features.map((f, i) => (
             <li key={i}>
               {/* <CheckCircleFilled className="feature-icon" /> {f} */}
-              <div style={{display:'flex',flexDirection:'row',marginTop:15}}>
-              <img src={circle_check} style={{ height: 20, width: 20 }} className='feature-icon' />{f}
+              <div style={{ display: 'flex', flexDirection: 'row', marginTop: 15 }}>
+                <img src={circle_check} style={{ height: 20, width: 20 }} className='feature-icon' />{f}
               </div>
             </li>
           ))}

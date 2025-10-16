@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Button } from "antd";
+import { Switch, Button, message } from "antd";
 import PlanCard from "./PlanCard";
 // import BillingHistoryTable from "./BillingHistoryTable";
 import "./Plans.css";
@@ -58,7 +58,7 @@ const Plans = ({ onContinue }) => {
   const [yearly, setYearly] = useState(true);
   const [planDataM, setPlansDataM] = useState([]);
   const [planDataY, setPlansDataY] = useState([]);
-  const [selectedPlan, setSelectedPlan] = useState("pro");
+  const [selectedPlan, setSelectedPlan] = useState("");
   const [selectedPlanObj, setSelectedPlanObj] = useState(null);
 
   useEffect(() => {
@@ -85,8 +85,28 @@ const Plans = ({ onContinue }) => {
   const plans = yearly ? planDataY : planDataM;
 
   const onClickContinue = () => {
-    localStorage.setItem('plan',JSON.stringify(selectedPlanObj))
+    localStorage.setItem('plan', JSON.stringify(selectedPlanObj))
     onContinue()
+  }
+
+  const onSelectPlan = (plan) => {
+    let subscription = null
+    let planSave = null
+    const subscription1 = localStorage.getItem('plans')
+    if (subscription1) {
+      subscription = JSON.parse(subscription1)
+      planSave = subscription?.subscription?.plan?.plan
+    }
+    if(planSave=='enterprise' && (plan.plan=='pro' || plan.plan=='basic')){
+      message.error('Your package could not be downgraded.')
+      return
+    }
+      if(planSave=='pro' && plan.plan=='basic'){
+      message.error('Your package could not be downgraded.')
+      return
+    }
+    setSelectedPlanObj(plan)
+    setSelectedPlan(plan.plan)
   }
 
   return (
@@ -118,8 +138,8 @@ const Plans = ({ onContinue }) => {
             plan={plan}
             selected={selectedPlan === plan.plan}
             onSelect={() => {
-              setSelectedPlanObj(plan)
-              setSelectedPlan(plan.plan)
+
+              onSelectPlan(plan)
             }}
           />
         ))}

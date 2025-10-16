@@ -6,7 +6,7 @@ import { Divide } from "react-feather";
 
 const { Title, Text } = Typography;
 
-const AddonCard = ({ addon, onToggle, onChangeQty }) => {
+const AddonCard = ({ addon, onToggle, onChangeQty,onChangeSwitch }) => {
   const { id, title, description, price, icon, enabled, quantity, unit } =
     addon;
 
@@ -15,8 +15,8 @@ const AddonCard = ({ addon, onToggle, onChangeQty }) => {
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: -20 }}>
         <div></div>
         <Switch
-          checked={enabled}
-          onChange={(checked) => onToggle(id, checked)}
+          checked={addon?.enabled}
+          onChange={onChangeSwitch}
         />
       </div>
       <div className="addon-header" style={{ marginTop: -6 }}>

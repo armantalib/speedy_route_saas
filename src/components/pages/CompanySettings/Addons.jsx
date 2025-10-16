@@ -28,7 +28,7 @@ const initialAddons = [
 
 ];
 
-const Addons = ({onContinue}) => {
+const Addons = ({ onContinue }) => {
   const [addons, setAddons] = useState(initialAddons)
   const [addonsData, setAddonsData] = useState([])
 
@@ -89,17 +89,20 @@ const Addons = ({onContinue}) => {
     let addonsArr = [];
     data1.forEach((element, index) => {
       let addonsVal = {};
-      addonsPrice = addonsPrice + (element.price * element.quantity)
-      addonsVal['addonId'] = element?._id;
-      addonsVal['quantity'] = element?.quantity;
-      addonsArr.push(addonsVal);
+      if (element?.enabled) {
+        addonsPrice = addonsPrice + (element.price * element.quantity)
+        addonsVal['addonId'] = element?._id;
+        addonsVal['quantity'] = element?.quantity;
+        addonsArr.push(addonsVal);
+      }
+
     });
 
     let data2 = {
-      addons:addonsArr,
+      addons: addonsArr,
       addonsPrice,
     }
-    localStorage.setItem('addon_final',JSON.stringify(data2))
+    localStorage.setItem('addon_final', JSON.stringify(data2))
     onContinue()
   }
 
@@ -124,6 +127,11 @@ const Addons = ({onContinue}) => {
             addon={addon}
             onToggle={() => toggleAddon(addon.id)}
             onQuantityChange={updateQuantity}
+            onChangeSwitch={() => {
+              let data1 = [...addonsData];
+              data1[index].enabled = !data1[index].enabled
+              setAddonsData(data1)
+            }}
             onChangeQty={(val) => {
               let data1 = [...addonsData];
               data1[index].quantity = val == 'plus' ? data1[index].quantity + 1 : Math.max(data1[index].quantity - 1, 0)
