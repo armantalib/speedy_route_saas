@@ -136,6 +136,21 @@ const AdminUsersList = (props) => {
 
     const columns = [
         {
+            name: 'Company Name',
+            allowoverflow: true,
+            width: '250px',
+            cell: (row) => {
+                return (
+                    <div onClick={() => {
+                        setSingleData(row)
+                        setShowModal(true)
+                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.company?.company_name}</p>
+                    </div>
+                )
+            }
+        },
+        {
             name: 'Client Name',
             allowoverflow: true,
             width: '250px',
@@ -199,7 +214,7 @@ const AdminUsersList = (props) => {
                         <span style={{
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
                             color: row?.status == 'deactivated' ? '#CA8A04' : '#22C55E'
-                        }}>{row?.status =='online'?'Active':row?.status}</span>
+                        }}>{row?.status == 'online' ? 'Active' : row?.status}</span>
                     </div>
                 )
             }

@@ -78,7 +78,7 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
     const menuItemsSuperAdmin = [
         { image: dashboard_icon, image2: dashboard_icon, items: "Dashboard", path: '/super/dashboard' },
         { image: user_icons, image2: user_icons, items: "Clients", path: '/clients/list' },
-        { image: prof_delivery_icon, image2: prof_delivery_icon, items: "Companies", path: '/company/list' },
+        // { image: prof_delivery_icon, image2: prof_delivery_icon, items: "Companies", path: '/company/list' },
 
         // { image: driver_icons, image2: driver_icons, items: "Drivers", path: '/driver/list' },
         // { image: live_tracking_icon, image2: live_tracking_icon, items: "Live Tracking", path: '/tracking/list' },

@@ -268,6 +268,20 @@ const RouteForm = () => {
 
   // const handleCancel = () => dispatch(hideRouteForm()); 
 
+  const createRouteOptimizeCheck = async () => {
+     setIsLoading(true);
+    const endPoint = `routes/route/limit`;
+    const response = await dataGet_(endPoint, {})
+ 
+    if(response?.data?.success){
+      handleOptimize();
+    }else{
+      message.error(response?.data?.message)
+       setIsLoading(false);
+    }
+
+  }
+
   const handleOptimize = async () => {
     // console.log("Click");
     // saveStopsToDB()
@@ -713,7 +727,7 @@ const RouteForm = () => {
                     {/* <Button onClick={handleCancel} className="cancel-btn">
                     Cancel
                   </Button> */}
-                    <Button type="primary" className="optimize-btn" onClick={handleOptimize}>
+                    <Button type="primary" className="optimize-btn" onClick={createRouteOptimizeCheck}>
                       {loading ? "Optimizing Route..." : "Optimize Route"}
                     </Button>
                     {/* <Tooltip title="Export to CSV">

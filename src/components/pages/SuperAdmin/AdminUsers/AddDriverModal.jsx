@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Input, Upload, Button, Form, Select } from "antd";
+import { Modal, Input, Upload, Button, Form, Select, message } from "antd";
 import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import "./AddDriverModal.css";
 import { dataPost } from "../../../utils/myAxios";
@@ -24,11 +24,38 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
       phone: values?.phone,
       licenseFile: '',
     }
-    const response = await dataPost(endPoint, data1)
-
-    setLoader(false)
-    onClose();
+    const res = await dataPost(endPoint, data1)
+    if (res?.data.success) {
+      let user = res?.data?.user;
+      registerCompany(values, user)
+    } else {
+      message.error(res?.data?.message)
+    }
     // form.resetFields();
+  };
+
+  const registerCompany = async (data, user) => {
+    try {
+      let data1 = {
+        userId: user?._id,
+        company_name: data?.company,
+      }
+      const endPoint = 'company/create'
+      const res = await dataPost(endPoint, data1);
+
+      if (res?.data.success) {
+        message.success("Register Successful")
+        setLoader(false)
+        onClose();
+      } else {
+        message.error(res?.data?.message)
+      }
+    } catch (error) {
+      message.error("Invalid credentials")
+      console.log(error);
+    } finally {
+
+    }
   };
 
   return (
@@ -51,7 +78,7 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
       <Form layout="vertical" form={form} onFinish={handleFinish}>
         <div className="form-grid">
           <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input placeholder="John" 
+            <Input placeholder="John"
             />
           </Form.Item>
           <Form.Item name="email" label="Email" rules={[{ required: true }]}>
@@ -63,8 +90,12 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
           <Form.Item name="phone" label="Phone Number">
             <Input placeholder="+1 (___) ___-____" />
           </Form.Item>
-    
-        
+
+          <Form.Item name="company" label="Company Name" rules={[{ required: true }]}>
+            <Input placeholder="Please enter company name" />
+          </Form.Item>
+
+
         </div>
 
 

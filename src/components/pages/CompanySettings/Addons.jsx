@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AddonCard from "./AddonCard";
 import "./Addons.css";
-import { navigation_direction, people_users } from "../../icons/icon";
+import { call, navigation_direction, people_users } from "../../icons/icon";
 import { dataGet_ } from "../../utils/myAxios";
 
 const initialAddons = [
@@ -61,7 +61,7 @@ const Addons = ({ onContinue }) => {
         valuePush = element;
         valuePush['quantity'] = 2;
         valuePush['enabled'] = true;
-        valuePush['icon'] = <img src={element?.feature == 'app_license' ? people_users : navigation_direction} style={{ height: 48, width: 48 }} className='' alt="" />;
+        valuePush['icon'] = <img src={element?.feature == 'app_license' ? people_users :element?.feature == 'dispatcher' ? call: navigation_direction} style={{ height: 48, width: 48 }} className='' alt="" />;
         valuePush['quantity'] = 2;
       });
       setAddonsData(data1)
