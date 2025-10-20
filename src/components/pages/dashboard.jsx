@@ -22,6 +22,7 @@ const Dashboard = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false)
+    const [failedData, setFailedData] = useState(null)
     const dispatch = useDispatch();
     dispatch(setHeaderName('Dashboard'))
     const navigate = useNavigate()
@@ -210,10 +211,28 @@ const Dashboard = () => {
             }
             const endPoint = 'routes/admin/dashboard'
             const res = await dataGet_(endPoint, data1);
-            console.log("E", res.data.data);
-
             if (res?.data.success) {
                 setCategories(res?.data);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+        const getFailedStops = async () => {
+
+        try {
+            // const res = await axios.get(`${global.BASEURL}api/users/dashboard`, { headers });
+            let data1 = {
+            }
+            const endPoint = 'routes/failed/latest'
+            const res = await dataGet_(endPoint, data1);
+            if (res?.data.success) {
+                console.log("R",res?.data?.data);
+                
+                setFailedData(res?.data?.data)
             }
         } catch (error) {
             console.log(error);
@@ -232,6 +251,7 @@ const Dashboard = () => {
     useEffect(() => {
         fetchData();
         fetchData2();
+        getFailedStops()
     }, []);
 
     return (
@@ -389,6 +409,7 @@ const Dashboard = () => {
                         >
                             <h6 className="text_dark plusJakara_semibold">Exceptions Callout Panel</h6>
                         </div>
+                        {failedData?
                         <div
                             style={{
                                 border: "1px solid #E8E8E9",   // border color
@@ -398,17 +419,17 @@ const Dashboard = () => {
                             }}
                         >
                             <div style={{ width: '100%', height: 160, backgroundColor: '#FFE6E6', borderRadius: 12, padding: 10 }}>
-                                <p className="text_dark plusJakara_semibold" style={{ fontSize: 14 }}>Route #124 · Stop #5 — Failed</p>
-                                <p className="text_dark plusJakara_light" style={{ fontSize: 14, color: '#73757C' }}>Customer not available — Driver: Sarah K · ETA 11:45 AM · Tried 1:05 PM — No answer, no safe place.</p>
+                                <p className="text_dark plusJakara_semibold" style={{ fontSize: 14 }}>Route #{failedData?.routeId} · Stop #{failedData?.failedStop?.stopNumber} — Failed</p>
+                                <p className="text_dark plusJakara_light" style={{ fontSize: 14, color: '#73757C' }}>{failedData?.failedStop?.notes} — Driver: {failedData?.driver?.name} ·Location: — {failedData?.failedStop?.place_name}</p>
                                <div style={{display:'flex',justifyContent:'space-between',marginTop:20}}>
                                 <div></div>
-                                <button onClick={() => {
+                                {/* <button onClick={() => {
                                     navigate('/route/form')
 
-                                }} style={{ width: '129px', backgroundColor: '#6688E8', fontSize: 11, alignSelf: 'flex-end' }} className="bg_primary py-2 rounded-3 text_white plusKajara_semibold">View Details</button>
+                                }} style={{ width: '129px', backgroundColor: '#6688E8', fontSize: 11, alignSelf: 'flex-end' }} className="bg_primary py-2 rounded-3 text_white plusKajara_semibold">View Details</button> */}
                             </div>
                             </div>
-                        </div>
+                        </div>:null}
                     </div>
                 </div>
             </div>

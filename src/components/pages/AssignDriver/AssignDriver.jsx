@@ -13,7 +13,7 @@ import { CircularProgress } from "@mui/material";
 
 const { Title, Text } = Typography;
 
-const AssignDriver = ({ routeGeometry, start, stops = [], destination,routeName,routeId,startPoint,endPoint,dateSchedule,timeSchedule,stopData=[],onClickSave,loading,exportToCSV,printToPDF }) => {
+const AssignDriver = ({ routeGeometry, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, loading, exportToCSV, printToPDF, isUpdate }) => {
   const mapRef = useRef(null);
   const routeLayerRef = useRef(null);
   const markersRef = useRef([]);
@@ -34,7 +34,7 @@ const AssignDriver = ({ routeGeometry, start, stops = [], destination,routeName,
 
   // Initialize map
   useEffect(() => {
-    
+
     if (!mapRef.current) {
       mapRef.current = L.map("map", {
         center: [34.2402, -118.5535],
@@ -169,22 +169,23 @@ const AssignDriver = ({ routeGeometry, start, stops = [], destination,routeName,
 
         {/* Actions */}
         <div className="driver-actions">
-          <Button style={{ marginRight: 8 }} onClick={()=>{onClickSave(null)}}>
-            {loading?
-            <CircularProgress size={18} className='text_black' />:
-            "Update Route"
-            }
-            </Button>
-          <Button type="primary" onClick={() => setShowAssignDriverModal(true)}>
+          {isUpdate ?
+            <Button style={{ marginRight: 8 }} onClick={() => { onClickSave(null) }}>
+              {loading ?
+                <CircularProgress size={18} className='text_black' /> :
+                "Update Route"
+              }
+            </Button> : null}
+          <Button type="primary" onClick={() => setShowAssignDriverModal(true)} style={{marginRight:10}}>
             Assign Driver
           </Button>
 
-             <Tooltip title="Export to CSV">
-                                <Button icon={<ExportOutlined />} onClick={exportToCSV} />
-                              </Tooltip>
-                              <Tooltip title="Print to PDF">
-                                <Button icon={<PrinterOutlined />} onClick={printToPDF} />
-                              </Tooltip>
+          <Tooltip title="Export to CSV">
+            <Button style={{marginRight:10}} icon={<ExportOutlined />} onClick={exportToCSV} />
+          </Tooltip>
+          <Tooltip title="Print to PDF">
+            <Button icon={<PrinterOutlined />} onClick={printToPDF} />
+          </Tooltip>
         </div>
       </Card>
 

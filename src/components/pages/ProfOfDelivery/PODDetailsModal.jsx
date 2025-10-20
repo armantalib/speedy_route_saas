@@ -15,12 +15,12 @@ const PODDetailsModal = ({ visible, onClose, data }) => {
       width={420}
       className="pod-details-modal"
     >
-      <div className="pod-details-header">
+      {/* <div className="pod-details-header">
         <div className="title">POD details</div>
         <button className="close-button" onClick={onClose}>
           <CloseOutlined />
         </button>
-      </div>
+      </div> */}
 
       <div className="pod-details-body">
         <div className="pod-number">
@@ -29,7 +29,7 @@ const PODDetailsModal = ({ visible, onClose, data }) => {
         </div>
 
         <div className="section">
-          <div className="section-title">Time Stamps : {moment(data?.updatedAt).format('DD-MM-YYYY hh:mm a')}</div>
+          <div className="section-title">Time Stamps : {moment(data?.updatedAt).format('MMM-DD-YYYY hh:mm a')}</div>
           <div className="info-row">
             <span>Stops</span>
             <span>{data?.stops?.length}</span>
@@ -40,7 +40,7 @@ const PODDetailsModal = ({ visible, onClose, data }) => {
           </div>
           <div className="info-row">
             <span>Date & Time</span>
-            <span>{moment(data?.createdAt).format('DD-MM-YYYY hh:mm a')}</span>
+            <span>{moment(data?.createdAt).format('MMM-DD-YYYY hh:mm a')}</span>
           </div>
           {/* <div className="info-row">
             <span>Assigned Vehicle</span>

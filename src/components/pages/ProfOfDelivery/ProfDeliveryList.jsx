@@ -200,7 +200,7 @@ const ProfDeliveryList = (props) => {
             name: 'Time',
             sortable: true,
             width: '250px',
-            selector: row => formatSecondsToHMS(row?.duration)
+            selector: row => moment(row.updatedAt).fromNow()
         },
         {
             name: 'Action',
@@ -209,7 +209,9 @@ const ProfDeliveryList = (props) => {
                 return (
                     <div className='flex gap-1' style={{ flexDirection: 'row', flex: 'row', justifyContent: 'space-between' }}>
                         <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14, color: '#4770E4', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => {
-                            setSingleData(row)
+                        console.log("R",row);
+                        
+                        setSingleData(row)
                             setSelectedDriver(row)
                             setShowDriverDetail(true)
                         }}>{'View Detail'}</p>

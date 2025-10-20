@@ -269,15 +269,15 @@ const RouteForm = () => {
   // const handleCancel = () => dispatch(hideRouteForm()); 
 
   const createRouteOptimizeCheck = async () => {
-     setIsLoading(true);
+    setIsLoading(true);
     const endPoint = `routes/route/limit`;
     const response = await dataGet_(endPoint, {})
- 
-    if(response?.data?.success){
+
+    if (response?.data?.success) {
       handleOptimize();
-    }else{
+    } else {
       message.error(response?.data?.message)
-       setIsLoading(false);
+      setIsLoading(false);
     }
 
   }
@@ -452,7 +452,7 @@ const RouteForm = () => {
       duration: duration,
     };
 
-    const response = isUpdate ? await dataPut(endPoint, data1) : await dataPost(endPoint, data1);
+    const response = isUpdate || isDriver ? await dataPut(endPoint, data1) : await dataPost(endPoint, data1);
     if (isDriver) {
       assignDriverFun(response?.data?.data?._id, isDriver)
       return
@@ -539,7 +539,10 @@ const RouteForm = () => {
                       <AutoComplete
                         placeholder="Enter start point"
                         value={start?.place_name || queries.start}   // ✅ pre-fill from update data
-                        onChange={(v) => setQueries({ ...queries, start: v })}
+                        onChange={(v) => {
+                          setQueries({ ...queries, start: v })
+                          setStart({ ...start, place_name: v })
+                        }}
                         onSearch={handleSearch}
                         onSelect={(val, opt) => handleSelect(val, opt, "start")}
                         options={renderOptions()}
@@ -552,7 +555,10 @@ const RouteForm = () => {
                         placeholder="Enter end point"
                         disabled={options?.roundTrip}
                         value={destination?.place_name || queries.destination}  // ✅ pre-fill
-                        onChange={(v) => setQueries({ ...queries, destination: v })}
+                        onChange={(v) => {
+                          setQueries({ ...queries, destination: v })
+                          setDestination({ ...destination, place_name: v })
+                        }}
                         onSearch={handleSearch}
                         onSelect={(val, opt) => handleSelect(val, opt, "destination")}
                         options={renderOptions()}
@@ -663,7 +669,7 @@ const RouteForm = () => {
                             value={stop.place_name}
                             onChange={(v) => {
                               const updated = [...stops];
-                              updated[index].place_name = v;
+                              updated[index] = { ...updated[index], place_name: v };
                               setStops(updated);
                             }}
                             onSearch={handleSearch}
@@ -758,6 +764,7 @@ const RouteForm = () => {
               endPoint={options?.roundTrip ? start?.place_name : destination?.place_name}
               dateSchedule={moment(scheduleDate).format('DD MMM YYYY')}
               timeSchedule={moment(scheduleTime).format('hh:mm')}
+              isUpdate={isUpdate}
               loading={loading}
               exportToCSV={() => { exportToCSV() }}
               printToPDF={() => { printToPDF() }}

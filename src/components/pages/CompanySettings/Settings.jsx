@@ -11,7 +11,7 @@ import Billing from "./Billing";
 
 
 const Settings = () => {
-  const [tab, setTab] = useState('1')
+  const [tab, setTab] = useState('3')
   const [plan, setPlan] = useState(null)
 
   const items = [
