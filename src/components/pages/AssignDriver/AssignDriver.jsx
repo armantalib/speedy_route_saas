@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Card, Button, Descriptions, Timeline, Typography, Tooltip } from "antd";
+import { Card, Button, Descriptions, Timeline, Typography, Tooltip, message } from "antd";
 import { EnvironmentOutlined, ClockCircleOutlined, ExportOutlined, PrinterOutlined } from "@ant-design/icons";
 import L from "leaflet";
 import AssignDriverModal from "./AssignDriverModal";
@@ -13,7 +13,7 @@ import { CircularProgress } from "@mui/material";
 
 const { Title, Text } = Typography;
 
-const AssignDriver = ({title, routeGeometry, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, loading, exportToCSV, printToPDF, isUpdate }) => {
+const AssignDriver = ({ title, routeGeometry, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, onClickAssign, loading, exportToCSV, printToPDF, isUpdate }) => {
   const mapRef = useRef(null);
   const routeLayerRef = useRef(null);
   const markersRef = useRef([]);
@@ -43,10 +43,24 @@ const AssignDriver = ({title, routeGeometry, start, stops = [], destination, rou
       });
 
       // Add Google Maps tile layer
-      L.tileLayer("http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+      // L.tileLayer("http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+      //   maxZoom: 19,
+      //   subdomains: ["mt0", "mt1", "mt2", "mt3"],
+      // }).addTo(mapRef.current);
+
+            L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", {
         maxZoom: 19,
-        subdomains: ["mt0", "mt1", "mt2", "mt3"],
+        attribution: '&copy; <a href="https://carto.com/">CARTO</a> contributors'
       }).addTo(mapRef.current);
+
+      // L.tileLayer(`https://{1-4}.aerial.maps.ls.hereapi.com/maptile/2.1/maptile/newest/normal.day/{z}/{x}/{y}/256/png8?apiKey=YOUR_HERE_API_KEY`, {
+      //   maxZoom: 19,
+      //   attribution: '&copy; HERE Maps'
+      // }).addTo(mapRef.current);
+
+
+
+
     }
 
     return () => {
@@ -126,7 +140,7 @@ const AssignDriver = ({title, routeGeometry, start, stops = [], destination, rou
   return (
     <div className="assign-driver-container">
       <Card className="driver-card" bordered={false}>
-        <Title level={4}>{title?title:'Assign Driver'}</Title>
+        <Title level={4}>{title ? title : 'Assign Driver'}</Title>
         <Text type="secondary">
           Sorem ipsum dolor sit amet, consectetur adipiscing elit.
         </Text>
@@ -176,12 +190,12 @@ const AssignDriver = ({title, routeGeometry, start, stops = [], destination, rou
                 "Update Route"
               }
             </Button> : null}
-          <Button type="primary" onClick={() => setShowAssignDriverModal(true)} style={{marginRight:10}}>
+          <Button type="primary" onClick={() => setShowAssignDriverModal(true)} style={{ marginRight: 10 }}>
             Assign Driver
           </Button>
 
           <Tooltip title="Export to CSV">
-            <Button style={{marginRight:10}} icon={<ExportOutlined />} onClick={exportToCSV} />
+            <Button style={{ marginRight: 10 }} icon={<ExportOutlined />} onClick={exportToCSV} />
           </Tooltip>
           <Tooltip title="Print to PDF">
             <Button icon={<PrinterOutlined />} onClick={printToPDF} />
@@ -199,10 +213,9 @@ const AssignDriver = ({title, routeGeometry, start, stops = [], destination, rou
         visible={showAssignDriverModal}
         onCancel={() => setShowAssignDriverModal(false)}
         modalRoute={true}
-        // routeId = {}
+        routeId={routeId}
         onAssign={(driverName) => {
-          onClickSave(driverName)
-          console.log("Driver assigned:", driverName);
+
           setShowAssignDriverModal(false);
         }}
       />

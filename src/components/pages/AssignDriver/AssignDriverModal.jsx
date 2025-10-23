@@ -1,6 +1,6 @@
 // AssignDriverModal.jsx
 import React, { useEffect, useState } from "react";
-import { Modal, Input, Radio, Button, Typography, Avatar } from "antd";
+import { Modal, Input, Radio, Button, Typography, Avatar, message } from "antd";
 import "./AssignDriverModal.css";
 import { dataGet_, dataPut } from "../../utils/myAxios";
 
@@ -19,6 +19,8 @@ const AssignDriverModal = ({ visible, onCancel, onAssign, routeId, modalRoute })
   const [search, setSearch] = useState("");
   const [driversData, setDriverData] = useState([]);
 
+  console.log("Cejkjcllkncnie jionclke. jiooce",routeId);
+  
 
   const getDrivers = async () => {
     try {
@@ -43,17 +45,18 @@ const AssignDriverModal = ({ visible, onCancel, onAssign, routeId, modalRoute })
   }, [])
 
   const assingDriverCreateRoute = () => {
-    if (modalRoute) {
-    onAssign(selectedDriver)
-    } else {
+  
       assignDriver()
-
-    }
   }
   const assignDriver = async () => {
     let data1 = {}
+    console.log("RouteId",routeId);
+    console.log("Dr",selectedDriver);
+    
     const endPoint = `routes/assign/update/${routeId}/${selectedDriver}`;
-    const res = await dataPut(endPoint, data1);
+    const response = await dataPut(endPoint, data1);
+    console.log("RcLip",response?.data);
+              message.success('Route Assigned')
     onAssign()
   }
 

@@ -437,7 +437,7 @@ const SpeedyRoutesList = (props) => {
             <AssignDriverModal
                 visible={showAssignDriverModal}
                 onCancel={() => setShowAssignDriverModal(false)}
-                routeId={singleData?._id}
+                routeId={singleData?.routeId}
                 onAssign={(driverName) => {
                     console.log("Driver assigned:", driverName);
                     setShowAssignDriverModal(false);

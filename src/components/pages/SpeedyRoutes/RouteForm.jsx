@@ -832,6 +832,7 @@ const RouteForm = () => {
               timeSchedule={moment(scheduleTime).format('hh:mm')}
               isUpdate={isUpdate}
               loading={loading}
+              onClickAssign={()=>{}}
               exportToCSV={() => { exportToCSV() }}
               printToPDF={() => { printToPDF() }}
               onClickSave={(val) => {
