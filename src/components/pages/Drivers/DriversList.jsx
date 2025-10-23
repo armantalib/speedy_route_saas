@@ -43,7 +43,7 @@ const DriversList = (props) => {
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [selectedDate, setSelectedDate] = useState("Today");
-    const [selectedStatus, setSelectedStatus] = useState("Completed");
+    const [selectedStatus, setSelectedStatus] = useState("");
     const [selectedDriver, setSelectedDriver] = useState(null);
     const [isEditForm, setIsEditForm] = useState(false);
 const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -64,7 +64,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
     const user_type = localStorage.getItem('user_type')
 
     const dateOptions = ["Today", "Yesterday", "Last 7 Days", "Last Month"];
-    const statusOptions = ["Completed", "In Progress", "Failed", "Cancelled"];
+     const statusOptions = ["active", "deactivated"];
 
     const handleDriverChange = (e) => {
         const { name, value } = e.target;
@@ -143,7 +143,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                 return (
                     <div onClick={() => {
                         setSingleData(row)
-                        setShowModal(true)
+                      
                     }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
                         <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?._id}</p>
                     </div>
@@ -228,7 +228,6 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                 return (
                     <div onClick={() => {
                         setSingleData(row)
-                        setShowModal(true)
                     }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
                         <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?._id}</p>
                     </div>
@@ -293,7 +292,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
         try {
             let allData = [];
             let data1 = {}
-            const endPoint = `users/admin/driver/all/${currentPage}?category=${selectedCategory}&search=${search}`;
+            const endPoint = `users/admin/driver/all/${currentPage}/${search}?category=${selectedCategory}&search=${search}`;
             const res = await dataGet_(endPoint, data1);
 
             if (res?.data) {
@@ -362,7 +361,11 @@ const handleConfirmDelete = async () => {
                             onChange={(e) => setSearch(e.target.value)}
                             style={{ width: 200, marginRight: 10 }}
                         />
-                        <Button type="default">Filter</Button>
+                        <Button type="default"
+                        onClick={()=>{
+                              setShowModal(true)
+                        }}
+                        >Filter</Button>
                         {user_type =='dispatcher'?null:
                         <Button
                             type="primary"
@@ -390,7 +393,7 @@ const handleConfirmDelete = async () => {
             </main>
 
             {/* Existing Filter Modal */}
-            <Modal
+       <Modal
                 show={showModal}
                 onHide={() => setShowModal(false)}
                 centered
@@ -401,28 +404,7 @@ const handleConfirmDelete = async () => {
                 </Modal.Header>
                 <Modal.Body>
                     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                        <div>
-                            <h6 className="mb-2" style={{ fontWeight: "600" }}>Date</h6>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-                                {dateOptions.map((option) => (
-                                    <button
-                                        key={option}
-                                        onClick={() => setSelectedDate(option)}
-                                        style={{
-                                            padding: "6px 14px",
-                                            borderRadius: "7px",
-                                            border: selectedDate === option ? "1.5px solid #4770E4" : "1px solid #ccc",
-                                            background: selectedDate === option ? "#F3F6FF" : "#fff",
-                                            color: selectedDate === option ? "#4770E4" : "#555",
-                                            fontWeight: "400",
-                                            cursor: "pointer",
-                                        }}
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+
 
                         <div>
                             <h6 className="mb-2" style={{ fontWeight: "600" }}>Status</h6>
@@ -430,7 +412,14 @@ const handleConfirmDelete = async () => {
                                 {statusOptions.map((option) => (
                                     <button
                                         key={option}
-                                        onClick={() => setSelectedStatus(option)}
+                                        onClick={() => {
+                                            setSelectedStatus(option)
+                                            if (option == 'active') {
+                                                setSearch('online')
+                                            } else {
+                                                setSearch(option)
+                                            }
+                                        }}
                                         style={{
                                             padding: "6px 14px",
                                             borderRadius: "7px",
@@ -439,6 +428,7 @@ const handleConfirmDelete = async () => {
                                             color: selectedStatus === option ? "#4770E4" : "#555",
                                             fontWeight: "400",
                                             cursor: "pointer",
+                                            textTransform: "capitalize", // ✅ makes text capitalize
                                         }}
                                     >
                                         {option}
@@ -470,6 +460,7 @@ const handleConfirmDelete = async () => {
                             borderRadius: "12px",
                             padding: "6px 16px",
                             fontWeight: "500",
+                            color: "white"
                         }}
                     >
                         Apply

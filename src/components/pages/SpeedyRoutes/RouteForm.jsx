@@ -799,7 +799,7 @@ const RouteForm = () => {
                     {/* <Button onClick={handleCancel} className="cancel-btn">
                     Cancel
                   </Button> */}
-                    <Button type="primary" className="optimize-btn" onClick={createRouteOptimizeCheck}>
+                    <Button type="primary" disabled={true} className="optimize-btn" onClick={createRouteOptimizeCheck}>
                       {loading ? "Optimizing Route..." : "Optimize Route"}
                     </Button>
                     {/* <Tooltip title="Export to CSV">

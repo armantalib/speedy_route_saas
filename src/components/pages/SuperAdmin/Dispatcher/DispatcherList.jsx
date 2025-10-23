@@ -44,7 +44,7 @@ const DispatcherList = (props) => {
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [selectedDate, setSelectedDate] = useState("Today");
-    const [selectedStatus, setSelectedStatus] = useState("Completed");
+    const [selectedStatus, setSelectedStatus] = useState("active");
     const [selectedDriver, setSelectedDriver] = useState(null);
     const [isEditForm, setIsEditForm] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -61,10 +61,10 @@ const DispatcherList = (props) => {
     });
     const [imagePreview, setImagePreview] = useState(null);
     const dispatch = useDispatch();
-    dispatch(setHeaderName('Clients'))
+    dispatch(setHeaderName('Dispatcher'))
 
     const dateOptions = ["Today", "Yesterday", "Last 7 Days", "Last Month"];
-    const statusOptions = ["Completed", "In Progress", "Failed", "Cancelled"];
+    const statusOptions = ["active", "deactivated"];
 
     const handleDriverChange = (e) => {
         const { name, value } = e.target;
@@ -136,14 +136,14 @@ const DispatcherList = (props) => {
 
     const columns = [
         {
-            name: 'Client Name',
+            name: 'Dispatcher Name',
             allowoverflow: true,
             width: '250px',
             cell: (row) => {
                 return (
                     <div onClick={() => {
                         setSingleData(row)
-                        setShowModal(true)
+
                     }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
                         <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.name}</p>
                     </div>
@@ -199,7 +199,7 @@ const DispatcherList = (props) => {
                         <span style={{
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
                             color: row?.status == 'deactivated' ? '#CA8A04' : '#22C55E'
-                        }}>{row?.status =='online'?'Active':row?.status}</span>
+                        }}>{row?.status == 'online' ? 'Active' : row?.status}</span>
                     </div>
                 )
             }
@@ -229,7 +229,7 @@ const DispatcherList = (props) => {
         try {
             let allData = [];
             let data1 = {}
-            const endPoint = `users/s-admin/dispatcher/all/${currentPage}?category=${selectedCategory}&search=${search}`;
+            const endPoint = `users/s-admin/dispatcher/all/${currentPage}/${search}?category=${selectedCategory}&search=${search}`;
             const res = await dataGet_(endPoint, data1);
 
             if (res?.data) {
@@ -252,6 +252,8 @@ const DispatcherList = (props) => {
     const handleClear = () => {
         setSelectedDate(null);
         setSelectedStatus(null);
+        setSearch('')
+        setShowModal(false)
     };
     const handleDeleteClick = (driver) => {
         setDriverToDelete(driver);
@@ -293,11 +295,15 @@ const DispatcherList = (props) => {
                     <div>
                         <Input.Search
                             placeholder="Search"
-                            value={search}
+                            // value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             style={{ width: 200, marginRight: 10 }}
                         />
-                        <Button type="default">Filter</Button>
+                        <Button type="default"
+                            onClick={() => {
+                                setShowModal(true)
+                            }}
+                        >Filter</Button>
                         <Button
                             type="primary"
                             icon={<PlusOutlined />}
@@ -334,28 +340,7 @@ const DispatcherList = (props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                        <div>
-                            <h6 className="mb-2" style={{ fontWeight: "600" }}>Date</h6>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-                                {dateOptions.map((option) => (
-                                    <button
-                                        key={option}
-                                        onClick={() => setSelectedDate(option)}
-                                        style={{
-                                            padding: "6px 14px",
-                                            borderRadius: "7px",
-                                            border: selectedDate === option ? "1.5px solid #4770E4" : "1px solid #ccc",
-                                            background: selectedDate === option ? "#F3F6FF" : "#fff",
-                                            color: selectedDate === option ? "#4770E4" : "#555",
-                                            fontWeight: "400",
-                                            cursor: "pointer",
-                                        }}
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+
 
                         <div>
                             <h6 className="mb-2" style={{ fontWeight: "600" }}>Status</h6>
@@ -363,7 +348,14 @@ const DispatcherList = (props) => {
                                 {statusOptions.map((option) => (
                                     <button
                                         key={option}
-                                        onClick={() => setSelectedStatus(option)}
+                                        onClick={() => {
+                                            setSelectedStatus(option)
+                                            if (option == 'active') {
+                                                setSearch('online')
+                                            } else {
+                                                setSearch(option)
+                                            }
+                                        }}
                                         style={{
                                             padding: "6px 14px",
                                             borderRadius: "7px",
@@ -372,6 +364,7 @@ const DispatcherList = (props) => {
                                             color: selectedStatus === option ? "#4770E4" : "#555",
                                             fontWeight: "400",
                                             cursor: "pointer",
+                                            textTransform: "capitalize", // ✅ makes text capitalize
                                         }}
                                     >
                                         {option}
@@ -403,6 +396,7 @@ const DispatcherList = (props) => {
                             borderRadius: "12px",
                             padding: "6px 16px",
                             fontWeight: "500",
+                            color: "white"
                         }}
                     >
                         Apply
@@ -491,15 +485,7 @@ const DispatcherList = (props) => {
                     fetchData();
                 }}
             />
-            <DriverDetailsModal
-                visible={showDriverDetail}
-                driver={selectedDriver}
-                onClose={() => {
-                    setSelectedDriver(null)
-                    setShowDriverDetail(false)
-                }
-                }
-            />
+
 
 
         </StyleSheetManager>
