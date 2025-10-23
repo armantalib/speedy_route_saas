@@ -34,8 +34,8 @@ const LiveDriverMap = () => {
   
   return (
     <MapContainer
-      center={[-34.557319, 150.366009]}
-      zoom={12}
+      center={[38.689582665351594, -101.67054287037817]}
+      zoom={5}
       scrollWheelZoom
       style={{ height: "800px", width: "100%" }}
     >

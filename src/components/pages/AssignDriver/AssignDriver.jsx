@@ -13,7 +13,7 @@ import { CircularProgress } from "@mui/material";
 
 const { Title, Text } = Typography;
 
-const AssignDriver = ({ routeGeometry, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, loading, exportToCSV, printToPDF, isUpdate }) => {
+const AssignDriver = ({title, routeGeometry, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, loading, exportToCSV, printToPDF, isUpdate }) => {
   const mapRef = useRef(null);
   const routeLayerRef = useRef(null);
   const markersRef = useRef([]);
@@ -126,7 +126,7 @@ const AssignDriver = ({ routeGeometry, start, stops = [], destination, routeName
   return (
     <div className="assign-driver-container">
       <Card className="driver-card" bordered={false}>
-        <Title level={4}>Assign Driver</Title>
+        <Title level={4}>{title?title:'Assign Driver'}</Title>
         <Text type="secondary">
           Sorem ipsum dolor sit amet, consectetur adipiscing elit.
         </Text>

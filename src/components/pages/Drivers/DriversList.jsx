@@ -210,14 +210,82 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                             setSingleData(row)
                             setIsEditForm(true)
                         }} alt="" /></button>
-                        <button className="bg-[#CE2C60] flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[12px] h-auto" src={trash} onClick={()=>{
+                        {/* <button className="bg-[#CE2C60] flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[12px] h-auto" src={trash} onClick={()=>{
                             handleDeleteClick(row)
-                        }} alt="" /></button>
+                        }} alt="" /></button> */}
 
                     </div>
                 )
             }
         },
+    ]
+     const columnsDis = [
+        {
+            name: 'ID',
+            allowoverflow: true,
+            width: '290px',
+            cell: (row) => {
+                return (
+                    <div onClick={() => {
+                        setSingleData(row)
+                        setShowModal(true)
+                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?._id}</p>
+                    </div>
+                )
+            }
+        },
+        {
+            name: 'Name',
+            allowoverflow: true,
+            width: '290px',
+            cell: (row) => {
+                return (
+                    <div onClick={() => {
+                        console.log("Ec", row);
+
+                        setSingleData(row)
+                        setSelectedDriver(row)
+                        setShowDriverDetail(true)
+                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                        <img src={row?.user?.image ? row?.user?.image : avatar1} alt="Girl in a jacket" style={{ borderRadius: 100, width: 40, height: 40 }} />
+                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.name}</p>
+                    </div>
+                )
+            }
+        },
+        {
+            name: 'Status',
+            allowoverflow: true,
+            width: '290px',
+            cell: (row) => {
+                return (
+                    <div style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        backgroundColor: row?.status == 'draft' ? '#FEF9C3' : '#EDFEED',
+                        padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15
+                    }}>
+                        <span style={{
+                            fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
+                            color: row?.status == 'offline' ? '#CA8A04' : '#22C55E'
+                        }}>{row?.status}</span>
+                    </div>
+                )
+            }
+        },
+        {
+            name: 'Last Active',
+            sortable: true,
+            width: '290px',
+            selector: row => row?.lastActive ? moment(row?.lastActive).fromNow() : 'N/A'
+        },
+        {
+            name: 'Assigned Route',
+            sortable: true,
+            width: '290px',
+            selector: row => row?.driver?.name ? row?.driver?.name : 'N/A'
+        },
+     
     ]
 
     const fetchData = async () => {
@@ -266,10 +334,11 @@ const handleConfirmDelete = async () => {
     alert("Failed to delete driver");
   }
 };
+
     return (
         <StyleSheetManager shouldForwardProp={(prop) => !['sortActive'].includes(prop)}>
-            <DriverStats />
-            <main className="min-h-screen lg:container py-1 px-4 mx-auto">
+            {/* <DriverStats />  */}
+            <main className="min-h-screen lg:container mt-5 py-1 px-4 mx-auto">
 
                 <div className="flex justify-between gap-3 items-center w-full">
                     {/* <div className="flex flex-col mb-3 w-full">
@@ -316,7 +385,7 @@ const handleConfirmDelete = async () => {
                         <main className='my-5 d-flex w-100 justify-content-center align-items-center'>
                             <span className="text_secondary plusJakara_medium">No Dates Found</span>
                         </main> :
-                        <ProductTableFetch columns={columns} showFilter={true} data={data} totalPage={totalPages} currentPageSend={(val) => { setCurrentPage(val) }} currentPage={currentPage - 1} />
+                        <ProductTableFetch columns={user_type==='dispatcher'?columnsDis:columns} showFilter={true} data={data} totalPage={totalPages} currentPageSend={(val) => { setCurrentPage(val) }} currentPage={currentPage - 1} />
                 }
             </main>
 

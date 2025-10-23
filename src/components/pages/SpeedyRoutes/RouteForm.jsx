@@ -50,6 +50,8 @@ const RouteForm = () => {
   const [scheduleDate, setScheduleDate] = useState(null);
   const [scheduleTime, setScheduleTime] = useState(null);
   const [routeGeom, setRouteGeom] = useState(null); // GeoJSON data for the route
+  const [isRouteCreate, setIsRouteCreate] = useState(false);
+
   const [duration, setDuration] = useState(0);
   const [distance, setDistance] = useState(0);
   const [loading, setIsLoading] = useState(false);
@@ -69,13 +71,31 @@ const RouteForm = () => {
     try {
       const response = await axios.get(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json`,
-        { params: { access_token: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN, limit: 5 } }
+        { params: { access_token: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN, limit: 10 } }
       );
       setSearchResults(response.data.features);
     } catch (err) {
       console.error("Mapbox search error:", err);
     }
   };
+
+// const handleSearch = async (query) => {
+//   if (!query) return;
+
+//   try {
+//     const response = await axios.get("https://autocomplete.search.hereapi.com/v1/autocomplete", {
+//       params: {
+//         apiKey: process.env.REACT_APP_HERE_API_KEY,
+//         q: query,
+//         limit: 10,
+//       },
+//     });
+
+//     setSearchResults(response.data.items);
+//   } catch (err) {
+//     console.error("HERE autocomplete error:", err);
+//   }
+// };
 
   const handleSearchFromDb = async (val) => {
     if (!val) return;
@@ -364,12 +384,19 @@ const RouteForm = () => {
       setStops(optimizedStops);
       await setDuration(optimizeResponse.data.duration)
       await setDistance(optimizeResponse.data.distance)
+       
     } catch (error) {
       console.error("Error optimizing route:", error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+  if (routeGeom && distance && duration && isRouteCreate) {
+    saveDraftData(null);
+  }
+}, [duration, distance,routeGeom,isRouteCreate]);
 
   const fetchOptimizedRoute = async (optimizedWaypoints) => {
     try {
@@ -384,12 +411,11 @@ const RouteForm = () => {
       console.log("R", routeData);
 
       setRouteGeom(routeData); // Set the GeoJSON data for the route
+      if(!isUpdate){
+      setIsRouteCreate(true)
+      }
       setShowMap(true)
-      setTimeout(() => {
-        if (isUpdate) return
-        saveDraftData(null);
-
-      }, 1000);
+    
       //setDuration(routeData.properties.summary.duration / 3600); // Convert duration to hours
       //setDistance(routeData.properties.summary.length / 1000); // Convert distance to kilometers
     } catch (error) {
@@ -436,7 +462,7 @@ const RouteForm = () => {
 
     const stops12 = stops.map((stop) => stop.coordinates);
 
-    const endPoint = isUpdate ? `routes/admin/update/${routeDetail?._id}` : `routes/create`;
+    const endPoint = `routes/create`;
     let data1 = {
       routeId: routeIdGen,
       name: routeName,
@@ -452,15 +478,55 @@ const RouteForm = () => {
       duration: duration,
     };
 
-    const response = isUpdate || isDriver ? await dataPut(endPoint, data1) : await dataPost(endPoint, data1);
+    const response = await dataPost(endPoint, data1);
+    setIsRouteCreate(false)
+    message.success('Route Created Successfully');
+    setIsLoading(false);
+  };
+
+    const updateDraftData = async (isDriver) => {
+    setIsLoading(true);
+
+    await saveStopsToDB(); // 🔹 Save stops to DB first
+
+    const startPoint = {
+      latitude: start?.coordinates[1],
+      longitude: start?.coordinates[0],
+      address: start?.place_name
+    };
+
+    const endPointAddress = {
+      latitude: destination?.coordinates[1],
+      longitude: destination?.coordinates[0],
+      address: destination?.place_name,
+      status: 'pending', name: '', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
+    };
+
+    const stops12 = stops.map((stop) => stop.coordinates);
+
+    const endPoint = `routes/admin/update/${routeDetail?._id}`;
+    let data1 = {
+      routeId: routeIdGen,
+      name: routeName,
+      startPoint: startPoint,
+      endPoint: endPointAddress?.latitude ? endPointAddress : null,
+      scheduleDate: scheduleDate,
+      scheduleTime: scheduleTime,
+      isRound: options?.roundTrip,
+      isReverse: options?.reverseOrder,
+      stops: stops12,
+      stopsData: stops,
+      routeGeometry: routeGeom,
+      duration: duration,
+    };
+
+    const response = await dataPut(endPoint, data1)
     if (isDriver) {
       assignDriverFun(response?.data?.data?._id, isDriver)
       return
     }
-    if (isUpdate) {
       navigate('/route/list');
-    }
-    message.success(isUpdate ? 'Route Updated Successfully' : 'Route Created Successfully');
+    message.success('Route Updated Successfully');
     setIsLoading(false);
   };
 
@@ -769,7 +835,7 @@ const RouteForm = () => {
               exportToCSV={() => { exportToCSV() }}
               printToPDF={() => { printToPDF() }}
               onClickSave={(val) => {
-                saveDraftData(val)
+                updateDraftData(val)
 
               }}
 

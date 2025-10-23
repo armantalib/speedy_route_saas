@@ -38,7 +38,7 @@ const SettingsPasswordForm = () => {
 
       <Divider />
 
-      <div className="login-devices-section">
+      {/* <div className="login-devices-section">
         <Typography.Title level={5}>Where you’re logged in</Typography.Title>
         <p className="device-subtitle">
           We’ll alert you via <span className="email">olivia@xyz.com</span> if
@@ -69,7 +69,7 @@ const SettingsPasswordForm = () => {
           </div>
           <EllipsisOutlined className="device-menu" />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

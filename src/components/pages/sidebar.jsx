@@ -196,7 +196,7 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
                                     </div>
                                     <p style={{ fontWeight: '500', color: '#1B1B1B', marginTop: 15 }}>Trial plan</p>
                                     <p style={{ fontWeight: '400', color: '#73757C', fontSize: 12, marginTop: -10 }}>You’re on the Basic Plan. Max 5 routes/day.</p>
-
+                                    {user_type==='dispatcher'?null:
                                     <Button
                                         size="middle"
                                         variant="primary"
@@ -207,6 +207,7 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
                                     >
                                         Upgrade Plan
                                     </Button>
+}
                                 </div>:null}
                             </div>
                         </Sidebar>

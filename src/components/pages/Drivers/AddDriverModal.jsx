@@ -31,6 +31,8 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
     setLoader(false)
     if (response?.data?.success) {
       onClose();
+    form.resetFields();
+
     } else {
       message.error(response?.data?.message)
     }

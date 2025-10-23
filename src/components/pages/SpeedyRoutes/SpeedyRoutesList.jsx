@@ -22,6 +22,7 @@ import styles2 from "../Drivers/DriverTable.module.css";
 import { Button, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { setRouteDetail } from '../../../storeTolkit/routeSlice';
+import AssignDriver from '../AssignDriver/AssignDriver';
 const SpeedyRoutesList = (props) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
@@ -44,6 +45,7 @@ const SpeedyRoutesList = (props) => {
     const [selectedDate, setSelectedDate] = useState("Today");
     const [selectedStatus, setSelectedStatus] = useState("Completed");
     const [showAssignDriverModal, setShowAssignDriverModal] = useState(false);
+    const [routeDetailsShow, setRouteDetailsShow] = useState(false);
     const dispatch = useDispatch();
     dispatch(setHeaderName('Routes'))
 
@@ -94,7 +96,7 @@ const SpeedyRoutesList = (props) => {
             cell: (row) => {
                 return (
                     <div onClick={() => {
-                        setSingleData(row)
+
                         // setShowModal(true)
                     }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
                         {/* <button className="bg-[#2B7F75] flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[12px] h-auto" src={preview} alt="" /></button> */}
@@ -157,10 +159,7 @@ const SpeedyRoutesList = (props) => {
             width: '250px',
             cell: (row) => {
                 return (
-                    <div onClick={() => {
-                        setSingleData(row)
-
-                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
                         {/* <button className="bg-[#2B7F75] flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[12px] h-auto" src={preview} alt="" /></button> */}
                         {/* <img src={row?.user?.image ? row?.user?.image : avatar1} alt="Girl in a jacket" style={{ borderRadius: 100, width: 40, height: 40 }} /> */}
                         <p style={{ marginLeft: 10, fontWeight: 700, fontSize: 14, color: '#4770E4', cursor: 'pointer', textDecoration: 'underline' }}
@@ -172,7 +171,13 @@ const SpeedyRoutesList = (props) => {
                             setSingleData(row)
                             setShowAssignDriverModal(true)
                         }}>{'Assign Route'}</p>
-                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14, color: '#73757C', cursor: 'pointer', textDecoration: 'underline' }}>{'Details'}</p>
+                        <p
+                            onClick={() => {
+                                setSingleData(row)
+                                 dispatch(setRouteDetail(row))
+                                setRouteDetailsShow(trash)
+                            }}
+                            style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14, color: '#73757C', cursor: 'pointer', textDecoration: 'underline' }}>{'Details'}</p>
                     </div>
                 )
             }
@@ -228,7 +233,7 @@ const SpeedyRoutesList = (props) => {
 
     const moveNext = async (item) => {
         // console.log("Clock",item);
-        
+
         // localStorage.setItem('route_data', JSON.stringify(item))
         dispatch(setRouteDetail(item))
         navigate('/route/form');
@@ -246,50 +251,82 @@ const SpeedyRoutesList = (props) => {
 
     return (
         <StyleSheetManager shouldForwardProp={(prop) => !['sortActive'].includes(prop)}>
-            <main className="min-h-screen lg:container py-5 px-4 mx-auto">
+            {!routeDetailsShow ?
+                <main className="min-h-screen lg:container py-5 px-4 mx-auto">
 
 
 
-                <div className={styles2.tableHeader}>
-                    <h3></h3>
-                    <div>
-                        <Input.Search
-                            placeholder="Search"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            style={{ width: 200, marginRight: 10 }}
-                        />
-                        <Button type="default"
-                            onClick={() => {
-                                setShowModal(true)
-                            }}
-                        >Filter</Button>
-                        <Button
-                            type="primary"
-                            icon={<PlusOutlined />}
-                            style={{ marginLeft: 10 }}
-                            onClick={() => {
-                                dispatch(setRouteDetail(null))
-                                navigate('/route/form')
+                    <div className={styles2.tableHeader}>
+                        <h3></h3>
+                        <div>
+                            <Input.Search
+                                placeholder="Search"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                style={{ width: 200, marginRight: 10 }}
+                            />
+                            <Button type="default"
+                                onClick={() => {
+                                    setShowModal(true)
+                                }}
+                            >Filter</Button>
+                            <Button
+                                type="primary"
+                                icon={<PlusOutlined />}
+                                style={{ marginLeft: 10 }}
+                                onClick={() => {
+                                    dispatch(setRouteDetail(null))
+                                    navigate('/route/form')
 
-                            }}
-                        >
-                            New Route
-                        </Button>
+                                }}
+                            >
+                                New Route
+                            </Button>
+                        </div>
                     </div>
+
+                    {loading ? <main className='my-5 d-flex w-100 justify-content-center align-items-center'>
+                        <CircularProgress size={24} className='text_dark' />
+                    </main> :
+                        !data || data.length === 0 ?
+                            <main className='my-5 d-flex w-100 justify-content-center align-items-center'>
+                                <span className="text_secondary plusJakara_medium">No Dates Found</span>
+                            </main> :
+                            <ProductTableFetch columns={columns} showFilter={true} data={data} totalPage={totalPages} currentPageSend={(val) => { setCurrentPage(val) }} currentPage={currentPage - 1} />
+                    }
+                </main>
+                :
+                <div className="map-layout">
+                    <div className="map-section">
+                        <AssignDriver
+                            routeGeometry={singleData?.routeGeometry} // Pass GeoJSON data to MapComponent
+                            start={[singleData?.startPoint?.longitude,singleData?.startPoint?.latitude]}
+                            stops={singleData.stopsData.map((stop) => stop.coordinates)}
+                            stopData={singleData.stopsData}
+                            destination={[singleData?.endPoint?.longitude,singleData?.endPoint?.latitude]}
+                            // destination={start?.coordinates}
+                            routeName={singleData?.name}
+                            routeId={singleData?.routeId}
+                            startPoint={singleData?.startPoint?.address}
+                            endPoint={singleData?.endPoint?.address}
+                            dateSchedule={moment(singleData?.scheduleDate).format('DD MMM YYYY')}
+                            timeSchedule={moment(singleData?.scheduleTime).format('hh:mm')}
+                            isUpdate={false}
+                            loading={loading}
+                            title="Route Detail"
+                            exportToCSV={() => {}}
+                            printToPDF={() => { }}
+                            onClickSave={(val) => {
+               
+
+                            }}
+
+
+                        />
+                    </div>
+
                 </div>
-
-                {loading ? <main className='my-5 d-flex w-100 justify-content-center align-items-center'>
-                    <CircularProgress size={24} className='text_dark' />
-                </main> :
-                    !data || data.length === 0 ?
-                        <main className='my-5 d-flex w-100 justify-content-center align-items-center'>
-                            <span className="text_secondary plusJakara_medium">No Dates Found</span>
-                        </main> :
-                        <ProductTableFetch columns={columns} showFilter={true} data={data} totalPage={totalPages} currentPageSend={(val) => { setCurrentPage(val) }} currentPage={currentPage - 1} />
-                }
-            </main>
-
+            }
             <Modal
                 show={showModal}
                 onHide={() => setShowModal(false)}

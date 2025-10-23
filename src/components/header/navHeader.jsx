@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState,useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { arrowdown, arrowdownlight, avatarman, cart, favourite, notification, searchbar } from '../icons/icon';
 import { Menu, Transition } from '@headlessui/react';
@@ -8,11 +8,14 @@ import { Navbar, Nav, Container, Modal } from 'react-bootstrap';
 import { useMediaQuery } from 'react-responsive';
 import { message } from 'antd';
 import { useSelector } from 'react-redux';
+import { dataGet_ } from '../utils/myAxios';
 
 const NavHeader = ({ broken, setToggled, toggled }) => {
     const isSmallScreen = useMediaQuery({ query: '(max-width: 768px)' });
     const [isModalOpen, setIsModalOpen] = useState(false);
-     const {headerName} = useSelector((state) => state?.user);
+    const [daysRemain, setDaysRemain] = useState(7);
+    const [daysRemainAll, setDaysRemainAll] = useState(null);
+    const { headerName } = useSelector((state) => state?.user);
     const navigate = useNavigate();
 
     const openModal = () => setIsModalOpen(true);
@@ -30,38 +33,45 @@ const NavHeader = ({ broken, setToggled, toggled }) => {
         navigate('/login');
     };
 
+    useEffect(() => {
+    checkExpiryDays()
+    }, [])
+    
+
+    const checkExpiryDays = async () => {
+        const trial_days = localStorage.getItem('trial_days');
+        if(trial_days){
+            setDaysRemain(trial_days?.remainingDays)
+            setDaysRemainAll(trial_days?.plan?.plan)
+        }
+        const endPoint = 'company/subscribe/check/company-trial'
+        const response = await dataGet_(endPoint, {});
+        if(response?.data?.success){
+            setDaysRemain(response?.data?.remainingDays)
+            
+            setDaysRemainAll(response?.data?.plan?.plan)
+            localStorage.setItem('trial_days',response?.data)
+        }
+    }
+
     return (
         <>
             <Navbar bg="white" expand="lg" sticky="top" className='p-3 shadow-sm w-[100%]' id="navbar">
-                <Container fluid="lg" className='w-full' >
-                    <div className='flex items-center gap-3 md:w-1/2'>
-                        {broken && (
-                            <button className="sb-button" onClick={() => setToggled(!toggled)}>
-                                <MdMenu size={28} />
-                            </button>
-                        )}
-                        <h5 className="d-none d-md-block poppins_semibold mb-0 text_dark">{headerName}</h5>
+                <div className='flex items-center gap-3 md:w-1/2'>
+                    {broken && (
+                        <button className="sb-button" onClick={() => setToggled(!toggled)}>
+                            <MdMenu size={28} />
+                        </button>
+                    )}
+                    <h5 className="d-none d-md-block poppins_semibold mb-0 text_dark">{headerName}</h5>
 
-                        {/* {isSmallScreen && (
-                            <div>
-                                <img src={searchbar} className='cursor-pointer' alt="" onClick={openModal} />
-                                <Modal show={isModalOpen} onHide={closeModal}>
-                                    <Modal.Body className='p-0'>
-                                        <div className="flex items-center">
-                                            <img src={searchbar} className='absolute m-2' alt="" />
-                                            <input type="text" className='w-full ps-10 py-[10px] border border-white rounded' placeholder='Search anything here' name="" id="" />
-                                        </div>
-                                    </Modal.Body>
-                                </Modal>
-                            </div>
-                        )}
-                        {!isSmallScreen && (
-                            <div className='hidden md:block w-full'>
-                                <img src={searchbar} className='absolute m-2' alt="" />
-                                <input type="text" className='ps-10 py-2 w-full' placeholder='Search anything here' name="" id="" />
-                            </div>
-                        )} */}
-                    </div>
+
+                </div>
+                <Container fluid="lg" className='w-full' >
+                    {daysRemainAll=='trial'?
+                    <div style={{ padding: 10, backgroundColor: '#FEF9C3', borderRadius: 10, marginLeft: 30 }}>
+                        <h6 className="d-none d-md-block poppins_regular mb-0 text_dark" style={{ color: '#CA8A04', fontSize: 14 }}>You have {daysRemain} days left before your trial expires.</h6>
+                    </div>:null}
                     <Nav className="ms-auto flex">
                         <div className='flex justify-center items-center'>
                             <Menu as="div" className="relative">
