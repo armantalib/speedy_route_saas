@@ -57,6 +57,7 @@ const RouteForm = () => {
   const [loading, setIsLoading] = useState(false);
   const [updateData, setUpdateData] = useState(null);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [isButtonDisable, setIsButtonDisabled] = useState(true);
   const [customerStopId, setCustomerStopId] = useState(null);
   const navigate = useNavigate();
   const { routeDetail } = useSelector((state) => state?.route);
@@ -79,23 +80,23 @@ const RouteForm = () => {
     }
   };
 
-// const handleSearch = async (query) => {
-//   if (!query) return;
+  // const handleSearch = async (query) => {
+  //   if (!query) return;
 
-//   try {
-//     const response = await axios.get("https://autocomplete.search.hereapi.com/v1/autocomplete", {
-//       params: {
-//         apiKey: process.env.REACT_APP_HERE_API_KEY,
-//         q: query,
-//         limit: 10,
-//       },
-//     });
+  //   try {
+  //     const response = await axios.get("https://autocomplete.search.hereapi.com/v1/autocomplete", {
+  //       params: {
+  //         apiKey: process.env.REACT_APP_HERE_API_KEY,
+  //         q: query,
+  //         limit: 10,
+  //       },
+  //     });
 
-//     setSearchResults(response.data.items);
-//   } catch (err) {
-//     console.error("HERE autocomplete error:", err);
-//   }
-// };
+  //     setSearchResults(response.data.items);
+  //   } catch (err) {
+  //     console.error("HERE autocomplete error:", err);
+  //   }
+  // };
 
   const handleSearchFromDb = async (val) => {
     if (!val) return;
@@ -307,7 +308,10 @@ const RouteForm = () => {
     // saveStopsToDB()
     // return
     // await handleSaveAddresses()
-    const waypoints = [start, ...stops, destination].filter(Boolean);
+    let waypoints = [start, ...stops, destination].filter(Boolean);
+    if (options?.roundTrip) {
+      waypoints = [start, ...stops, destination,start].filter(Boolean);
+    }
     if (waypoints.length < 2) {
       console.error("At least 2 waypoints are required for optimization.");
       return;
@@ -384,7 +388,7 @@ const RouteForm = () => {
       setStops(optimizedStops);
       await setDuration(optimizeResponse.data.duration)
       await setDistance(optimizeResponse.data.distance)
-       
+
     } catch (error) {
       console.error("Error optimizing route:", error);
     } finally {
@@ -393,10 +397,10 @@ const RouteForm = () => {
   };
 
   useEffect(() => {
-  if (routeGeom && distance && duration && isRouteCreate) {
-    saveDraftData(null);
-  }
-}, [duration, distance,routeGeom,isRouteCreate]);
+    if (routeGeom && distance && duration && isRouteCreate) {
+      saveDraftData(null);
+    }
+  }, [duration, distance, routeGeom, isRouteCreate]);
 
   const fetchOptimizedRoute = async (optimizedWaypoints) => {
     try {
@@ -411,11 +415,11 @@ const RouteForm = () => {
       console.log("R", routeData);
 
       setRouteGeom(routeData); // Set the GeoJSON data for the route
-      if(!isUpdate){
-      setIsRouteCreate(true)
+      if (!isUpdate) {
+        setIsRouteCreate(true)
       }
       setShowMap(true)
-    
+
       //setDuration(routeData.properties.summary.duration / 3600); // Convert duration to hours
       //setDistance(routeData.properties.summary.length / 1000); // Convert distance to kilometers
     } catch (error) {
@@ -484,7 +488,7 @@ const RouteForm = () => {
     setIsLoading(false);
   };
 
-    const updateDraftData = async (isDriver) => {
+  const updateDraftData = async (isDriver) => {
     setIsLoading(true);
 
     await saveStopsToDB(); // 🔹 Save stops to DB first
@@ -525,7 +529,7 @@ const RouteForm = () => {
       assignDriverFun(response?.data?.data?._id, isDriver)
       return
     }
-      navigate('/route/list');
+    navigate('/route/list');
     message.success('Route Updated Successfully');
     setIsLoading(false);
   };
@@ -741,8 +745,6 @@ const RouteForm = () => {
                             onSearch={handleSearch}
                             onSelect={(val, opt) => {
                               const updated = [...stops];
-
-
                               updated[index] = {
                                 ...updated[index],
                                 place_name: opt.result.place_name,
@@ -750,8 +752,23 @@ const RouteForm = () => {
                                 coordinates: opt.result.geometry.coordinates,
                                 status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
                               };
-
                               setStops(updated);
+                              const allHaveCoordinates = updated.every(
+                                (stop) =>
+                                  stop.coordinates &&
+                                  Array.isArray(stop.coordinates) &&
+                                  stop.coordinates.length === 2 &&
+                                  stop.coordinates[0] != null &&
+                                  stop.coordinates[1] != null
+                              );
+
+                              if (allHaveCoordinates) {
+                                console.log("✅ All stops have valid coordinates");
+                                setIsButtonDisabled(false)
+                              } else {
+                                console.log("⚠️ Some stops are missing coordinates");
+                                setIsButtonDisabled(true)
+                              }
                             }}
 
                             options={renderOptions()}
@@ -787,6 +804,7 @@ const RouteForm = () => {
                       onClick={() => {
                         setStops([...stops, { place_name: "", name: "", coordinates: null, status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: '' }]);
                         setNotes((prev) => ({ ...prev, stops: [...prev.stops, ""] }));
+                        setIsButtonDisabled(true)
                       }}
                     >
                       Add Stops
@@ -799,7 +817,7 @@ const RouteForm = () => {
                     {/* <Button onClick={handleCancel} className="cancel-btn">
                     Cancel
                   </Button> */}
-                    <Button type="primary" disabled={true} className="optimize-btn" onClick={createRouteOptimizeCheck}>
+                    <Button type="primary" disabled={isButtonDisable} className="optimize-btn" onClick={createRouteOptimizeCheck}>
                       {loading ? "Optimizing Route..." : "Optimize Route"}
                     </Button>
                     {/* <Tooltip title="Export to CSV">
@@ -832,7 +850,7 @@ const RouteForm = () => {
               timeSchedule={moment(scheduleTime).format('hh:mm')}
               isUpdate={isUpdate}
               loading={loading}
-              onClickAssign={()=>{}}
+              onClickAssign={() => { }}
               exportToCSV={() => { exportToCSV() }}
               printToPDF={() => { printToPDF() }}
               onClickSave={(val) => {
