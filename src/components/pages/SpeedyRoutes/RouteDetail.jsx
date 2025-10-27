@@ -34,7 +34,7 @@ import { useSelector } from "react-redux";
 const { Title, Paragraph, Text } = Typography;
 const { TabPane } = Tabs;
 
-const RouteForm = () => {
+const RouteDetail = () => {
   const [showMap, setShowMap] = useState(false);
 
   // Autocomplete + notes states (from DrawerComponent)
@@ -56,7 +56,7 @@ const RouteForm = () => {
   const [distance, setDistance] = useState(0);
   const [loading, setIsLoading] = useState(false);
   const [updateData, setUpdateData] = useState(null);
-  const [isUpdate, setIsUpdate] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(true);
   const [isButtonDisable, setIsButtonDisabled] = useState(true);
   const [customerStopId, setCustomerStopId] = useState(null);
   const navigate = useNavigate();
@@ -576,264 +576,7 @@ const RouteForm = () => {
 
   return (
     <>
-      {!showMap ? (
-        <div className="route-form-container-main">
-          <div className="route-form-container">
-            <div className="route-header">
-              <div className="route-icon">
-                <img src={new_route_icon} alt="Route" width={50} height={50} />
-              </div>
-              <Title level={3}>{isUpdate ? "Update Route" : "New Route"}</Title>
-              <Paragraph>
-                Sorem ipsum dolor sit amet, consectetur adipiscing elit.
-              </Paragraph>
-            </div>
-
-            <Tabs defaultActiveKey="1" centered className="route-tabs">
-              <TabPane tab="Manual Entry" key="1">
-                <Form layout="vertical">
-                  <div className="form-grid">
-                    <Form.Item label="Auto Route ID">
-                      <Input placeholder="#R1234" disabled value={routeIdGen}
-
-                      />
-                    </Form.Item>
-                    <Form.Item label="Route Name (optional)">
-                      <Input placeholder="Name"
-                        value={routeName}
-                        onChange={(e) => { setRouteName(e.target.value) }}
-                      />
-                    </Form.Item>
-
-                    {/* Start Point Autocomplete */}
-                    <Form.Item label="Start Point">
-                      <AutoComplete
-                        placeholder="Enter start point"
-                        value={start?.place_name || queries.start}   // ✅ pre-fill from update data
-                        onChange={(v) => {
-                          setQueries({ ...queries, start: v })
-                          setStart({ ...start, place_name: v })
-                        }}
-                        onSearch={handleSearch}
-                        onSelect={(val, opt) => handleSelect(val, opt, "start")}
-                        options={renderOptions()}
-                      />
-                    </Form.Item>
-
-                    {/* Destination Autocomplete */}
-                    <Form.Item label="End Point (optional)">
-                      <AutoComplete
-                        placeholder="Enter end point"
-                        disabled={options?.roundTrip}
-                        value={destination?.place_name || queries.destination}  // ✅ pre-fill
-                        onChange={(v) => {
-                          setQueries({ ...queries, destination: v })
-                          setDestination({ ...destination, place_name: v })
-                        }}
-                        onSearch={handleSearch}
-                        onSelect={(val, opt) => handleSelect(val, opt, "destination")}
-                        options={renderOptions()}
-                      />
-                    </Form.Item>
-
-                    <Form.Item label="Scheduled Date">
-                      <DatePicker
-                        suffixIcon={<CalendarOutlined />}
-                        style={{ width: "100%" }}
-                        value={scheduleDate}   // ✅ pre-fill
-                        onChange={(e) => {
-                          setScheduleDate(e)
-
-                          console.log("E", e);
-
-                        }}
-                      />
-                    </Form.Item>
-                    <Form.Item label="Scheduled Time">
-                      <TimePicker
-                        suffixIcon={<ClockCircleOutlined />}
-                        value={scheduleTime}   // ✅ pre-fill
-                        style={{ width: "100%" }}
-                        onChange={(e) => { setScheduleTime(e) }}
-                      />
-                    </Form.Item>
-                  </div>
-
-                  {/* Switches */}
-                  <div className="route-options">
-                    <div className="switch-group">
-                      <Switch
-                        checked={options.roundTrip}
-                        onChange={(checked) => handleSwitchChange("roundTrip", checked)}
-                      />
-                      <span className="switch-label">Round Trip</span>
-                      <div className="switch-subtext">Return to starting location</div>
-                    </div>
-                    <div className="switch-group">
-                      <Switch
-                        checked={options.reverseOrder}
-                        onChange={(checked) => handleSwitchChange("reverseOrder", checked)}
-                      />
-                      <span className="switch-label">Reverse Order</span>
-                      <div className="switch-subtext">Reverse stop sequence</div>
-                    </div>
-                  </div>
-
-                  {/* Stops Section */}
-                  {/* Stops Section */}
-                  <div className="stop-block">
-                    <Title level={5}>Stops</Title>
-
-                    {stops.map((stop, index) => (
-                      <Card
-                        key={index}
-                        className="stop-card"
-                        bordered={false}
-                        bodyStyle={{ padding: "16px 24px" }}
-                      >
-                        <div className="stop-header">
-                          <Title level={5}>{`Stop ${index + 1}`}</Title>
-                          <Button
-                            danger
-                            type="text"
-                            onClick={() => handleRemoveLocation("stop", index)}
-                          >
-                            Delete Stop
-                          </Button>
-                        </div>
-                        <Form.Item label="Client/Location Name">
-                          <AutoComplete
-                            placeholder="Enter client/location name"
-                            value={stop.name || ""}
-                            onSearch={handleSearchFromDb}   // 🔹 let AutoComplete trigger search
-                            onChange={(v) => {
-                              const updated = [...stops];
-                              updated[index] = { ...updated[index], name: v };
-                              setStops(updated);
-                            }}
-                            onSelect={(val, opt) => {
-                              const updated = [...stops];
-                              updated[index] = {
-                                ...updated[index],
-                                name: opt.result.name,
-                                place_name: opt.result.place_name,
-                                coordinates: opt.result.coordinates,
-                                status: "pending",
-                                startTime: "",
-                                notes: "",
-                                completeLat: "",
-                                completeLng: "",
-                                completeTime: "",
-                                profDelivery: "",
-                                signature: "",
-                              };
-                              setStops(updated);
-                            }}
-                            options={renderOptionsName()}
-                            filterOption={false}   // 🔹 must add for async
-                          />
-                        </Form.Item>
-                        {/* Address */}
-                        <Form.Item label="Address">
-                          <AutoComplete
-                            placeholder="Address"
-                            value={stop.place_name}
-                            onChange={(v) => {
-                              const updated = [...stops];
-                              updated[index] = { ...updated[index], place_name: v };
-                              setStops(updated);
-                            }}
-                            onSearch={handleSearch}
-                            onSelect={(val, opt) => {
-                              const updated = [...stops];
-                              updated[index] = {
-                                ...updated[index],
-                                place_name: opt.result.place_name,
-                                // name: opt.result.name || val,
-                                coordinates: opt.result.geometry.coordinates,
-                                status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
-                              };
-                              setStops(updated);
-                              const allHaveCoordinates = updated.every(
-                                (stop) =>
-                                  stop.coordinates &&
-                                  Array.isArray(stop.coordinates) &&
-                                  stop.coordinates.length === 2 &&
-                                  stop.coordinates[0] != null &&
-                                  stop.coordinates[1] != null
-                              );
-
-                              if (allHaveCoordinates) {
-                                console.log("✅ All stops have valid coordinates");
-                                setIsButtonDisabled(false)
-                              } else {
-                                console.log("⚠️ Some stops are missing coordinates");
-                                setIsButtonDisabled(true)
-                              }
-                            }}
-
-                            options={renderOptions()}
-                          />
-                        </Form.Item>
-
-                        {/* Time Window & Client/Location Name */}
-                        <div style={{ display: "flex", gap: "16px" }}>
-                          <Form.Item label="Time Window (optional)" style={{ flex: 1 }}>
-                            <TimePicker.RangePicker style={{ width: "100%" }} />
-                          </Form.Item>
-
-                        </div>
-
-                        {/* Notes */}
-                        <Form.Item label="Notes">
-                          <Input.TextArea
-                            rows={2}
-                            placeholder="Write Notes"
-                            value={notes.stops[index] || ""}
-                            onChange={(e) => handleNotesChange(e.target.value, "stop", index)}
-                          />
-                        </Form.Item>
-                      </Card>
-                    ))}
-
-                    {/* Add Stop Button */}
-                    <Button
-                      type="dashed"
-                      block
-                      style={{ width: '20%', marginTop: 20 }}
-                      icon={<PlusOutlined />}
-                      onClick={() => {
-                        setStops([...stops, { place_name: "", name: "", coordinates: null, status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: '' }]);
-                        setNotes((prev) => ({ ...prev, stops: [...prev.stops, ""] }));
-                        setIsButtonDisabled(true)
-                      }}
-                    >
-                      Add Stops
-                    </Button>
-                  </div>
-
-
-                  {/* Action Buttons */}
-                  <div className="action-buttons">
-                    {/* <Button onClick={handleCancel} className="cancel-btn">
-                    Cancel
-                  </Button> */}
-                    <Button type="primary" disabled={isButtonDisable} className="optimize-btn" onClick={createRouteOptimizeCheck}>
-                      {loading ? "Optimizing Route..." : "Optimize Route"}
-                    </Button>
-                    {/* <Tooltip title="Export to CSV">
-                      <Button icon={<ExportOutlined />} onClick={exportToCSV} />
-                    </Tooltip>
-                    <Tooltip title="Print to PDF">
-                      <Button icon={<PrinterOutlined />} onClick={printToPDF} />
-                    </Tooltip> */}
-                  </div>
-                </Form>
-              </TabPane>
-            </Tabs>
-          </div>
-        </div>
-      ) : (
+   
         <div className="map-layout">
           <div className="map-section">
             <AssignDriver
@@ -851,6 +594,7 @@ const RouteForm = () => {
               timeSchedule={moment(scheduleTime).format('hh:mm')}
               isUpdate={isUpdate}
               loading={loading}
+              isRouteDetail={true}
               onClickAssign={() => { }}
               exportToCSV={() => { exportToCSV() }}
               printToPDF={() => { printToPDF() }}
@@ -863,9 +607,8 @@ const RouteForm = () => {
             />
           </div>
         </div>
-      )}
     </>
   );
 };
 
-export default RouteForm;
+export default RouteDetail;

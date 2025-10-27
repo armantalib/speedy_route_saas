@@ -11,17 +11,17 @@ import LiveDriverList from "./LiveDriverList";
 import LiveDriverMap from "./LiveDriverMap";
 import { useDispatch } from "react-redux";
 import { setHeaderName } from "../../../storeTolkit/userSlice";
+import LiveDriverDetail from "./LiveDriversDetail";
 
 const LiveTrackingList = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-
   const [selectedDate, setSelectedDate] = useState("Today");
   const [selectedStatus, setSelectedStatus] = useState("Completed");
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [showDriverDetail, setShowDriverDetail] = useState(false);
   const dispatch = useDispatch();
-  dispatch(setHeaderName('Live Tracking'))
+  dispatch(setHeaderName("Live Tracking"));
 
   const dateOptions = ["Today", "Yesterday", "Last 7 Days", "Last Month"];
   const statusOptions = ["Completed", "In Progress", "Failed", "Cancelled"];
@@ -33,12 +33,28 @@ const LiveTrackingList = () => {
 
   return (
     <StyleSheetManager shouldForwardProp={(prop) => !["sortActive"].includes(prop)}>
-      <main className="min-h-screen lg:container py-5 px-4 mx-auto">
-        <Row className="main-row" gutter={0}>
-          <Col span={8} className="left-panel">
+      <main className="min-h-screen lg:container py-4 px-4 mx-auto live-tracking-container">
+        <Row className="main-row" gutter={[16, 16]}>
+          {/* Left Panel */}
+          <Col
+            xs={24}
+            sm={24}
+            md={10}
+            lg={8}
+            className="left-panel"
+          >
             <LiveDriverList />
+            {/* <LiveDriverDetail /> */}
           </Col>
-          <Col span={16} className="right-panel">
+
+          {/* Right Panel */}
+          <Col
+            xs={24}
+            sm={24}
+            md={14}
+            lg={16}
+            className="right-panel"
+          >
             <LiveDriverMap />
           </Col>
         </Row>

@@ -1,19 +1,64 @@
-.live-tracking-wrapper {
-  height: 100vh;
-  overflow: hidden;
+/* LiveTracking.css */
+
+.live-tracking-container {
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .main-row {
-  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .left-panel {
-  background: #fff;
-  border-right: 1px solid #eee;
-  padding: 16px;
+  background-color: #fff;
+  border-right: 1px solid #f0f0f0;
+  height: 100%;
   overflow-y: auto;
+  min-height: 80vh;
 }
 
 .right-panel {
+  background-color: #fafafa;
   height: 100%;
+  min-height: 80vh;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .main-row {
+    flex-direction: column;
+  }
+
+  .left-panel,
+  .right-panel {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    min-height: auto;
+  }
+
+  .left-panel {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Improve scroll and spacing for small devices */
+@media (max-width: 480px) {
+  .live-tracking-container {
+    padding: 0 8px;
+  }
+
+  .left-panel,
+  .right-panel {
+    padding: 8px;
+  }
+
+  .modal-dialog {
+    width: 90%;
+    margin: auto;
+  }
+
+  button {
+    font-size: 13px !important;
+  }
 }

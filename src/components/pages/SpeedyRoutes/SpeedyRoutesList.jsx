@@ -142,7 +142,8 @@ const SpeedyRoutesList = (props) => {
                         onClick={() => {
                             setSingleData(row)
                             dispatch(setRouteDetail(row))
-                            setRouteDetailsShow(true)
+                            navigate('/route-detail')
+                            // setRouteDetailsShow(true)
                         }}
                         style={{
                             marginLeft: 10,

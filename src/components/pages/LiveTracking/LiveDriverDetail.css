@@ -1,0 +1,68 @@
+.driver-detail-container {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.driver-card {
+  width: 100%;
+  max-width: 700px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.driver-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.driver-location {
+  margin-top: 10px;
+  color: #666;
+  font-size: 15px;
+}
+
+.driver-section {
+  margin-bottom: 10px;
+}
+
+.driver-section h4 {
+  margin-bottom: 6px;
+  color: #4770e4;
+  font-weight: 600;
+}
+
+.stat-box {
+  background: #f5f7ff;
+  border-radius: 8px;
+  text-align: center;
+  padding: 12px 8px;
+  margin-bottom: 10px;
+}
+
+.stat-box p {
+  margin: 0;
+  font-size: 13px;
+  color: #777;
+}
+
+.stat-box h3 {
+  margin: 4px 0 0;
+  font-weight: 600;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .driver-card {
+    padding: 15px;
+  }
+
+  .driver-name {
+    font-size: 20px;
+  }
+
+  .stat-box h3 {
+    font-size: 16px;
+  }
+}

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
- const mainUrl = "http://192.168.43.244:8080/api/";
-//  const mainUrl = "https://api.speedyroute.ai/api/";
+//  const mainUrl = "http://192.168.43.244:8080/api/";
+ const mainUrl = "https://api.speedyroute.ai/api/";
  export const socketUrl = "https://api.speedyroute.ai/";
 
 

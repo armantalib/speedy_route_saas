@@ -10,24 +10,28 @@ import "./AssignDriver.css";
 import startIconUrl from "../../assets/svg/start-pin.svg";
 import destinationIconUrl from "../../assets/svg/destination-pin.svg";
 import { CircularProgress } from "@mui/material";
-
+import { useSelector } from "react-redux";
+import { FaArrowLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 const { Title, Text } = Typography;
 
-const AssignDriver = ({ title, routeGeometry, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, onClickAssign, loading, exportToCSV, printToPDF, isUpdate }) => {
+const AssignDriver = ({ title, routeGeometry,isRouteDetail, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, onClickAssign, loading, exportToCSV, printToPDF, isUpdate }) => {
   const mapRef = useRef(null);
   const routeLayerRef = useRef(null);
   const markersRef = useRef([]);
   const [showAssignDriverModal, setShowAssignDriverModal] = useState(false);
+  const { routeDetail } = useSelector((state) => state?.route);
+  const navigate = useNavigate();
 
   // Function to create a stop marker with dynamic index
-  const createStopMarker = (index) => {
+  const createStopMarker = (index,color) => {
     return `
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="40" viewBox="0 0 24 40">
         <!-- Pin body -->
-        <path d="M12 0C5.373 0 0 5.373 0 12c0 4.418 7.636 15.347 11.25 20.502.637.892 1.75.892 2.387 0C16.364 27.347 24 16.418 24 12 24 5.373 18.627 0 12 0z" fill="#1890ff"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 4.418 7.636 15.347 11.25 20.502.637.892 1.75.892 2.387 0C16.364 27.347 24 16.418 24 12 24 5.373 18.627 0 12 0z" fill="${color}"/>
         <!-- Circular badge for number -->
         <circle cx="12" cy="12" r="8" fill="white"/>
-        <text x="12" y="16" font-size="10" text-anchor="middle" fill="#1890ff" font-weight="bold">${index}</text>
+        <text x="12" y="16" font-size="10" text-anchor="middle" fill="${color}" font-weight="bold">${index}</text>
       </svg>
     `;
   };
@@ -48,7 +52,7 @@ const AssignDriver = ({ title, routeGeometry, start, stops = [], destination, ro
       //   subdomains: ["mt0", "mt1", "mt2", "mt3"],
       // }).addTo(mapRef.current);
 
-            L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", {
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: '&copy; <a href="https://carto.com/">CARTO</a> contributors'
       }).addTo(mapRef.current);
@@ -103,12 +107,12 @@ const AssignDriver = ({ title, routeGeometry, start, stops = [], destination, ro
     };
 
     if (start) addMarker(start, "Start", startIconUrl);
-
-    stops.forEach((stop, index) => {
+    stopData.forEach((stop, index) => {
+      let color = stop.status=='start'?'#4770E4':stop.status=='completed'?'#37B87B':'#FFC64A'
       const stopIconUrl = `data:image/svg+xml;utf8,${encodeURIComponent(
-        createStopMarker(index + 1)
+        createStopMarker(index + 1,color)
       )}`;
-      addMarker(stop, `Stop ${index + 1}`, stopIconUrl);
+      addMarker(stop?.coordinates, `Stop ${index + 1}`, stopIconUrl);
     });
 
     if (destination) addMarker(destination, "Destination", destinationIconUrl);
@@ -140,7 +144,14 @@ const AssignDriver = ({ title, routeGeometry, start, stops = [], destination, ro
   return (
     <div className="assign-driver-container">
       <Card className="driver-card" bordered={false}>
-        <Title level={4}>{title ? title : 'Assign Driver'}</Title>
+        <FaArrowLeft className="text-gray-500 cursor-pointer" size={18} onClick={() => {
+          if (window.history.state && window.history.state.idx > 0) {
+            navigate(-1);
+          } else {
+            navigate("/"); // go to home or any default page
+          }
+        }} />
+        <Title className="mt-3" level={4}>{title ? title : 'Assign Driver'}</Title>
         <Text type="secondary">
           Sorem ipsum dolor sit amet, consectetur adipiscing elit.
         </Text>
@@ -183,6 +194,8 @@ const AssignDriver = ({ title, routeGeometry, start, stops = [], destination, ro
 
         {/* Actions */}
         <div className="driver-actions">
+          {isRouteDetail?null:
+          <>
           {isUpdate ?
             <Button style={{ marginRight: 8 }} onClick={() => { onClickSave(null) }}>
               {loading ?
@@ -190,9 +203,11 @@ const AssignDriver = ({ title, routeGeometry, start, stops = [], destination, ro
                 "Update Route"
               }
             </Button> : null}
-          <Button type="primary" onClick={() => setShowAssignDriverModal(true)} style={{ marginRight: 10 }}>
-            Assign Driver
-          </Button>
+            </>}
+          {routeDetail?.status == 'draft' ?
+            <Button type="primary" onClick={() => setShowAssignDriverModal(true)} style={{ marginRight: 10 }}>
+              Assign Driver
+            </Button> : null}
 
           <Tooltip title="Export to CSV">
             <Button style={{ marginRight: 10 }} icon={<ExportOutlined />} onClick={exportToCSV} />

@@ -48,6 +48,7 @@ const LiveDriverList = () => {
       {drivers.map((driver) => (
         <DriverCard
           key={driver.userId}
+          driverDetail={driver}
           driver={{
             id: driver.userId,
             name: driver.routeDetail?.driver?.name || "Unknown Driver",

@@ -30,6 +30,7 @@ import AdminUsersList from "./components/pages/SuperAdmin/AdminUsers/AdminUsersL
 import DispatcherList from "./components/pages/SuperAdmin/Dispatcher/DispatcherList";
 import Settings from "./components/pages/CompanySettings/Settings";
 import RegisterUser from "./components/auth/registerUser";
+import RouteDetail from "./components/pages/SpeedyRoutes/RouteDetail";
 
 // import AccountDeletetion from "./components/auth/accountDeletion";
 
@@ -113,6 +114,7 @@ function App() {
               <Route path="/clients/list" element={<AdminUsersList />} />
               <Route path="/dispatcher/list" element={<DispatcherList />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/route-detail" element={<RouteDetail />} />
              
       
 
