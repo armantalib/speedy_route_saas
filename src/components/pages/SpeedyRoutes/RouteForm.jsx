@@ -59,6 +59,7 @@ const RouteForm = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [isButtonDisable, setIsButtonDisabled] = useState(true);
   const [customerStopId, setCustomerStopId] = useState(null);
+  const [coordinateErrors, setCoordinateErrors] = useState([]);
   const navigate = useNavigate();
   const { routeDetail } = useSelector((state) => state?.route);
   const [options, setOptions] = useState({
@@ -310,9 +311,9 @@ const RouteForm = () => {
     // return
     // await handleSaveAddresses()
     let waypoints = [start, ...stops, destination].filter(Boolean);
-    if (options?.roundTrip) {
-      waypoints = [start, ...stops, destination,start].filter(Boolean);
-    }
+    // if (options?.roundTrip) {
+    //   waypoints = [start, ...stops, destination].filter(Boolean);
+    // }
     if (waypoints.length < 2) {
       console.error("At least 2 waypoints are required for optimization.");
       return;
@@ -461,7 +462,7 @@ const RouteForm = () => {
     const endPointAddress = {
       latitude: destination?.coordinates[1],
       longitude: destination?.coordinates[0],
-      address: destination?.place_name,
+      address:destination?.place_name,
       status: 'pending', name: '', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
     };
 
@@ -484,6 +485,8 @@ const RouteForm = () => {
     };
 
     const response = await dataPost(endPoint, data1);
+    console.log("RE",response);
+    
     setIsRouteCreate(false)
     message.success('Route Created Successfully');
     setIsLoading(false);
@@ -567,6 +570,22 @@ const RouteForm = () => {
 
 
   const handleSwitchChange = (key, value) => {
+      if(value==true){
+      if(!start?.coordinates){
+        message.error('Please enter start location first')
+        return
+      }
+      if(key=='reverseOrder' && destination?.coordinates){}else{
+       setDestination({
+          coordinates: [
+            start.coordinates[0],
+            start.coordinates[1],
+          ],
+          place_name: start.place_name,
+          status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
+        });
+      }
+      }
     setOptions((prev) => ({
       ...prev,
       [key]: value,
@@ -754,6 +773,37 @@ const RouteForm = () => {
                                 status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
                               };
                               setStops(updated);
+
+                              const newErrors = [];
+
+                              // 🔍 Check each stop for missing/invalid coordinates
+                              updated.forEach((stop, i) => {
+                                const validCoords =
+                                  stop.coordinates &&
+                                  Array.isArray(stop.coordinates) &&
+                                  stop.coordinates.length === 2 &&
+                                  stop.coordinates[0] != null &&
+                                  stop.coordinates[1] != null;
+
+                                if (!validCoords) {
+                                  newErrors[i] = "⚠️ Missing or invalid coordinates for this stop.";
+                                } else {
+                                  newErrors[i] = "";
+                                }
+                              });
+
+                              // 🟥 If any errors found, show them and block adding new stop
+                              const hasError = newErrors.some((msg) => msg);
+                              if (hasError) {
+                                setCoordinateErrors(newErrors);
+                                // message.error("Please fix missing coordinates before adding a new stop.");
+                              }else{
+                          setCoordinateErrors(newErrors);
+                        }
+
+
+
+
                               const allHaveCoordinates = updated.every(
                                 (stop) =>
                                   stop.coordinates &&
@@ -774,6 +824,11 @@ const RouteForm = () => {
 
                             options={renderOptions()}
                           />
+                          {coordinateErrors[index] && (
+                            <div style={{ color: "red", marginTop: "10px", marginBottom: "10px" }}>
+                              {coordinateErrors[index]}
+                            </div>
+                          )}
                         </Form.Item>
 
                         {/* Time Window & Client/Location Name */}
@@ -803,6 +858,34 @@ const RouteForm = () => {
                       style={{ width: '20%', marginTop: 20 }}
                       icon={<PlusOutlined />}
                       onClick={() => {
+                        const newErrors = [];
+
+                        // 🔍 Check each stop for missing/invalid coordinates
+                        stops.forEach((stop, i) => {
+                          const validCoords =
+                            stop.coordinates &&
+                            Array.isArray(stop.coordinates) &&
+                            stop.coordinates.length === 2 &&
+                            stop.coordinates[0] != null &&
+                            stop.coordinates[1] != null;
+
+                          if (!validCoords) {
+                            newErrors[i] = "⚠️ Missing or invalid coordinates for this stop.";
+                          } else {
+                            newErrors[i] = "";
+                          }
+                        });
+
+                        // 🟥 If any errors found, show them and block adding new stop
+                        const hasError = newErrors.some((msg) => msg);
+                        if (hasError) {
+                          setCoordinateErrors(newErrors);
+                          // message.error("Please fix missing coordinates before adding a new stop.");
+                        }else{
+                          setCoordinateErrors(newErrors);
+                        }
+
+
                         setStops([...stops, { place_name: "", name: "", coordinates: null, status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: '' }]);
                         setNotes((prev) => ({ ...prev, stops: [...prev.stops, ""] }));
                         setIsButtonDisabled(true)
@@ -849,6 +932,7 @@ const RouteForm = () => {
               endPoint={options?.roundTrip ? start?.place_name : destination?.place_name}
               dateSchedule={moment(scheduleDate).format('DD MMM YYYY')}
               timeSchedule={moment(scheduleTime).format('hh:mm')}
+              duration={duration}
               isUpdate={isUpdate}
               loading={loading}
               onClickAssign={() => { }}

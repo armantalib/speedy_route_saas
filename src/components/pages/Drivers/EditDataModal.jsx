@@ -21,6 +21,7 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
         licenseNumber: dataFill?.licenseNumber || "",
         tags: dataFill?.tags || "",
         isAppAllow: dataFill?.isAppAllow || "",
+        status: dataFill?.status || "",
       });
     }
   }, [dataFill, form]);
@@ -37,6 +38,7 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
         tags: values?.tags,
         phone: values?.phone,
         isAppAllow: values?.isAppAllow,
+        status: values?.status,
       };
 
       const response = await dataPut(endPoint, updatedData);
@@ -91,6 +93,14 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
           <Form.Item name="licenseNumber" label="License Number">
             <Input placeholder="DL123456" />
           </Form.Item>
+
+            <Form.Item name="status" label="Status">
+                      <Select placeholder="Select status">
+                        <Select.Option value="online">Active</Select.Option>
+                        <Select.Option value="deactivated">Deactivate</Select.Option>
+                        {/* <Select.Option value="contractor">Contractor</Select.Option> */}
+                      </Select>
+                    </Form.Item>
 
           <Form.Item name="tags" label="Tags">
             <Select placeholder="Select type">

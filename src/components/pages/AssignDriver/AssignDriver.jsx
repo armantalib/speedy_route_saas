@@ -13,9 +13,10 @@ import { CircularProgress } from "@mui/material";
 import { useSelector } from "react-redux";
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { formatSecondsToHMS } from "../../utils/DateTimeCustom";
 const { Title, Text } = Typography;
 
-const AssignDriver = ({ title, routeGeometry,isRouteDetail, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, onClickAssign, loading, exportToCSV, printToPDF, isUpdate }) => {
+const AssignDriver = ({ title, duration, routeGeometry, isRouteDetail, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, onClickAssign, loading, exportToCSV, printToPDF, isUpdate }) => {
   const mapRef = useRef(null);
   const routeLayerRef = useRef(null);
   const markersRef = useRef([]);
@@ -24,7 +25,7 @@ const AssignDriver = ({ title, routeGeometry,isRouteDetail, start, stops = [], d
   const navigate = useNavigate();
 
   // Function to create a stop marker with dynamic index
-  const createStopMarker = (index,color) => {
+  const createStopMarker = (index, color) => {
     return `
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="40" viewBox="0 0 24 40">
         <!-- Pin body -->
@@ -108,9 +109,9 @@ const AssignDriver = ({ title, routeGeometry,isRouteDetail, start, stops = [], d
 
     if (start) addMarker(start, "Start", startIconUrl);
     stopData.forEach((stop, index) => {
-      let color = stop.status=='start'?'#4770E4':stop.status=='completed'?'#37B87B':'#FFC64A'
+      let color = stop.status == 'start' ? '#4770E4' : stop.status == 'completed' ? '#37B87B' : '#FFC64A'
       const stopIconUrl = `data:image/svg+xml;utf8,${encodeURIComponent(
-        createStopMarker(index + 1,color)
+        createStopMarker(index + 1, color)
       )}`;
       addMarker(stop?.coordinates, `Stop ${index + 1}`, stopIconUrl);
     });
@@ -164,7 +165,10 @@ const AssignDriver = ({ title, routeGeometry,isRouteDetail, start, stops = [], d
           <Descriptions.Item label="End Point (optional)">{endPoint}</Descriptions.Item>
           <Descriptions.Item label="Scheduled Date">{dateSchedule}</Descriptions.Item>
           <Descriptions.Item label="Time Window">{timeSchedule}</Descriptions.Item>
+        </Descriptions>
+        <Descriptions column={2} bordered className="route-info">
           <Descriptions.Item label="Stops">{stops?.length || 0}</Descriptions.Item>
+          <Descriptions.Item label="Duration">{duration?formatSecondsToHMS(duration):formatSecondsToHMS(routeDetail?.duration)}</Descriptions.Item>
         </Descriptions>
 
         {/* Stops Timeline */}
@@ -194,17 +198,17 @@ const AssignDriver = ({ title, routeGeometry,isRouteDetail, start, stops = [], d
 
         {/* Actions */}
         <div className="driver-actions">
-          {isRouteDetail?null:
-          <>
-          {isUpdate ?
-            <Button style={{ marginRight: 8 }} onClick={() => { onClickSave(null) }}>
-              {loading ?
-                <CircularProgress size={18} className='text_black' /> :
-                "Update Route"
-              }
-            </Button> : null}
+          {isRouteDetail ? null :
+            <>
+              {isUpdate ?
+                <Button style={{ marginRight: 8 }} onClick={() => { onClickSave(null) }}>
+                  {loading ?
+                    <CircularProgress size={18} className='text_black' /> :
+                    "Update Route"
+                  }
+                </Button> : null}
             </>}
-          {routeDetail?.status == 'draft' ?
+          {routeDetail?.status == 'draft' || !routeDetail ?
             <Button type="primary" onClick={() => setShowAssignDriverModal(true)} style={{ marginRight: 10 }}>
               Assign Driver
             </Button> : null}

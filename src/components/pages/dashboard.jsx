@@ -45,7 +45,7 @@ const Dashboard = () => {
             },
         ],
     };
-    const chartSeries = [44, 33, 23]; // Values for each section
+    const chartSeries = [0, 0, 0]; // Values for each section
 
     const chartOptions2 = {
         chart: {

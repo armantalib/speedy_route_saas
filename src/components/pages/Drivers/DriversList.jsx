@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react'
 import ProductTableFetch from '../../DataTable/productTableFetch';
 import { dataTable } from '../../DataTable/productsData';
-import { avatar1, preview, trash, edit2 } from '../../icons/icon';
+import { avatar1, preview, trash, edit2, edit_icon } from '../../icons/icon';
 import { StyleSheetManager } from 'styled-components';
 import axios from 'axios';
 import { CircularProgress } from '@mui/material';
@@ -136,21 +136,6 @@ const [driverToDelete, setDriverToDelete] = useState(null);
 
     const columns = [
         {
-            name: 'ID',
-            allowoverflow: true,
-            width: '250px',
-            cell: (row) => {
-                return (
-                    <div onClick={() => {
-                        setSingleData(row)
-                      
-                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
-                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?._id}</p>
-                    </div>
-                )
-            }
-        },
-        {
             name: 'Name',
             allowoverflow: true,
             width: '250px',
@@ -169,27 +154,33 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                 )
             }
         },
-        {
+      {
+            name: 'Email',
+            sortable: true,
+            width: '350px',
+            selector: row => row?.email
+        },
+         {
             name: 'Status',
             allowoverflow: true,
-            width: '250px',
+            width: '290px',
             cell: (row) => {
                 return (
                     <div style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        backgroundColor: row?.status == 'draft' ? '#FEF9C3' : '#EDFEED',
+                        backgroundColor: row?.status == 'deactivated' ? '#FEF9C3' : '#EDFEED',
                         padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15
                     }}>
                         <span style={{
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
-                            color: row?.status == 'offline' ? '#CA8A04' : '#22C55E'
+                            color: row?.status == 'deactivated' ? '#CA8A04' : '#22C55E'
                         }}>{row?.status}</span>
                     </div>
                 )
             }
         },
         {
-            name: 'Last Active',
+            name: 'Created At',
             sortable: true,
             width: '250px',
             selector: row => row?.lastActive ? moment(row?.lastActive).fromNow() : 'N/A'
@@ -206,10 +197,10 @@ const [driverToDelete, setDriverToDelete] = useState(null);
             cell: (row) => {
                 return (
                     <div className='flex gap-1' style={{ flexDirection: 'row', flex: 'row', justifyContent: 'space-between' }}>
-                        <button className="bg-[#2B7F75] flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[12px] h-auto" src={edit2} onClick={() => {
-                            setSingleData(row)
-                            setIsEditForm(true)
-                        }} alt="" /></button>
+                       <button className="flex justify-center rounded-3 w-[34px] h-[34px] items-center"><img className="w-[24px] h-auto" src={edit_icon} onClick={() => {
+                                                setSingleData(row)
+                                                setIsEditForm(true)
+                                            }} alt="" /></button>
                         {/* <button className="bg-[#CE2C60] flex justify-center rounded-3 w-[24px] h-[24px] items-center"><img className="w-[12px] h-auto" src={trash} onClick={()=>{
                             handleDeleteClick(row)
                         }} alt="" /></button> */}
@@ -261,19 +252,19 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                 return (
                     <div style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        backgroundColor: row?.status == 'draft' ? '#FEF9C3' : '#EDFEED',
+                        backgroundColor: row?.status == 'deactivated' ? '#FEF9C3' : '#EDFEED',
                         padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15
                     }}>
                         <span style={{
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
-                            color: row?.status == 'offline' ? '#CA8A04' : '#22C55E'
+                            color: row?.status == 'deactivated' ? '#CA8A04' : '#22C55E'
                         }}>{row?.status}</span>
                     </div>
                 )
             }
         },
         {
-            name: 'Last Active',
+            name: 'Created At',
             sortable: true,
             width: '290px',
             selector: row => row?.lastActive ? moment(row?.lastActive).fromNow() : 'N/A'

@@ -15,10 +15,10 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
-      const [planDataM, setPlansDataM] = useState([]);
-      const [plans, setPlans] = useState(null);
-      const [planDataY, setPlansDataY] = useState([]);
-      const [selectedPlanObj, setSelectedPlanObj] = useState(null);
+    const [planDataM, setPlansDataM] = useState([]);
+    const [plans, setPlans] = useState(null);
+    const [planDataY, setPlansDataY] = useState([]);
+    const [selectedPlanObj, setSelectedPlanObj] = useState(null);
     const isLogin = useAuth();
     const handleLinkClick = (itemId, path) => {
         setSelectedLink(itemId);
@@ -32,24 +32,24 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
     };
 
     useEffect(() => {
-     getData();
+        getData();
     }, [])
-    
 
-      const getData = async () => {
+
+    const getData = async () => {
         const plans = localStorage.getItem('plans')
         if (plans) {
-          const planParse = JSON.parse(plans)
-          setPlansDataM(planParse?.plansMonthly)
-          setPlansDataY(planParse?.plansYearly)
+            const planParse = JSON.parse(plans)
+            setPlansDataM(planParse?.plansMonthly)
+            setPlansDataY(planParse?.plansYearly)
         }
         const endPoint = 'settings/get/plan-addons'
         const response = await dataGet_(endPoint, {});
         if (response?.data?.success) {
-          setPlans(response?.data?.subscription?.plan?.plan)
-          localStorage.setItem('plans', JSON.stringify(response?.data))
+            setPlans(response?.data?.subscription?.plan?.plan)
+            localStorage.setItem('plans', JSON.stringify(response?.data))
         }
-      }
+    }
 
     const getParentPath = (path) => {
         const pathSegments = path.split('/');
@@ -71,7 +71,7 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
         { image: route_icom, image2: route_icom, items: "Routes", path: '/route/list' },
         {
             items: "Team",
-            image: live_tracking_icon, image2: live_tracking_icon,
+            image: user_icons, image2: user_icons,
             subItems: [
                 { label: "Dispatcher", path: "/dispatcher/list" },
                 { label: "Driver", path: "/driver/list" },
@@ -128,7 +128,7 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
     const user_type = localStorage.getItem('user_type')
     const dispatch_limit = localStorage.getItem('dispatch_limit')
     const finalMenuItem = user_type === 'super_admin' ? menuItemsSuperAdmin : user_type === 'dispatcher' ? menuItemsDispatcher : menuItems
-    
+
     return (
         <>
             {isLogin ? (
@@ -158,7 +158,11 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
                                         {finalMenuItem.map((item, i) => (
                                             <Fragment key={i}>
                                                 {item.subItems ? (
-                                                    <SubMenu icon={<MdProductionQuantityLimits style={{ height: 'auto', width: "25px", marginRight: '10px' }} />} label={item.items} className={`w-full plusJakara_semibold text_secondary rounded-3 mb-2`}>
+                                                    <SubMenu icon={<img
+                                                        style={{ height: 'auto', width: '25px', marginRight: '10px' }}
+                                                        src={isChildPath(item.path, location.pathname) ? item.image2 : item.image}
+                                                        alt=""
+                                                    />} label={item.items} className={`w-full plusJakara_semibold text_secondary rounded-3 mb-2`}>
                                                         {item.subItems.map((subItem, j) => (
                                                             <MenuItem
                                                                 key={`${i}-${j}`}
@@ -189,26 +193,26 @@ const SidebarMenu = ({ children, setToggled, toggled, setBroken }) => {
                                         ))}
                                     </div>
                                 </Menu>
-                                {plans=='trial'?
-                                <div style={{ width: '88%', alignSelf: 'center', height: 187, backgroundColor: '#F3F4F4', position: 'absolute', bottom: 50, borderRadius: 10, padding: 12 }}>
-                                    <div style={{ width: 40, height: 40, backgroundColor: '#6688E8', borderRadius: 12, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
-                                        <img style={{ height: 24, width: 24 }} src={crown} className='' alt="" />
-                                    </div>
-                                    <p style={{ fontWeight: '500', color: '#1B1B1B', marginTop: 15 }}>Trial plan</p>
-                                    <p style={{ fontWeight: '400', color: '#73757C', fontSize: 12, marginTop: -10 }}>You’re on the Basic Plan. Max 5 routes/day.</p>
-                                    {user_type==='dispatcher'?null:
-                                    <Button
-                                        size="middle"
-                                        variant="primary"
-                                        style={{width:'100%'}}
-                                        onClick={() => {
-                                            navigate('/settings')
-                                        }}
-                                    >
-                                        Upgrade Plan
-                                    </Button>
-}
-                                </div>:null}
+                                {plans == 'trial' ?
+                                    <div style={{ width: '88%', alignSelf: 'center', height: 187, backgroundColor: '#F3F4F4', position: 'absolute', bottom: 50, borderRadius: 10, padding: 12 }}>
+                                        <div style={{ width: 40, height: 40, backgroundColor: '#6688E8', borderRadius: 12, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
+                                            <img style={{ height: 24, width: 24 }} src={crown} className='' alt="" />
+                                        </div>
+                                        <p style={{ fontWeight: '500', color: '#1B1B1B', marginTop: 15 }}>Trial plan</p>
+                                        <p style={{ fontWeight: '400', color: '#73757C', fontSize: 12, marginTop: -10 }}>You’re on the Basic Plan. Max 5 routes/day.</p>
+                                        {user_type === 'dispatcher' ? null :
+                                            <Button
+                                                size="middle"
+                                                variant="primary"
+                                                style={{ width: '100%' }}
+                                                onClick={() => {
+                                                    navigate('/settings')
+                                                }}
+                                            >
+                                                Upgrade Plan
+                                            </Button>
+                                        }
+                                    </div> : null}
                             </div>
                         </Sidebar>
                     </div>
