@@ -529,10 +529,7 @@ const RouteForm = () => {
     };
 
     const response = await dataPut(endPoint, data1)
-    if (isDriver) {
-      assignDriverFun(response?.data?.data?._id, isDriver)
-      return
-    }
+    
     navigate('/route/list');
     message.success('Route Updated Successfully');
     setIsLoading(false);
@@ -715,7 +712,26 @@ const RouteForm = () => {
                           <Button
                             danger
                             type="text"
-                            onClick={() => handleRemoveLocation("stop", index)}
+                            onClick={() => {
+                              
+                              const allHaveCoordinates = stops.every(
+                                (stop) =>
+                                  stop.coordinates &&
+                                  Array.isArray(stop.coordinates) &&
+                                  stop.coordinates.length === 2 &&
+                                  stop.coordinates[0] != null &&
+                                  stop.coordinates[1] != null
+                              );
+
+                              if (allHaveCoordinates) {
+                                console.log("✅ All stops have valid coordinates");
+                                setIsButtonDisabled(false)
+                              } else {
+                                console.log("⚠️ Some stops are missing coordinates");
+                                setIsButtonDisabled(true)
+                              }
+                              handleRemoveLocation("stop", index)
+                            }}
                           >
                             Delete Stop
                           </Button>

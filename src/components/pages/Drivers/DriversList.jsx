@@ -174,7 +174,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                         <span style={{
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
                             color: row?.status == 'deactivated' ? '#CA8A04' : '#22C55E'
-                        }}>{row?.status}</span>
+                        }}>{row?.status=='online'?'Active':'Deactivated'}</span>
                     </div>
                 )
             }
@@ -258,7 +258,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                         <span style={{
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
                             color: row?.status == 'deactivated' ? '#CA8A04' : '#22C55E'
-                        }}>{row?.status}</span>
+                        }}>{row?.status=='online'?'Active':'Deactivated'}</span>
                     </div>
                 )
             }
