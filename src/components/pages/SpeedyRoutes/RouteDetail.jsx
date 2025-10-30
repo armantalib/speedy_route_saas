@@ -256,22 +256,87 @@ const RouteDetail = () => {
 
   // Print to PDF
   const printToPDF = () => {
-    const printContent = `
-      <h1>Route Details</h1>
-      <table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
-        <thead><tr><th>Type</th><th>Address</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr><td>Start</td><td>${start?.place_name || ""}</td><td>${notes.start}</td></tr>
-          ${stops
-        .map(
-          (s, i) =>
-            `<tr><td>Stop ${i + 1}</td><td>${s.place_name}</td><td>${notes.stops[i] || ""}</td></tr>`
-        )
-        .join("")}
-          <tr><td>Destination</td><td>${destination?.place_name || ""}</td><td>${notes.destination}</td></tr>
-        </tbody>
-      </table>
-    `;
+ const printContent = `
+  <div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6;">
+  
+    <hr>
+    <div style="display: flex; justify-content: space-between;">
+      <div><strong>SPEEDYROUTE LOGO</strong></div>
+      <div>Route #${"R1234" || ""} – Optimized Summary</div>
+    </div>
+    <hr>
+    <table style="width:100%; margin-top: 10px;">
+      <tr>
+        <td><strong>Driver:</strong> ${"John Sow" || ""}</td>
+        <td><strong>Date:</strong> ${"12-03-205" || ""}</td>
+      </tr>
+      <tr>
+        <td><strong>Dispatcher:</strong> ${"John Dis" || ""}</td>
+        <td><strong>Generated:</strong> ${"29 OCT 2025" || ""}</td>
+      </tr>
+      <tr>
+        <td><strong>Stops Optimized:</strong> ${stops?.length || 0}</td>
+        <td><strong>Distance:</strong> ${"100k/m" || "—"} mi</td>
+      </tr>
+      <tr>
+        <td><strong>Est. Duration:</strong> ${"1 hr 20m" || "—"}</td>
+      </tr>
+    </table>
+    <hr style="margin: 20px 0;">
+
+    <div>
+      <p><strong>Start Location:</strong> ${start?.place_name || ""}</p>
+      <p><strong>End Location:</strong> ${destination?.place_name || "Return to Depot"}</p>
+    </div>
+    <hr>
+
+    <h3>Optimized Stop List (Columns)</h3>
+    <table border="1" cellpadding="6" cellspacing="0" style="width:100%; border-collapse: collapse; text-align:left;">
+      <thead style="background-color:#f0f0f0;">
+        <tr>
+          <th>Order</th>
+          <th>Stop Name</th>
+          <th>Address</th>
+          <th>Distance (mi)</th>
+          <th>Duration (min)</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Start Location</td>
+          <td>${start?.place_name || ""}</td>
+          <td>—</td>
+          <td>—</td>
+          <td>${notes.start || "—"}</td>
+        </tr>
+        ${stops
+          .map(
+            (s, i) => `
+            <tr>
+              <td>${i + 2}</td>
+              <td>${s.name || `Stop ${i + 1}`}</td>
+              <td>${s.place_name || "—"}</td>
+              <td>${s.distance || "—"}</td>
+              <td>${s.duration || "—"}</td>
+              <td>${notes.stops?.[i] || "—"}</td>
+            </tr>`
+          )
+          .join("")}
+        <tr>
+          <td>${(stops?.length || 0) + 2}</td>
+          <td>Return to Depot</td>
+          <td>${destination?.place_name || ""}</td>
+          <td>—</td>
+          <td>—</td>
+          <td>${notes.destination || "—"}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 20px; font-style: italic;">Under add stop: Remove <strong>Time Window</strong> field</p>
+  </div>
+`;
     const win = window.open("", "_blank");
     win.document.write(printContent);
     win.document.close();

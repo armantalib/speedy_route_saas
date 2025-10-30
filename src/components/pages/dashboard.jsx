@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from 'react'
-import { avatarman, bag, earning, ready, preview, trash, information2, filter, avatar1 } from '../icons/icon'
+import { avatarman, bag, earning, ready, preview, trash, information2, filter, avatar1, up_arrow } from '../icons/icon'
 import Chart from 'react-apexcharts'
 import axios from 'axios';
 import { CircularProgress } from '@mui/material';
@@ -148,6 +148,7 @@ const Dashboard = () => {
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         backgroundColor: row?.stop?.status == 'failed' ? '#FCE8EC' :
                             row?.stop?.status == 'pending' ? '#FEF9C3' :
+                            row?.stop?.status == 'start' ? '#6495ED' :
 
                                 '#EDFEED',
                         padding: 6, borderRadius: 10, paddingLeft: 15, paddingRight: 15
@@ -156,6 +157,7 @@ const Dashboard = () => {
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
                             color: row?.stop?.status == 'failed' ? '#EF4444' :
                                 row?.stop?.status == 'pending' ? '#CA8A04' :
+                                row?.stop?.status == 'start' ? '#0000FF' :
 
                                     '#22C55E'
                         }}>{row?.stop?.status}</span>
@@ -221,7 +223,7 @@ const Dashboard = () => {
         }
     };
 
-        const getFailedStops = async () => {
+    const getFailedStops = async () => {
 
         try {
             // const res = await axios.get(`${global.BASEURL}api/users/dashboard`, { headers });
@@ -230,8 +232,8 @@ const Dashboard = () => {
             const endPoint = 'routes/failed/latest'
             const res = await dataGet_(endPoint, data1);
             if (res?.data.success) {
-                console.log("R",res?.data?.data);
-                
+                console.log("R", res?.data?.data);
+
                 setFailedData(res?.data?.data)
             }
         } catch (error) {
@@ -271,7 +273,13 @@ const Dashboard = () => {
                             <div className="flex items-center ms-5">
                                 <CircularProgress size={18} className='text_dark' />
                             </div> : */}
-                        <h5 className="plusJakara_semibold text_dark">{categories?.routesAssignedToday || 0}</h5>
+                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+                            <h5 className="plusJakara_semibold text_dark">{categories?.routesAssignedToday || 0}</h5>
+                            <div style={{ backgroundColor: '#F3F4F4' }} className="rounded-4 w-auto p-2 h-auto flex items-center justify-center">
+                                <img src={up_arrow} className='w-4 h-auto' alt="" />
+                                <span style={{ fontSize: 14, marginLeft: 5, color: '#006F1F' }}>{categories?.routesAssignedChangePercent || 0}%</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="flex gap-2 justify-start w-full">
@@ -284,7 +292,13 @@ const Dashboard = () => {
                             <div className="flex items-center ms-5">
                                 <CircularProgress size={18} className='text_dark' />
                             </div> : */}
-                        <h5 className="plusJakara_semibold text_dark">{categories?.activeDrivers || 0}</h5>
+                           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+                            <h5 className="plusJakara_semibold text_dark">{categories?.activeDrivers || 0}</h5>
+                            <div style={{  }} className="rounded-4 w-auto p-2 h-auto flex items-center justify-center">
+                                {/* <img src={up_arrow} className='w-4 h-auto' alt="" />
+                                <span style={{ fontSize: 14, marginLeft: 5, color: '#006F1F' }}>+9%</span> */}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -298,7 +312,13 @@ const Dashboard = () => {
                             <div className="flex items-center ms-5">
                                 <CircularProgress size={18} className='text_dark' />
                             </div> : */}
-                        <h5 className="plusJakara_semibold text_dark">{categories?.deliveryExpectation || 0}</h5>
+                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+                            <h5 className="plusJakara_semibold text_dark">{categories?.deliveryExpectation || 0}</h5>
+                            <div style={{ backgroundColor: '#F3F4F4' }} className="rounded-4 w-auto p-2 h-auto flex items-center justify-center">
+                                <img src={up_arrow} className='w-4 h-auto' alt="" />
+                                <span style={{ fontSize: 14, marginLeft: 5, color: '#006F1F' }}>{categories?.deliveryExpectationChangePercent || 0}%</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -313,7 +333,13 @@ const Dashboard = () => {
                             <div className="flex items-center ms-5">
                                 <CircularProgress size={18} className='text_dark' />
                             </div> : */}
-                        <h5 className="plusJakara_semibold text_dark">{categories?.routesCreatedToday || 0}</h5>
+                           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+                            <h5 className="plusJakara_semibold text_dark">{categories?.routesCreatedToday || 0}</h5>
+                            <div style={{ backgroundColor: '#F3F4F4' }} className="rounded-4 w-auto p-2 h-auto flex items-center justify-center">
+                                <img src={up_arrow} className='w-4 h-auto' alt="" />
+                                <span style={{ fontSize: 14, marginLeft: 5, color: '#006F1F' }}>{categories?.routesCreatedChangePercent || 0}%</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -324,7 +350,9 @@ const Dashboard = () => {
 
             <div className="feature_grid w-full gap-3">
                 <div className="rounded-4 bg_white p-4 shadow w-full h-auto scrolbar">
-                    <h5 className='text_dark plusJakara_semibold mb-4'>Recent Activity</h5>
+                    <h5 className='text_dark plusJakara_semibold'>Recent Stop Activity</h5>
+                    <p className='text_dark plusJakara_regular mb-4' style={{color:'gray',fontSize:13}}>Shows the most recent delivery stop status updates across all active routes.</p>
+          
 
                     <ProductTableFetch columns={columns} showFilter={true} data={data} totalPage={totalPages} currentPageSend={(val) => { setCurrentPage(val) }} currentPage={currentPage - 1} />
 
@@ -409,27 +437,27 @@ const Dashboard = () => {
                         >
                             <h6 className="text_dark plusJakara_semibold">Exceptions Callout Panel</h6>
                         </div>
-                        {failedData?
-                        <div
-                            style={{
-                                border: "1px solid #E8E8E9",   // border color
-                                borderRadius: "8px",        // rounded corners
-                                padding: "10px",            // space inside border
-                                display: "inline-block",    // wrap tightly around chart
-                            }}
-                        >
-                            <div style={{ width: '100%', height: 160, backgroundColor: '#FFE6E6', borderRadius: 12, padding: 10 }}>
-                                <p className="text_dark plusJakara_semibold" style={{ fontSize: 14 }}>Route #{failedData?.routeId} · Stop #{failedData?.failedStop?.stopNumber} — Failed</p>
-                                <p className="text_dark plusJakara_light" style={{ fontSize: 14, color: '#73757C' }}>{failedData?.failedStop?.notes} — Driver: {failedData?.driver?.name} ·Location: — {failedData?.failedStop?.place_name}</p>
-                               <div style={{display:'flex',justifyContent:'space-between',marginTop:20}}>
-                                <div></div>
-                                {/* <button onClick={() => {
+                        {failedData ?
+                            <div
+                                style={{
+                                    border: "1px solid #E8E8E9",   // border color
+                                    borderRadius: "8px",        // rounded corners
+                                    padding: "10px",            // space inside border
+                                    display: "inline-block",    // wrap tightly around chart
+                                }}
+                            >
+                                <div style={{ width: '100%', height: 160, backgroundColor: '#FFE6E6', borderRadius: 12, padding: 10 }}>
+                                    <p className="text_dark plusJakara_semibold" style={{ fontSize: 14 }}>Route #{failedData?.routeId} · Stop #{failedData?.failedStop?.stopNumber} — Failed</p>
+                                    <p className="text_dark plusJakara_light" style={{ fontSize: 14, color: '#73757C' }}>{failedData?.failedStop?.notes} — Driver: {failedData?.driver?.name} ·Location: — {failedData?.failedStop?.place_name}</p>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+                                        <div></div>
+                                        {/* <button onClick={() => {
                                     navigate('/route/form')
 
                                 }} style={{ width: '129px', backgroundColor: '#6688E8', fontSize: 11, alignSelf: 'flex-end' }} className="bg_primary py-2 rounded-3 text_white plusKajara_semibold">View Details</button> */}
-                            </div>
-                            </div>
-                        </div>:null}
+                                    </div>
+                                </div>
+                            </div> : null}
                     </div>
                 </div>
             </div>

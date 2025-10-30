@@ -193,12 +193,14 @@ import navigation_direction from '../assets/png/navigation_direction.png'
 import circle_check from '../assets/png/circle_check.png'
 import call from '../assets/png/call.png'
 import crown from '../assets/png/crown.png'
+import down_arrow from '../assets/png/down_arrow.png'
+import up_arrow from '../assets/png/up_arrow.png'
 
 
 
 
 export {
-    call,crown,
+    call,crown,up_arrow,down_arrow,
     edit_icon,pause_icon,layer_icon,circle_check,people_users,navigation_direction,
     new_route_icon,badge1,badge2,badge3,badge4,badge5,user_icons,settings_icon,billing_icons,
     support_icon,reports_icon,route_icom,prof_delivery_icon,live_tracking_icon,driver_icons,dashboard_icon,

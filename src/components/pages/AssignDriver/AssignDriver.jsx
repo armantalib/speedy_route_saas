@@ -152,9 +152,9 @@ const AssignDriver = ({ title, duration, routeGeometry, isRouteDetail, start, st
             navigate("/"); // go to home or any default page
           }
         }} />
-        <Title className="mt-3" level={4}>{title ? title : 'Assign Driver'}</Title>
+        <Title className="mt-3" level={4}>{title ? title : 'Route Detail'}</Title>
         <Text type="secondary">
-          Sorem ipsum dolor sit amet, consectetur adipiscing elit.
+          Route optimized! Review the details and assign a driver to begin deliveries.
         </Text>
 
         {/* Route Info */}
@@ -168,7 +168,7 @@ const AssignDriver = ({ title, duration, routeGeometry, isRouteDetail, start, st
         </Descriptions>
         <Descriptions column={2} bordered className="route-info">
           <Descriptions.Item label="Stops">{stops?.length || 0}</Descriptions.Item>
-          <Descriptions.Item label="Duration">{duration?formatSecondsToHMS(duration):formatSecondsToHMS(routeDetail?.duration)}</Descriptions.Item>
+          <Descriptions.Item label="Duration">{duration ? formatSecondsToHMS(duration) : formatSecondsToHMS(routeDetail?.duration)}</Descriptions.Item>
         </Descriptions>
 
         {/* Stops Timeline */}
@@ -212,7 +212,11 @@ const AssignDriver = ({ title, duration, routeGeometry, isRouteDetail, start, st
             <Button type="primary" onClick={() => setShowAssignDriverModal(true)} style={{ marginRight: 10 }}>
               Assign Driver
             </Button> : null}
-
+          <Button type="primary" onClick={() => {
+            navigate('/route/form')
+          }} style={{ marginRight: 10 }}>
+            Edit
+          </Button>
           <Tooltip title="Export to CSV">
             <Button style={{ marginRight: 10 }} icon={<ExportOutlined />} onClick={exportToCSV} />
           </Tooltip>
