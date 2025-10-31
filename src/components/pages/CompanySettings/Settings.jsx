@@ -11,23 +11,23 @@ import Billing from "./Billing";
 
 
 const Settings = () => {
-  const [tab, setTab] = useState('3')
+  const [tab, setTab] = useState('1')
   const [plan, setPlan] = useState(null)
 
   const items = [
     { key: "1", label: "Profile", children: <SettingsProfileForm /> },
     { key: "2", label: "Password", children: <SettingsPasswordForm /> },
     // { key: "3", label: "Team", children: <SettingsTeamForm /> },
-    {
-      key: "3", label: "Plans", children:
-        <Plans
-          onContinue={(plan) => { setTab('4') }}
+    // {
+    //   key: "3", label: "Plans", children:
+    //     <Plans
+    //       onContinue={(plan) => { setTab('4') }}
           
-        />
-    },
-    { key: "4", label: "Addons", children: <Addons 
-             onContinue={(plan) => { setTab('5') }}
-    /> },
+    //     />
+    // },
+    // { key: "4", label: "Addons", children: <Addons 
+    //          onContinue={(plan) => { setTab('5') }}
+    // /> },
     { key: "5", label: "Billing", children: <Billing  onContinue={(plan) => { setTab('1') }} /> },
     //   { key: "6", label: "Billing" },
   ];

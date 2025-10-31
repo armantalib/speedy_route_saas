@@ -90,7 +90,7 @@ function App() {
             <Route element={<PublicRoutes />} >
               <Route index element={<LoginPage1 />}></Route>
               <Route path='/login' element={<LoginPage1 />}></Route>
-              <Route path='/register' element={<RegisterUser />}></Route>
+              {/* <Route path='/register' element={<RegisterUser />}></Route> */}
               <Route path='/account-delete' element={<AccountDeletetion />}></Route>
             </Route>
             <Route element={<PrivateRoutes />}>

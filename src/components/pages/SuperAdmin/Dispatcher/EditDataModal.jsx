@@ -3,7 +3,8 @@ import { Modal, Input, Upload, Button, Form, Select, message } from "antd";
 import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import { CircularProgress } from "@mui/material";
 import "./AddDriverModal.css";
-import { dataPut } from "../../../utils/myAxios"; // ✅ use PUT for updating
+import { dataPost, dataPut } from "../../../utils/myAxios"; // ✅ use PUT for updating
+import { Edit } from "react-feather";
 
 const { Dragger } = Upload;
 
@@ -34,7 +35,7 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
         email: values?.email,
         phone: values?.phone,
         status: values?.status,
-        dispatcherAccess:values?.dispatcherAccess
+        dispatcherAccess: values?.dispatcherAccess
       };
 
       const response = await dataPut(endPoint, updatedData);
@@ -44,6 +45,32 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
         onClose();
       } else {
         message.error("Failed to update driver");
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Error while updating driver");
+    } finally {
+      setLoader(false);
+    }
+  };
+
+
+  const resetPassword = async (values) => {
+    try {
+      setLoader(true);
+      const endPoint = `users/forget-password`; // ✅ Update endpoint
+
+      const updatedData = {
+        email:dataFill?.email,
+      };
+      
+      const response = await dataPost(endPoint, updatedData);
+
+      if (response?.data?.success) {
+        message.success("Password updated successfully!");
+        onClose();
+      } else {
+        message.error(response?.data?.message);
       }
     } catch (error) {
       console.error(error);
@@ -64,11 +91,11 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
     >
       <div className="modal-header">
         <div className="icon-circle">
-          <UploadOutlined />
+          <Edit />
         </div>
-        <h2>Edit Client</h2>
-        <p>Update driver details below.</p>
       </div>
+      <h5 style={{ textAlign: 'center', marginTop: -20 }}>Edit Dispatcher</h5>
+      <p style={{ textAlign: 'center', marginTop: -10 }}>Update driver details below.</p>
 
       <Form layout="vertical" form={form} onFinish={handleFinish}>
         <div className="form-grid">
@@ -94,7 +121,7 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
             </Select>
           </Form.Item>
 
-          <Form.Item name="dispatcherAccess" label="Access" rules={[{ required: true }]}>
+          <Form.Item name="dispatcherAccess" label="Permission" rules={[{ required: true }]}>
             <Select placeholder="Please select">
               <Select.Option value={'limited'}>Limited Access</Select.Option>
               <Select.Option value={'full'}>Full Access</Select.Option>
@@ -105,9 +132,12 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
 
         </div>
 
-
+        <Button type="primary" onClick={() => { resetPassword() }}>
+          {loader ? <CircularProgress size={18} className="text_white" /> : "Reset Password"}
+        </Button>
         <div className="form-footer">
           <Button onClick={onCancel}>Cancel</Button>
+
           <Button type="primary" htmlType="submit">
             {loader ? <CircularProgress size={18} className="text_white" /> : "Update"}
           </Button>

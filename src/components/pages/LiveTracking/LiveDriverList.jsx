@@ -40,9 +40,9 @@ const LiveDriverList = () => {
     <div className="driver-list">
       <div className="driver-list-header">
         <Input.Search placeholder="Search Driver" className="search-input" />
-        <Button icon={<FilterOutlined />} className="filter-btn">
+        {/* <Button icon={<FilterOutlined />} className="filter-btn">
           Filter
-        </Button>
+        </Button> */}
       </div>
 
       {drivers.map((driver) => (

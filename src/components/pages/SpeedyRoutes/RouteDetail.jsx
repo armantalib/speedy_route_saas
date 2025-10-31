@@ -28,8 +28,9 @@ import "./RouteForm.css";
 import moment from "moment";
 import { dataGet_, dataPost, dataPut } from "../../utils/myAxios";
 import { useNavigate } from 'react-router-dom';
-import { new_route_icon } from "../../icons/icon";
+import { logo, new_route_icon } from "../../icons/icon";
 import { useSelector } from "react-redux";
+import { formatSecondsToHMS, metersToMiles } from "../../utils/DateTimeCustom";
 
 const { Title, Paragraph, Text } = Typography;
 const { TabPane } = Tabs;
@@ -261,25 +262,22 @@ const RouteDetail = () => {
   
     <hr>
     <div style="display: flex; justify-content: space-between;">
-      <div><strong>SPEEDYROUTE LOGO</strong></div>
-      <div>Route #${"R1234" || ""} – Optimized Summary</div>
+       <img src=${logo} alt="Route" width=${150} height=${70} />
+      <div>Route #${routeDetail?.routeId || ""} – Optimized Summary</div>
     </div>
     <hr>
     <table style="width:100%; margin-top: 10px;">
       <tr>
-        <td><strong>Driver:</strong> ${"John Sow" || ""}</td>
-        <td><strong>Date:</strong> ${"12-03-205" || ""}</td>
+        <td><strong>Driver:</strong> ${routeDetail?.driver?.name|| ""}</td>
+        <td><strong>Date:</strong> ${moment(routeDetail?.updatedAt).format("MMM/DD/YYYY") || ""}</td>
       </tr>
       <tr>
-        <td><strong>Dispatcher:</strong> ${"John Dis" || ""}</td>
-        <td><strong>Generated:</strong> ${"29 OCT 2025" || ""}</td>
+        <td><strong>Dispatcher:</strong> ${routeDetail?.user?.name || ""}</td>
+        <td><strong>Generated:</strong> ${moment().format("MMM/DD/YYYY")|| ""}</td>
       </tr>
+    
       <tr>
-        <td><strong>Stops Optimized:</strong> ${stops?.length || 0}</td>
-        <td><strong>Distance:</strong> ${"100k/m" || "—"} mi</td>
-      </tr>
-      <tr>
-        <td><strong>Est. Duration:</strong> ${"1 hr 20m" || "—"}</td>
+        <td><strong>Est. Duration:</strong> ${formatSecondsToHMS(routeDetail?.duration) || "—"}</td>
       </tr>
     </table>
     <hr style="margin: 20px 0;">

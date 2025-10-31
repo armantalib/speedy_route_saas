@@ -14,9 +14,10 @@ import { useSelector } from "react-redux";
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { formatSecondsToHMS } from "../../utils/DateTimeCustom";
+import moment from "moment";
 const { Title, Text } = Typography;
 
-const AssignDriver = ({ title, duration, routeGeometry, isRouteDetail, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, onClickAssign, loading, exportToCSV, printToPDF, isUpdate }) => {
+const AssignDriver = ({ title, duration, routeGeometry, isRouteDetail, start, stops = [], destination, routeName, routeId, startPoint, endPoint, dateSchedule, timeSchedule, stopData = [], onClickSave, onClickAssign, loading, exportToCSV, printToPDF, isUpdate,isRouteForm,onPressEdit }) => {
   const mapRef = useRef(null);
   const routeLayerRef = useRef(null);
   const markersRef = useRef([]);
@@ -156,20 +157,67 @@ const AssignDriver = ({ title, duration, routeGeometry, isRouteDetail, start, st
         <Text type="secondary">
           Route optimized! Review the details and assign a driver to begin deliveries.
         </Text>
+        <div></div>
+        <div className="flex items-center justify-between mb-4 mt-3">
+          <div className="flex items-center gap-2" style={{ width: '45%' }}>
+            <div>
+              <span className="text-sm font-semibold text-gray-400">Route ID</span>
+              <h2 className="text-lg font-semibold text-gray-800">#{routeId}</h2>
+            </div>
+          </div>
+          <div className="flex items-center gap-2" style={{ width: '45%' }}>
+            <div>
+              <span className="text-sm font-semibold text-gray-400">Route Name</span>
+              <h2 className="text-lg font-semibold text-gray-800">{routeName ? routeName : 'N/A'}</h2>
+            </div>
+          </div>
+        </div>
 
-        {/* Route Info */}
-        <Descriptions column={1} bordered className="route-info">
-          <Descriptions.Item label="Auto Route ID">#{routeId}</Descriptions.Item>
-          <Descriptions.Item label="Route Name">{routeName}</Descriptions.Item>
-          <Descriptions.Item label="Start Point">{startPoint}</Descriptions.Item>
-          <Descriptions.Item label="End Point (optional)">{endPoint}</Descriptions.Item>
-          <Descriptions.Item label="Scheduled Date">{dateSchedule}</Descriptions.Item>
-          <Descriptions.Item label="Time Window">{timeSchedule}</Descriptions.Item>
-        </Descriptions>
-        <Descriptions column={2} bordered className="route-info">
-          <Descriptions.Item label="Stops">{stops?.length || 0}</Descriptions.Item>
-          <Descriptions.Item label="Duration">{duration ? formatSecondsToHMS(duration) : formatSecondsToHMS(routeDetail?.duration)}</Descriptions.Item>
-        </Descriptions>
+        <div className="flex items-center justify-between mb-4 mt-3">
+          <div className="flex items-center gap-2" style={{ width: '45%' }}>
+            <div>
+              <span className="text-sm font-semibold text-gray-400">Start Point</span>
+              <h2 className="text-lg font-semibold text-gray-800">{startPoint}</h2>
+            </div>
+          </div>
+          <div className="flex items-center gap-2" style={{ width: '45%' }}>
+            <div>
+              <span className="text-sm font-semibold text-gray-400">End Point (optional)</span>
+              <h2 className="text-lg font-semibold text-gray-800">{endPoint ? endPoint : 'N/A'}</h2>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between mb-4 mt-3">
+          <div className="flex items-center gap-2" style={{ width: '45%' }}>
+            <div>
+              <span className="text-sm font-semibold text-gray-400">Scheduled Date</span>
+              <h2 className="text-lg font-semibold text-gray-800">{dateSchedule == 'Invalid date' ? 'N/A' : moment(dateSchedule).format('MMM/DD/YYYY')}</h2>
+            </div>
+          </div>
+          <div className="flex items-center gap-2" style={{ width: '45%' }}>
+            <div>
+              <span className="text-sm font-semibold text-gray-400">Scheduled Time</span>
+              <h2 className="text-lg font-semibold text-gray-800">{timeSchedule == 'Invalid date' ? 'N/A' : timeSchedule}</h2>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between mb-4 mt-3">
+          <div className="flex items-center gap-2" style={{ width: '45%' }}>
+            <div>
+              <span className="text-sm font-semibold text-gray-400">Stops</span>
+              <h2 className="text-lg font-semibold text-gray-800">{stops?.length || 0}</h2>
+            </div>
+          </div>
+          <div className="flex items-center gap-2" style={{ width: '45%' }}>
+            <div>
+              <span className="text-sm font-semibold text-gray-400">Duration</span>
+              <h2 className="text-lg font-semibold text-gray-800">{duration ? formatSecondsToHMS(duration) : formatSecondsToHMS(routeDetail?.duration)}</h2>
+            </div>
+          </div>
+        </div>
+      
 
         {/* Stops Timeline */}
         <div className="stops-section">
@@ -213,7 +261,14 @@ const AssignDriver = ({ title, duration, routeGeometry, isRouteDetail, start, st
               Assign Driver
             </Button> : null}
           <Button type="primary" onClick={() => {
+            setTimeout(() => {
+            if(isRouteForm){
+              onPressEdit()
+            }else{
             navigate('/route/form')
+            }
+              
+            }, 400);
           }} style={{ marginRight: 10 }}>
             Edit
           </Button>

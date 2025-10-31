@@ -830,3 +830,10 @@ textarea:focus {
   gap: 0.5rem;
   margin-top: 1rem;
 }
+
+.leaflet-tooltip.transparent-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}

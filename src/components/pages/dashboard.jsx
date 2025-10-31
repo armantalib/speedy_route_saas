@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from 'react'
-import { avatarman, bag, earning, ready, preview, trash, information2, filter, avatar1, up_arrow } from '../icons/icon'
+import { avatarman, bag, earning, ready, preview, trash, information2, filter, avatar1, up_arrow, down_arrow } from '../icons/icon'
 import Chart from 'react-apexcharts'
 import axios from 'axios';
 import { CircularProgress } from '@mui/material';
@@ -13,6 +13,7 @@ import moment from 'moment';
 import { Divider } from 'antd';
 import { DivideCircle } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
+import { checkPlusMinus } from '../utils/Math';
 
 const Dashboard = () => {
     const [series, setSeries] = useState([]);
@@ -157,10 +158,10 @@ const Dashboard = () => {
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
                             color: row?.stop?.status == 'failed' ? '#EF4444' :
                                 row?.stop?.status == 'pending' ? '#CA8A04' :
-                                row?.stop?.status == 'start' ? '#0000FF' :
+                                row?.stop?.status == 'start' ? 'white' :
 
                                     '#22C55E'
-                        }}>{row?.stop?.status}</span>
+                        }}>{row?.stop?.status=='start'?'In-Progress':row?.stop?.status}</span>
                     </div>
                 )
             }
@@ -190,7 +191,8 @@ const Dashboard = () => {
 
             if (res?.data) {
                 allData = allData.concat(res?.data?.data);
-                setTotalPages(res?.data?.count?.totalPage);
+    
+                setTotalPages(res?.data?.count?.totalPage || 1);
             }
 
             setData(allData);
@@ -276,8 +278,11 @@ const Dashboard = () => {
                         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
                             <h5 className="plusJakara_semibold text_dark">{categories?.routesAssignedToday || 0}</h5>
                             <div style={{ backgroundColor: '#F3F4F4' }} className="rounded-4 w-auto p-2 h-auto flex items-center justify-center">
-                                <img src={up_arrow} className='w-4 h-auto' alt="" />
-                                <span style={{ fontSize: 14, marginLeft: 5, color: '#006F1F' }}>{categories?.routesAssignedChangePercent || 0}%</span>
+                                <img src={checkPlusMinus(categories?.routesAssignedChangePercent)?up_arrow:down_arrow} className='w-4 h-auto' alt="" />
+                                {checkPlusMinus(categories?.routesAssignedChangePercent)?
+                                <span style={{ fontSize: 14, marginLeft: 5, color: '#006F1F',fontWeight:'bold' }}>{categories?.routesAssignedChangePercent || 0}%</span>:
+                                <span style={{ fontSize: 14, marginLeft: 5, color: '#c20215ff',fontWeight:'bold' }}>{categories?.routesAssignedChangePercent || 0}%</span>
+                                }
                             </div>
                         </div>
                     </div>

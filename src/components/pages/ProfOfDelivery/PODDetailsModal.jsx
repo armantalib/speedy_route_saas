@@ -5,6 +5,8 @@ import "./PODDetailsModal.css";
 import moment from "moment";
 
 const PODDetailsModal = ({ visible, onClose, data }) => {
+  console.log("DA",data);
+  
   return (
     <Modal
       open={visible}
@@ -29,19 +31,19 @@ const PODDetailsModal = ({ visible, onClose, data }) => {
         </div>
 
         <div className="section">
-          <div className="section-title">Time Stamps : {moment(data?.updatedAt).format('MMM-DD-YYYY hh:mm a')}</div>
+          <div className="section-title">Time Stamps : {moment(data?.updatedAt).format('MMM/DD/YYYY hh:mm a')}</div>
           <div className="info-row">
             <span>Stops</span>
-            <span>{data?.stops?.length}</span>
+            <span style={{width:'75%',textAlign:'right'}}>{data?.stop?.place_name}</span>
           </div>
           <div className="info-row">
             <span>Assigned Route</span>
             <span>{data?.driver?.name}</span>
           </div>
-          <div className="info-row">
+          {/* <div className="info-row">
             <span>Date & Time</span>
             <span>{moment(data?.createdAt).format('MMM-DD-YYYY hh:mm a')}</span>
-          </div>
+          </div> */}
           {/* <div className="info-row">
             <span>Assigned Vehicle</span>
             <span>{data?.vehicle}</span>

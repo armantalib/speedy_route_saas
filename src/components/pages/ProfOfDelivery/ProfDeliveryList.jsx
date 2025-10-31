@@ -43,7 +43,7 @@ const ProfDeliveryList = (props) => {
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [selectedDate, setSelectedDate] = useState("Today");
-    const [selectedStatus, setSelectedStatus] = useState("Completed");
+    const [selectedStatus, setSelectedStatus] = useState("completed");
     const [selectedDriver, setSelectedDriver] = useState(null);
       const dispatch = useDispatch();
   dispatch(setHeaderName('Prof Of Delivery'))
@@ -61,7 +61,7 @@ const ProfDeliveryList = (props) => {
     const [imagePreview, setImagePreview] = useState(null);
 
     const dateOptions = ["Today", "Yesterday", "Last 7 Days", "Last Month"];
-    const statusOptions = ["Completed", "In Progress", "Failed", "Cancelled"];
+    const statusOptions = ["completed", "failed"];
 
     const handleDriverChange = (e) => {
         const { name, value } = e.target;
@@ -133,14 +133,14 @@ const ProfDeliveryList = (props) => {
 
     const columns = [
         {
-            name: 'ID',
+            name: 'Route ID',
             allowoverflow: true,
             width: '250px',
             cell: (row) => {
                 return (
                     <div onClick={() => {
                         setSingleData(row)
-                        setShowModal(true)
+                        // setShowModal(true)
                     }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
                         <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.routeId}</p>
                     </div>
@@ -148,19 +148,37 @@ const ProfDeliveryList = (props) => {
             }
         },
         {
-            name: 'Name',
+            name: 'Driver Name',
             allowoverflow: true,
             width: '250px',
             cell: (row) => {
                 return (
                     <div onClick={() => {
 
-                        setSingleData(row)
-                        setSelectedDriver(row)
-                        setShowDriverDetail(true)
+                        // setSingleData(row)
+                        // setSelectedDriver(row)
+                        // setShowDriverDetail(true)
                     }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
                         <img src={row?.user?.image ? row?.user?.image : avatar1} alt="Girl in a jacket" style={{ borderRadius: 100, width: 40, height: 40 }} />
                         <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.driver?.name}</p>
+                    </div>
+                )
+            }
+        },
+           {
+            name: 'Client Name',
+            allowoverflow: true,
+            width: '250px',
+            cell: (row) => {
+                return (
+                    <div onClick={() => {
+
+                        // setSingleData(row)
+                        // setSelectedDriver(row)
+                        // setShowDriverDetail(true)
+                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                        {/* <img src={row?.user?.image ? row?.user?.image : avatar1} alt="Girl in a jacket" style={{ borderRadius: 100, width: 40, height: 40 }} /> */}
+                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?.stop?.name?row?.stop?.name:'N/A'}</p>
                     </div>
                 )
             }
@@ -196,12 +214,7 @@ const ProfDeliveryList = (props) => {
             width: '250px',
             selector: row => row?.stop?.place_name ? row?.stop?.place_name : 'N/A'
         },
-        {
-            name: 'Time',
-            sortable: true,
-            width: '250px',
-            selector: row => moment(row.updatedAt).fromNow()
-        },
+    
         {
             name: 'Action',
             allowoverflow: true,
@@ -226,12 +239,14 @@ const ProfDeliveryList = (props) => {
         try {
             let allData = [];
             let data1 = {}
-            const endPoint = `routes/admin/prof/list/${currentPage}?category=${selectedCategory}&minPrice=${minPrice}&maxPrice=${maxPrice}&search=${search}`;
+            const endPoint = `routes/admin/prof/list/${currentPage}/${selectedStatus}/${search}`;
             const res = await dataGet_(endPoint, data1);
 
             if (res?.data) {
                 allData = allData.concat(res?.data?.data);
-                setTotalPages(res?.data?.count?.totalPage);
+                console.log("CECCE",res?.data?.count?.totalPage );
+                
+                setTotalPages(res?.data?.count?.totalPage || 1);
             }
 
             setData(allData);
@@ -244,7 +259,7 @@ const ProfDeliveryList = (props) => {
 
     useEffect(() => {
         fetchData();
-    }, [currentPage, selectedCategory, minPrice, search]);
+    }, [currentPage, search,selectedStatus]);
 
     const handleClear = () => {
         setSelectedDate(null);
@@ -277,7 +292,7 @@ const ProfDeliveryList = (props) => {
                             onChange={(e) => setSearch(e.target.value)}
                             style={{ width: 200, marginRight: 10 }}
                         />
-                        <Button type="default">Filter</Button>
+                        <Button type="default" onClick={()=>{setShowModal(true)}}>Filter</Button>
                         {/* <Button
                             type="primary"
                             icon={<PlusOutlined />}
@@ -314,28 +329,7 @@ const ProfDeliveryList = (props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                        <div>
-                            <h6 className="mb-2" style={{ fontWeight: "600" }}>Date</h6>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-                                {dateOptions.map((option) => (
-                                    <button
-                                        key={option}
-                                        onClick={() => setSelectedDate(option)}
-                                        style={{
-                                            padding: "6px 14px",
-                                            borderRadius: "7px",
-                                            border: selectedDate === option ? "1.5px solid #4770E4" : "1px solid #ccc",
-                                            background: selectedDate === option ? "#F3F6FF" : "#fff",
-                                            color: selectedDate === option ? "#4770E4" : "#555",
-                                            fontWeight: "400",
-                                            cursor: "pointer",
-                                        }}
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                      
 
                         <div>
                             <h6 className="mb-2" style={{ fontWeight: "600" }}>Status</h6>
@@ -383,6 +377,7 @@ const ProfDeliveryList = (props) => {
                             borderRadius: "12px",
                             padding: "6px 16px",
                             fontWeight: "500",
+                            color:'white'
                         }}
                     >
                         Apply

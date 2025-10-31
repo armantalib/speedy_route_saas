@@ -3,7 +3,8 @@ import { Modal, Input, Upload, Button, Form, Select, message } from "antd";
 import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import { CircularProgress } from "@mui/material";
 import "./AddDriverModal.css";
-import { dataPut } from "../../utils/myAxios"; // ✅ use PUT for updating
+import { dataPost, dataPut } from "../../utils/myAxios"; // ✅ use PUT for updating
+import { Edit } from "react-feather";
 
 const { Dragger } = Upload;
 
@@ -57,6 +58,31 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
     }
   };
 
+    const resetPassword = async (values) => {
+      try {
+        setLoader(true);
+        const endPoint = `users/forget-password`; // ✅ Update endpoint
+  
+        const updatedData = {
+          email:dataFill?.email,
+        };
+        
+        const response = await dataPost(endPoint, updatedData);
+  
+        if (response?.data?.success) {
+          message.success("Password updated successfully!");
+          onClose();
+        } else {
+          message.error(response?.data?.message);
+        }
+      } catch (error) {
+        console.error(error);
+        message.error("Error while updating driver");
+      } finally {
+        setLoader(false);
+      }
+    };
+
   return (
     <Modal
       open={visible}
@@ -66,13 +92,13 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
       className="add-driver-modal"
       destroyOnClose
     >
-      <div className="modal-header">
-        <div className="icon-circle">
-          <UploadOutlined />
-        </div>
-        <h2>Edit Driver</h2>
-        <p>Update driver details below.</p>
-      </div>
+           <div className="modal-header">
+             <div className="icon-circle">
+               <Edit />
+             </div>
+           </div>
+           <h5 style={{ textAlign: 'center', marginTop: -20 }}>Edit Driver</h5>
+           <p style={{ textAlign: 'center', marginTop: -10 }}>Update driver details below.</p>
 
       <Form layout="vertical" form={form} onFinish={handleFinish}>
         <div className="form-grid">
@@ -117,6 +143,10 @@ const EditDataModal = ({ visible, onCancel, onClose, dataFill }) => {
             </Select>
           </Form.Item>
         </div>
+
+              <Button type="primary" onClick={() => { resetPassword() }}>
+                  {loader ? <CircularProgress size={18} className="text_white" /> : "Reset Password"}
+                </Button>
 
         {/* <Form.Item name="licenseFile" label="Driver License PDF (Optional)">
           <Dragger

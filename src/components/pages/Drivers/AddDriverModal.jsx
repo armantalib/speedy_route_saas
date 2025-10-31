@@ -4,6 +4,7 @@ import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import "./AddDriverModal.css";
 import { dataPost } from "../../utils/myAxios";
 import { CircularProgress, Switch } from '@mui/material'
+import { UserCheck } from "react-feather";
 
 const { Dragger } = Upload;
 
@@ -51,12 +52,12 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
       className="add-driver-modal"
     >
       <div className="modal-header">
-        <div className="icon-circle">
-          <UploadOutlined />
-        </div>
-        <h2>Add New Driver</h2>
-        <p>Sorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </div>
+               <div className="icon-circle">
+                 <UserCheck />
+               </div>
+             </div>
+             <h5 style={{ textAlign: 'center', marginTop: -20 }}>Add Driver</h5>
+             <p style={{ textAlign: 'center', marginTop: -10 }}>Add driver details below.</p>
 
       <Form layout="vertical" form={form} onFinish={handleFinish}>
         <div className="form-grid">

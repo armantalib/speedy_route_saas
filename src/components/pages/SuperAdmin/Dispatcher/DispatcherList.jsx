@@ -167,6 +167,23 @@ const DispatcherList = (props) => {
                 )
             }
         },
+          {
+            name: 'Permission',
+            allowoverflow: true,
+            width: '250px',
+            cell: (row) => {
+                return (
+                    <div onClick={() => {
+
+                        setSingleData(row)
+                        setSelectedDriver(row)
+                        setShowDriverDetail(true)
+                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                        <p style={{ fontWeight: 'bold', fontSize: 14,textTransform:'capitalize' }}>{row?.dispatcherAccess}</p>
+                    </div>
+                )
+            }
+        },
         {
             name: 'Phone Numbers',
             allowoverflow: true,

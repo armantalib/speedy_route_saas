@@ -157,8 +157,14 @@ const [driverToDelete, setDriverToDelete] = useState(null);
       {
             name: 'Email',
             sortable: true,
-            width: '350px',
+            width: '250px',
             selector: row => row?.email
+        },
+           {
+            name: 'Phone',
+            sortable: true,
+            width: '200px',
+            selector: row => row?.phone
         },
          {
             name: 'Status',
@@ -174,23 +180,18 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                         <span style={{
                             fontWeight: 'bold', fontSize: 14, textTransform: 'capitalize',
                             color: row?.status == 'deactivated' ? '#CA8A04' : '#22C55E'
-                        }}>{row?.status=='online'?'Active':'Deactivated'}</span>
+                        }}>{row?.status=='online'?'Active':'Inactive'}</span>
                     </div>
                 )
             }
         },
-        {
-            name: 'Created At',
+      {
+            name: 'App Permission',
             sortable: true,
-            width: '250px',
-            selector: row => row?.lastActive ? moment(row?.lastActive).fromNow() : 'N/A'
+            width: '290px',
+            selector: row => row?.isAppAllow?'Allow':'Not Allow'
         },
-        {
-            name: 'Assigned Route',
-            sortable: true,
-            width: '250px',
-            selector: row => row?.driver?.name ? row?.driver?.name : 'N/A'
-        },
+    
         {
             name: 'Action',
             allowoverflow: true,
@@ -211,20 +212,7 @@ const [driverToDelete, setDriverToDelete] = useState(null);
         },
     ]
      const columnsDis = [
-        {
-            name: 'ID',
-            allowoverflow: true,
-            width: '290px',
-            cell: (row) => {
-                return (
-                    <div onClick={() => {
-                        setSingleData(row)
-                    }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
-                        <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>{row?._id}</p>
-                    </div>
-                )
-            }
-        },
+
         {
             name: 'Name',
             allowoverflow: true,
@@ -243,6 +231,18 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                     </div>
                 )
             }
+        },
+             {
+            name: 'Email',
+            sortable: true,
+            width: '250px',
+            selector: row => row?.email
+        },
+           {
+            name: 'Phone',
+            sortable: true,
+            width: '200px',
+            selector: row => row?.phone
         },
         {
             name: 'Status',
@@ -263,18 +263,13 @@ const [driverToDelete, setDriverToDelete] = useState(null);
                 )
             }
         },
-        {
-            name: 'Created At',
+     {
+            name: 'App Permission',
             sortable: true,
             width: '290px',
-            selector: row => row?.lastActive ? moment(row?.lastActive).fromNow() : 'N/A'
+            selector: row => row?.isAppAllow?'Allow':'Not Allow'
         },
-        {
-            name: 'Assigned Route',
-            sortable: true,
-            width: '290px',
-            selector: row => row?.driver?.name ? row?.driver?.name : 'N/A'
-        },
+    
      
     ]
 
@@ -288,7 +283,8 @@ const [driverToDelete, setDriverToDelete] = useState(null);
 
             if (res?.data) {
                 allData = allData.concat(res?.data?.data);
-                setTotalPages(res?.data?.count?.totalPage);
+    
+                setTotalPages(res?.data?.count?.totalPage||1);
             }
 
             setData(allData);

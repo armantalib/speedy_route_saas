@@ -19,7 +19,12 @@ const dispatch = useDispatch();
     navigate('/route-detail');
 
   }
+const completedStops = driverDetail.routeDetail.stopsData.filter(
+  (stop) => stop.status === "completed"
+).length;
 
+const nextStop = driverDetail.routeDetail.stopsData.find((stop) => stop.status === "pending");
+const nextStopAddress = nextStop ? nextStop.place_name : null;
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 mb-3 hover:shadow-md transition-all duration-200">
       {/* Header */}
@@ -40,7 +45,7 @@ const dispatch = useDispatch();
           color={statusColors[driver.status] || "green"}
           className="text-xs font-medium rounded-full px-3 py-[2px] capitalize"
         >
-          {driverDetail.routeDetail?.status || "On Route"}
+          {driverDetail.routeDetail?.status=='assigned'?'On Route':'Completed' || "On Route"}
         </Tag>
       </div>
 
@@ -51,10 +56,10 @@ const dispatch = useDispatch();
           #{driverDetail?.routeDetail?.routeId || "12567"}
         </span>{" "}
         ·{" "}
-        {driverDetail?.routeDetail?.stops?.length
-          ? `${driverDetail?.routeDetail?.stops.length} / Stops`
+        {/* {driverDetail?.routeDetail?.stops?.length
+          ? `${completedStops+'/'+driverDetail?.routeDetail?.stops.length} / Stops`
           : "5/8 Stops"}{" "}
-        · ETA:{" "}
+        · ETA:{" "} */}
         <span className="font-medium text-gray-800">
           {formatSecondsToHMS(driverDetail?.routeDetail?.duration) || "12:30 PM"}
         </span>
@@ -64,9 +69,9 @@ const dispatch = useDispatch();
       <p className="text-[13px] text-gray-700 mb-3 flex items-start mt-3">
         <EnvironmentOutlined className="text-red-500 text-[14px] mt-[2px] mr-1" />
         <span>
-          Destination:{" "}
+          Next Stop:{" "}
           <span className="font-medium text-gray-800">
-            {driver.nextStop || "123 Main St."}
+            {nextStopAddress || "123 Main St."}
           </span>{" "}
         </span>
       </p>

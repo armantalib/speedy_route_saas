@@ -29,7 +29,8 @@ import moment from "moment";
 import { dataGet_, dataPost, dataPut } from "../../utils/myAxios";
 import { useNavigate } from 'react-router-dom';
 import { new_route_icon } from "../../icons/icon";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setRouteDetail } from "../../../storeTolkit/routeSlice";
 
 const { Title, Paragraph, Text } = Typography;
 const { TabPane } = Tabs;
@@ -61,6 +62,7 @@ const RouteForm = () => {
   const [customerStopId, setCustomerStopId] = useState(null);
   const [coordinateErrors, setCoordinateErrors] = useState([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { routeDetail } = useSelector((state) => state?.route);
   const [options, setOptions] = useState({
     roundTrip: false,
@@ -189,17 +191,17 @@ const RouteForm = () => {
 
   const renderOptionsName = () =>
     searchResultsName.map((result) => ({
-      value: result.name || result.stopName,   // fallback if key is stopName
+      value: result._id,   // fallback if key is stopName
       label: (
         <div>
-          <strong>{result.name || result.stopName}</strong><br />
-          <small>{result.place_name || result.address}</small>
+          <strong>{result.name}</strong><br />
+          <small>{result.place_name}</small>
         </div>
       ),
       result: {
         ...result,
-        name: result.name || result.stopName,
-        place_name: result.place_name || result.address,
+        name: result?.name,
+        place_name: result?.place_name,
       },
     }));
 
@@ -257,7 +259,7 @@ const RouteForm = () => {
 
   // Print to PDF
   const printToPDF = () => {
-const printContent = `
+    const printContent = `
   <div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6;">
   
     <hr>
@@ -268,11 +270,11 @@ const printContent = `
     <hr>
     <table style="width:100%; margin-top: 10px;">
       <tr>
-        <td><strong>Driver:</strong> ${"John Sow" || ""}</td>
+        <td><strong>Driver:</strong> ${routeDetail?.driver?.name || ""}</td>
         <td><strong>Date:</strong> ${"12-03-205" || ""}</td>
       </tr>
       <tr>
-        <td><strong>Dispatcher:</strong> ${"John Dis" || ""}</td>
+        <td><strong>Dispatcher:</strong> ${routeDetail?.user?.name || ""}</td>
         <td><strong>Generated:</strong> ${"29 OCT 2025" || ""}</td>
       </tr>
       <tr>
@@ -313,8 +315,8 @@ const printContent = `
           <td>${notes.start || "—"}</td>
         </tr>
         ${stops
-          .map(
-            (s, i) => `
+        .map(
+          (s, i) => `
             <tr>
               <td>${i + 2}</td>
               <td>${s.name || `Stop ${i + 1}`}</td>
@@ -323,8 +325,8 @@ const printContent = `
               <td>${s.duration || "—"}</td>
               <td>${notes.stops?.[i] || "—"}</td>
             </tr>`
-          )
-          .join("")}
+        )
+        .join("")}
         <tr>
           <td>${(stops?.length || 0) + 2}</td>
           <td>Return to Depot</td>
@@ -466,7 +468,10 @@ const printContent = `
 
   useEffect(() => {
     if (routeGeom && distance && duration && isRouteCreate) {
-      saveDraftData(null);
+      setTimeout(() => {
+        saveDraftData(null);
+
+      }, 500);
     }
   }, [duration, distance, routeGeom, isRouteCreate]);
 
@@ -480,8 +485,6 @@ const printContent = `
       //   optimizedWaypoints,
       // });
       const routeData = response?.data?.route;
-      console.log("R", routeData);
-
       setRouteGeom(routeData); // Set the GeoJSON data for the route
       if (!isUpdate) {
         setIsRouteCreate(true)
@@ -528,7 +531,7 @@ const printContent = `
     const endPointAddress = {
       latitude: destination?.coordinates[1],
       longitude: destination?.coordinates[0],
-      address:destination?.place_name,
+      address: destination?.place_name,
       status: 'pending', name: '', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
     };
 
@@ -551,8 +554,10 @@ const printContent = `
     };
 
     const response = await dataPost(endPoint, data1);
-    console.log("RE",response);
-    
+    if (response?.data?.success) {
+      dispatch(setRouteDetail(response?.data?.data))
+    }
+    // if(response?.)
     setIsRouteCreate(false)
     message.success('Route Created Successfully');
     setIsLoading(false);
@@ -595,7 +600,7 @@ const printContent = `
     };
 
     const response = await dataPut(endPoint, data1)
-    
+
     navigate('/route/list');
     message.success('Route Updated Successfully');
     setIsLoading(false);
@@ -633,22 +638,26 @@ const printContent = `
 
 
   const handleSwitchChange = (key, value) => {
-      if(value==true){
-      if(!start?.coordinates){
+    if (value == true) {
+      if (!start?.coordinates) {
         message.error('Please enter start location first')
         return
       }
-      if(key=='reverseOrder' && destination?.coordinates){}else{
-       setDestination({
-          coordinates: [
-            start.coordinates[0],
-            start.coordinates[1],
-          ],
-          place_name: start.place_name,
-          status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
-        });
+      if (key == 'reverseOrder') { } else {
+          setDestination({
+            coordinates: [
+              start.coordinates[0],
+              start.coordinates[1],
+            ],
+            place_name: start.place_name,
+            status: 'pending', startTime: '', notes: '', completeLat: '', completeLng: '', completeTime: '', profDelivery: '', signature: ''
+          });
       }
+    }else{
+      if(key == 'roundTrip'){
+        setDestination(null)
       }
+    }
     setOptions((prev) => ({
       ...prev,
       [key]: value,
@@ -726,8 +735,6 @@ const printContent = `
                         onChange={(e) => {
                           setScheduleDate(e)
 
-                          console.log("E", e);
-
                         }}
                       />
                     </Form.Item>
@@ -779,7 +786,7 @@ const printContent = `
                             danger
                             type="text"
                             onClick={() => {
-                              
+
                               const allHaveCoordinates = stops.every(
                                 (stop) =>
                                   stop.coordinates &&
@@ -813,12 +820,14 @@ const printContent = `
                               setStops(updated);
                             }}
                             onSelect={(val, opt) => {
+
+
                               const updated = [...stops];
                               updated[index] = {
                                 ...updated[index],
-                                name: opt.result.name,
-                                place_name: opt.result.place_name,
-                                coordinates: opt.result.coordinates,
+                                name: opt?.result?.name,
+                                place_name: opt?.result?.place_name,
+                                coordinates: opt?.result?.coordinates,
                                 status: "pending",
                                 startTime: "",
                                 notes: "",
@@ -879,9 +888,9 @@ const printContent = `
                               if (hasError) {
                                 setCoordinateErrors(newErrors);
                                 // message.error("Please fix missing coordinates before adding a new stop.");
-                              }else{
-                          setCoordinateErrors(newErrors);
-                        }
+                              } else {
+                                setCoordinateErrors(newErrors);
+                              }
 
 
 
@@ -914,12 +923,12 @@ const printContent = `
                         </Form.Item>
 
                         {/* Time Window & Client/Location Name */}
-                        <div style={{ display: "flex", gap: "16px" }}>
+                        {/* <div style={{ display: "flex", gap: "16px" }}>
                           <Form.Item label="Time Window (optional)" style={{ flex: 1 }}>
                             <TimePicker.RangePicker style={{ width: "100%" }} />
                           </Form.Item>
 
-                        </div>
+                        </div> */}
 
                         {/* Notes */}
                         <Form.Item label="Notes">
@@ -963,7 +972,7 @@ const printContent = `
                         if (hasError) {
                           setCoordinateErrors(newErrors);
                           // message.error("Please fix missing coordinates before adding a new stop.");
-                        }else{
+                        } else {
                           setCoordinateErrors(newErrors);
                         }
 
@@ -1020,6 +1029,11 @@ const printContent = `
               onClickAssign={() => { }}
               exportToCSV={() => { exportToCSV() }}
               printToPDF={() => { printToPDF() }}
+              isRouteForm={true}
+              onPressEdit={() => {
+                setShowMap(false)
+                setIsUpdate(true)
+              }}
               onClickSave={(val) => {
                 updateDraftData(val)
 

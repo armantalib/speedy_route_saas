@@ -52,7 +52,7 @@ const SpeedyRoutesList = (props) => {
             cell: (row) => (
                 <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                     <p style={{ marginLeft: 10, fontWeight: 'bold', fontSize: 14 }}>
-                        {moment(row.scheduleDate).format('DD MMM')}
+                        {row.scheduleDate ?moment(row.scheduleDate).format('MMM/DD/YYYY'):'N/A'}
                     </p>
                 </div>
             )
@@ -167,7 +167,8 @@ const SpeedyRoutesList = (props) => {
             const res = await dataGet_(endPoint, {});
             if (res?.data?.data) {
                 setData(res.data.data);
-                setTotalPages(res.data.count?.totalPage || 1);
+        
+                setTotalPages(res.data.count?.totalPages || 1);
             }
         } catch (error) {
             console.log(error);

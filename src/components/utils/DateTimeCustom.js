@@ -12,3 +12,7 @@ export function formatSecondsToHMS(seconds) {
     return `${seconds % 60}s`;
   }
 }
+
+export function metersToMiles(meters) {
+  return meters * 0.000621371;
+}

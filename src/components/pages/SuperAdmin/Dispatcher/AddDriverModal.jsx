@@ -4,6 +4,7 @@ import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import "./AddDriverModal.css";
 import { dataPost } from "../../../utils/myAxios";
 import { CircularProgress } from '@mui/material'
+import { UserCheck } from "react-feather";
 
 const { Dragger } = Upload;
 
@@ -47,13 +48,13 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
       width={520}
       className="add-driver-modal"
     >
-      <div className="modal-header">
-        <div className="icon-circle">
-          <UploadOutlined />
-        </div>
-        <h2>Add New Dispatcher</h2>
-        <p>Sorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </div>
+         <div className="modal-header">
+           <div className="icon-circle">
+             <UserCheck />
+           </div>
+         </div>
+         <h5 style={{ textAlign: 'center', marginTop: -20 }}>Add Dispatcher</h5>
+         <p style={{ textAlign: 'center', marginTop: -10 }}>Add driver details below.</p>
 
       <Form layout="vertical" form={form} onFinish={handleFinish}>
         <div className="form-grid">
@@ -71,7 +72,7 @@ const AddDriverModal = ({ visible, onCancel, onClose }) => {
             <Input placeholder="+1 (___) ___-____" />
           </Form.Item>
 
-          <Form.Item name="dispatcherAccess" label="Access" rules={[{ required: true }]}>
+          <Form.Item name="dispatcherAccess" label="Permission" rules={[{ required: true }]}>
             <Select placeholder="Please select">
               <Select.Option value={'limited'}>Limited Access</Select.Option>
               <Select.Option value={'full'}>Full Access</Select.Option>
